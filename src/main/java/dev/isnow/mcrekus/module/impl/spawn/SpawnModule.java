@@ -12,7 +12,7 @@ public class SpawnModule extends Module<SpawnConfig> {
     private SpawnTeleportManager spawnTeleportManager;
 
     public SpawnModule() {
-        super("Spawn", null);
+        super("Spawn");
     }
 
     @Override

@@ -13,7 +13,7 @@ import lombok.Getter;
 public class DeathChestModule extends Module<DeathChestConfig> {
 
     public DeathChestModule() {
-        super("DeathChest", null);
+        super("DeathChest");
     }
 
     @Override

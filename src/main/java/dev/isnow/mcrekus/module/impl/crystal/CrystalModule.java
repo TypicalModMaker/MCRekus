@@ -5,7 +5,7 @@ import dev.isnow.mcrekus.module.Module;
 
 public class CrystalModule extends Module {
     public CrystalModule() {
-        super("Crystal", null);
+        super("Crystal");
     }
 
     @Override

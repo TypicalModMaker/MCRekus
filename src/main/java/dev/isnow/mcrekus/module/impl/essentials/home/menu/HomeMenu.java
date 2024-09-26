@@ -1,10 +1,10 @@
 package dev.isnow.mcrekus.module.impl.essentials.home.menu;
 
 import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
-import dev.isnow.mcrekus.module.impl.essentials.data.EssentialsPlayerData;
 import dev.isnow.mcrekus.module.impl.essentials.home.Home;
 import dev.isnow.mcrekus.module.impl.essentials.teleport.TeleportManager;
 import dev.isnow.mcrekus.util.ComponentUtil;
@@ -59,8 +59,9 @@ public class HomeMenu extends ModuleAccessor<EssentialsModule> implements Menu {
             Capacity capacity) {
 
         ArrayList<Button> buttons = new ArrayList<>();
+        final PlayerData playerData = MCRekus.getInstance().getPlayerDataManager().getPlayerData(player.getUniqueId());
 
-        for (final Home home : ((EssentialsPlayerData) getModule().getPlayerData(player.getUniqueId())).getHomes().values()) {
+        for (final Home home : playerData.getHomeLocations().values()) {
             final ItemStack homeStack = LegacyItemBuilder.legacy(Material.LIME_BED, 1)
                     .setDisplay("&a&l" + home.getName())
                     .setLore("&fLokalizacja domu: " + ComponentUtil.formatLocation(home.getLocation(), true)).build();

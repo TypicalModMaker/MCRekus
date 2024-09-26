@@ -4,16 +4,23 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.isnow.mcrekus.command.CommandManager;
 import dev.isnow.mcrekus.config.ConfigManager;
 import dev.isnow.mcrekus.data.PlayerDataManager;
+import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.event.LoginEvent;
 import dev.isnow.mcrekus.hook.HookManager;
 import dev.isnow.mcrekus.module.ModuleManager;
 import dev.isnow.mcrekus.util.DateUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import io.github.mqzen.menus.Lotus;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,6 +34,7 @@ public final class MCRekus extends JavaPlugin {
     private ModuleManager moduleManager;
     private CommandManager commandManager;
     private PlayerDataManager playerDataManager;
+    private DatabaseManager databaseManager;
 
     private boolean shuttingDown;
 
@@ -44,8 +52,6 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.info("Initializing config");
         configManager = new ConfigManager();
 
-        playerDataManager = new PlayerDataManager();
-
         threadPool = Executors.newFixedThreadPool(configManager.getGeneralConfig().getThreadAmount(), new ThreadFactoryBuilder().setNameFormat("mcrekus-worker-thread-%d").build());
 
         RekusLogger.info("Initializing command manager");
@@ -54,6 +60,28 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.info("Loading hooks");
         hookManager = new HookManager();
         menuAPI = Lotus.load(this);
+
+        RekusLogger.info("Initializing database connection");
+        final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader pluginClassLoader = MCRekus.class.getClassLoader();
+
+        Thread.currentThread().setContextClassLoader(pluginClassLoader);
+        databaseManager = new DatabaseManager(pluginClassLoader);
+        Thread.currentThread().setContextClassLoader(originalClassLoader);
+
+        if (databaseManager.getDb() == null) {
+            RekusLogger.info("Failed to connect to the database! This plugin won't work without an database. Refer to docs for more info.");
+            Bukkit.getPluginManager().disablePlugin(MCRekus.getInstance());
+            return;
+        } else {
+            RekusLogger.info("Connected successfully.");
+
+            if (configManager.getGeneralConfig().isFirstRun()) {
+                configManager.getGeneralConfig().setFirstRun(false);
+                MCRekus.getInstance().getConfigManager().saveConfigs();
+            }
+        }
+        playerDataManager = new PlayerDataManager();
 
         RekusLogger.info("Loading modules");
         moduleManager = new ModuleManager(this);
@@ -74,7 +102,10 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.info("Disabled modules successfully!");
 
         RekusLogger.info("Saving player data");
-        playerDataManager.saveAll();
+        databaseManager.saveAllUsers();
+
+        RekusLogger.info("Shutting down database");
+        databaseManager.shutdown();
 
         threadPool.shutdownNow();
 

@@ -5,7 +5,7 @@ import dev.isnow.mcrekus.module.Module;
 
 public class SpawnersModule extends Module {
     public SpawnersModule() {
-        super("Spawners", null);
+        super("Spawners");
     }
 
     @Override

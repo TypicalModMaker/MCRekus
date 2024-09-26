@@ -9,7 +9,7 @@ import lombok.Getter;
 public class WorldProtectionModule extends Module<WorldProtectionConfig> {
 
     public WorldProtectionModule() {
-        super("WorldProtection", null);
+        super("WorldProtection");
     }
 
     @Override

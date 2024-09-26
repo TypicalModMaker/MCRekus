@@ -3,7 +3,6 @@ package dev.isnow.mcrekus.module;
 import co.aikar.commands.BaseCommand;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.data.PlayerData;
-import dev.isnow.mcrekus.module.impl.essentials.data.EssentialsPlayerData;
 import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.util.HashSet;
@@ -20,11 +19,10 @@ public abstract class Module<T extends ModuleConfig> {
     private final Set<BaseCommand> registeredCommands = new HashSet<>();
     private final T config;
 
-    public Module(final String name, final Class<? extends PlayerData> playerDataClass) {
+    public Module(final String name) {
         this.name = name;
 
         this.config = createConfig();
-        registerPlayerDataObject(playerDataClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -78,12 +76,6 @@ public abstract class Module<T extends ModuleConfig> {
         }
 
         RekusLogger.debug("Registering player data object " + clazz.getSimpleName());
-        try {
-            MCRekus.getInstance().getPlayerDataManager().registerCache(this.getName(), clazz);
-        } catch (Exception e) {
-            RekusLogger.info("Failed to register player data object " + clazz.getSimpleName() + " for module " + name);
-            e.printStackTrace();
-        }
     }
 
     private void registerCommand(final Class<? extends BaseCommand> clazz) {
@@ -111,10 +103,6 @@ public abstract class Module<T extends ModuleConfig> {
             RekusLogger.info("Failed to register commands for module " + name);
             e.printStackTrace();
         }
-    }
-
-    public final <T2> PlayerData getPlayerData(final UUID uuid) {
-        return MCRekus.getInstance().getPlayerDataManager().getPlayerData(this, uuid);
     }
 
     public abstract void onEnable(final MCRekus plugin);

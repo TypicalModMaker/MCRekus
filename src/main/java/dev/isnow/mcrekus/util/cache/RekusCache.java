@@ -10,12 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 public class RekusCache<K, V> {
     private final LoadingCache<K, V> cache;
-    private final ISaver<K, V> saver;
 
     @SuppressWarnings("all")
     // Unchecked cast & 'while' statement cannot complete without throwing an exception supress false positive
     public RekusCache(final String name, final ILoader<K, V> loader, final ISaver<K, V> saver, final IRemover<V> remover) {
-        this.saver = saver;
         cache = Caffeine.newBuilder()
                 .expireAfterAccess(300, TimeUnit.SECONDS)
                 .removalListener((key, value, cause) -> {

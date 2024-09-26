@@ -14,7 +14,7 @@ public class SpawnProtectionModule extends Module<SpawnProtectionConfig> {
     private Cuboid spawnCuboid;
 
     public SpawnProtectionModule() {
-        super("SpawnProtection", null);
+        super("SpawnProtection");
     }
 
     @Override

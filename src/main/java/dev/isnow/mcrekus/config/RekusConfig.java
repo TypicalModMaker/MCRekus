@@ -3,7 +3,7 @@ package dev.isnow.mcrekus.config;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import dev.isnow.mcrekus.util.serializer.location.RekusLocationSerializer;
+import dev.isnow.mcrekus.util.serializer.config.RekusLocationSerializer;
 import java.nio.file.Path;
 import lombok.Getter;
 
