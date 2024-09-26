@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>dev.isnow</groupId>
+  <artifactId>mcrekus</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>MCRekus</name>
+
+  <properties>
+    <java.version>21</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.4</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <finalName>MCRekus</finalName>
+                <createDependencyReducedPom>false</createDependencyReducedPom>
+                <filters>
+                    <filter>
+                        <artifact>*:*</artifact>
+                        <excludes>
+                            <exclude>META-INF/MANIFEST.MF</exclude>
+                            <exclude>META-INF/*.SF</exclude>
+                            <exclude>META-INF/*.DSA</exclude>
+                            <exclude>META-INF/*.RSA</exclude>
+                        </excludes>
+                    </filter>
+                </filters>
+            </configuration>
+        </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <repositories>
+      <!--      PAPER API      -->
+      <repository>
+          <id>papermc-repo</id>
+          <url>https://repo.papermc.io/repository/maven-public/</url>
+      </repository>
+
+      <!--      PLACEHOLDERAPI HOOK      -->
+      <repository>
+          <id>placeholderapi</id>
+          <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+      </repository>
+
+      <!--      COMMANDS API      -->
+      <repository>
+          <id>aikar</id>
+          <url>https://repo.aikar.co/content/groups/aikar/</url>
+      </repository>
+
+      <!--      INV API      -->
+      <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+      </repository>
+
+      <repository>
+          <id>google</id>
+          <url>https://repo.enonic.com/public/</url>
+      </repository>
+
+      <repository>
+          <id>codemc</id>
+          <url>https://repo.codemc.io/repository/maven-public/</url>
+      </repository>
+  </repositories>
+
+  <dependencies>
+      <!--      Paper API      -->
+      <dependency>
+          <groupId>io.papermc.paper</groupId>
+          <artifactId>paper-api</artifactId>
+          <version>1.20.4-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/com.google.common/google-collect -->
+      <dependency>
+          <groupId>com.google.common</groupId>
+          <artifactId>google-collect</artifactId>
+          <version>0.5</version>
+      </dependency>
+
+      <dependency>
+          <groupId>com.github.Mqzn</groupId>
+          <artifactId>Lotus</artifactId>
+          <version>1.1.7</version>
+      </dependency>
+
+      <!--      Command API      -->
+      <dependency>
+          <groupId>co.aikar</groupId>
+          <artifactId>acf-paper</artifactId>
+          <version>0.5.1-SNAPSHOT</version>
+      </dependency>
+
+      <!--      Config API      -->
+      <dependency>
+          <groupId>de.exlll</groupId>
+          <artifactId>configlib-paper</artifactId>
+          <version>4.5.0</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <!--      Cache API      -->
+      <dependency>
+          <groupId>com.github.ben-manes.caffeine</groupId>
+          <artifactId>caffeine</artifactId>
+          <version>3.1.8</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <!--      LOMB(COC)K      -->
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.18.30</version>
+          <scope>provided</scope>
+      </dependency>
+
+
+      <!--      HOOKS      -->
+      <dependency>
+          <groupId>me.clip</groupId>
+          <artifactId>placeholderapi</artifactId>
+          <version>2.11.6</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>com.github.cryptomorin</groupId>
+          <artifactId>kingdoms</artifactId>
+          <version>1.16.8.1.1</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>Vehicles</groupId>
+          <artifactId>Vehicles</artifactId>
+          <scope>system</scope>
+          <version>1.0</version>
+          <systemPath>${pom.basedir}/Vehicles.jar</systemPath>
+      </dependency>
+
+      <dependency>
+          <groupId>com.github.decentsoftware-eu</groupId>
+          <artifactId>decentholograms</artifactId>
+          <version>2.8.11</version>
+          <scope>provided</scope>
+      </dependency>
+
+  </dependencies>
+</project>

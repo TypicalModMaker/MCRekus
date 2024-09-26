@@ -1,0 +1,14 @@
+name: MCRekus
+version: '${project.version}'
+author: '5170'
+description: Main core for the MCRekus server
+website: https://bestsysadmin.me
+main: dev.isnow.mcrekus.MCRekus
+api-version: '1.20'
+softdepend:
+  - PlaceholderAPI
+  - Vehicles
+  - Kingdoms
+libraries:
+  - de.exlll:configlib-paper:4.5.0
+  - com.github.ben-manes.caffeine:caffeine:3.1.8
