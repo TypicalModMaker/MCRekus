@@ -21,6 +21,8 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
 
         if (playerItem.getEnchantmentLevel(Enchantment.SILK_TOUCH) == 0) return;
 
+        if (!(event.getBlock().getState() instanceof CreatureSpawner)) return;
+
         ItemStack spawner = new ItemStack(Material.SPAWNER);
         BlockStateMeta bsm = (BlockStateMeta) spawner.getItemMeta();
         bsm.setBlockState(event.getBlock().getState());
