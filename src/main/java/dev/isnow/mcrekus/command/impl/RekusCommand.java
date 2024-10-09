@@ -9,7 +9,6 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.DateUtil;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 @CommandAlias("mcrekus|rekus")
 @Description("Master MCRekus command")
@@ -22,6 +21,7 @@ public class RekusCommand extends BaseCommand {
         if (args.length == 0) {
             player.sendMessage(ComponentUtil.deserialize("&aCommands:"));
             player.sendMessage(ComponentUtil.deserialize("&a/mcrekus reload - Reloads the general config and modules"));
+            player.sendMessage(ComponentUtil.deserialize("&a/mcrekus manualsave - Saves all player data to the database manually"));
             return;
         }
 
@@ -34,22 +34,19 @@ public class RekusCommand extends BaseCommand {
 
             player.sendMessage(ComponentUtil.deserialize("&aReloading modules..."));
             MCRekus.getInstance().getModuleManager().unloadModules();
-            player.sendMessage(ComponentUtil.deserialize("&aReloading module cache..."));
-            MCRekus.getInstance().getPlayerDataManager().saveAll();
-            MCRekus.getInstance().getPlayerDataManager().unloadAllCaches();
             MCRekus.getInstance().getModuleManager().loadModules();
-            for(final Player onlinePlayer : MCRekus.getInstance().getServer().getOnlinePlayers()) {
-                MCRekus.getInstance().getThreadPool().execute(() -> {
-                    MCRekus.getInstance().getPlayerDataManager().preloadPlayerData(new AsyncPlayerPreLoginEvent(onlinePlayer.getName(), onlinePlayer.getAddress().getAddress(), onlinePlayer.getUniqueId()));
-                });
-            }
             player.sendMessage(ComponentUtil.deserialize("&aReloaded modules successfully!"));
 
             final String date = DateUtil.formatElapsedTime((System.currentTimeMillis() - startTime));
 
             player.sendMessage(ComponentUtil.deserialize("&cFinished reloading in " + date + " seconds."));
             player.sendMessage(ComponentUtil.deserialize("&aSome modules may require a server restart to take effect."));
+        }
 
+        if (args[0].equalsIgnoreCase("manualsave")) {
+            player.sendMessage(ComponentUtil.deserialize("&aSaving player data..."));
+            MCRekus.getInstance().getThreadPool().execute(() -> MCRekus.getInstance().getDatabaseManager().saveAllUsers());
+            player.sendMessage(ComponentUtil.deserialize("&aSaved player data successfully!"));
         }
     }
 }

@@ -12,7 +12,7 @@ public class SpawnModule extends Module<SpawnConfig> {
     private SpawnTeleportManager spawnTeleportManager;
 
     public SpawnModule() {
-        super("Spawn", null);
+        super("Spawn");
     }
 
     @Override
@@ -26,5 +26,6 @@ public class SpawnModule extends Module<SpawnConfig> {
     @Override
     public void onDisable(final MCRekus plugin) {
         unRegisterCommands();
+        unRegisterListeners();
     }
 }

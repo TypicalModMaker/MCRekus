@@ -2,6 +2,7 @@ package dev.isnow.mcrekus.config;
 
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.config.impl.GeneralConfig;
+import dev.isnow.mcrekus.config.impl.database.DatabaseConfig;
 import java.io.File;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ public class ConfigManager {
     private final MCRekus plugin;
 
     private GeneralConfig generalConfig;
+    private DatabaseConfig databaseConfig;
 
     public ConfigManager() {
         plugin = MCRekus.getInstance();
@@ -25,10 +27,12 @@ public class ConfigManager {
 
     private void loadAll() {
         generalConfig = (GeneralConfig) new GeneralConfig().load();
+        databaseConfig = (DatabaseConfig) new DatabaseConfig().load();
     }
 
     public void saveConfigs() {
         generalConfig.save();
+        databaseConfig.save();
     }
 
     public void reloadConfigs() {

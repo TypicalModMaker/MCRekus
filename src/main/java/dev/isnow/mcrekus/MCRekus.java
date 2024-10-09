@@ -3,15 +3,18 @@ package dev.isnow.mcrekus;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.isnow.mcrekus.command.CommandManager;
 import dev.isnow.mcrekus.config.ConfigManager;
-import dev.isnow.mcrekus.data.PlayerDataManager;
+import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.event.LoginEvent;
+import dev.isnow.mcrekus.event.QuitEvent;
 import dev.isnow.mcrekus.hook.HookManager;
 import dev.isnow.mcrekus.module.ModuleManager;
 import dev.isnow.mcrekus.util.DateUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
+import dev.isnow.mcrekus.util.migration.MigrationUtil;
 import io.github.mqzen.menus.Lotus;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -26,11 +29,12 @@ public final class MCRekus extends JavaPlugin {
     private ConfigManager configManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
-    private PlayerDataManager playerDataManager;
+    private DatabaseManager databaseManager;
 
     private boolean shuttingDown;
 
     private ExecutorService threadPool;
+    private ScheduledExecutorService scheduler;
     private Lotus menuAPI;
 
     @Override
@@ -40,13 +44,11 @@ public final class MCRekus extends JavaPlugin {
         instance = this;
         RekusLogger.watermark();
 
-        Bukkit.getPluginManager().registerEvents(new LoginEvent(), this);
         RekusLogger.info("Initializing config");
         configManager = new ConfigManager();
 
-        playerDataManager = new PlayerDataManager();
-
         threadPool = Executors.newFixedThreadPool(configManager.getGeneralConfig().getThreadAmount(), new ThreadFactoryBuilder().setNameFormat("mcrekus-worker-thread-%d").build());
+        scheduler = Executors.newScheduledThreadPool(configManager.getGeneralConfig().getThreadAmount(), new ThreadFactoryBuilder().setNameFormat("mcrekus-scheduler-thread-%d").build());
 
         RekusLogger.info("Initializing command manager");
         commandManager = new CommandManager(this);
@@ -55,9 +57,36 @@ public final class MCRekus extends JavaPlugin {
         hookManager = new HookManager();
         menuAPI = Lotus.load(this);
 
+        RekusLogger.info("Initializing database connection");
+
+        final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        databaseManager = new DatabaseManager();
+        Thread.currentThread().setContextClassLoader(originalClassLoader);
+
+        if (!databaseManager.isConnected()) {
+            RekusLogger.info("Failed to connect to the database! This plugin won't work without an database.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        } else {
+            RekusLogger.info("Connected successfully.");
+
+            if (configManager.getDatabaseConfig().isMigrate()) {
+                RekusLogger.info("Starting migration");
+                try {
+                    MigrationUtil.migrate();
+                } catch (Exception e) {
+                    RekusLogger.error("Failed to migrate data: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
+
         RekusLogger.info("Loading modules");
         moduleManager = new ModuleManager(this);
         moduleManager.loadModules();
+
+        Bukkit.getPluginManager().registerEvents(new LoginEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new QuitEvent(), this);
 
         final String date = DateUtil.formatElapsedTime((System.currentTimeMillis() - startTime));
         RekusLogger.info("Finished loading in " + date + " seconds.");
@@ -69,12 +98,19 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.watermark();
         shuttingDown = true;
 
+        if (moduleManager == null) {
+            return;
+        }
+
         RekusLogger.info("Disabling modules");
         moduleManager.unloadModules();
         RekusLogger.info("Disabled modules successfully!");
 
         RekusLogger.info("Saving player data");
-        playerDataManager.saveAll();
+        databaseManager.saveAllUsers();
+
+        RekusLogger.info("Shutting down database");
+        databaseManager.shutdown();
 
         threadPool.shutdownNow();
 

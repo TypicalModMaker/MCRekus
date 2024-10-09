@@ -4,10 +4,8 @@ import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import es.pollitoyeye.vehicles.events.VehicleEnterEvent;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.kingdoms.events.lands.ClaimLandEvent;
 
 public class VehiclesEvent extends ModuleAccessor<SpawnProtectionModule> implements Listener {
 

@@ -14,7 +14,7 @@ import lombok.Setter;
 @Configuration
 public class GeneralConfig extends MasterConfig {
     @Comment({RekusLogger.bigPrefix, " ", "Rekus Configuration, ask 5170 for more info.", "", "List of enabled modules"})
-    private ArrayList<String> enabledModules = new ArrayList<String>() {{
+    private ArrayList<String> enabledModules = new ArrayList<>() {{
         add("Spawn");
         add("SpawnProtection");
         add("WorldProtection");
@@ -32,11 +32,8 @@ public class GeneralConfig extends MasterConfig {
     @Comment({"", "Commands locale"})
     Locale commandsLocale = Locale.POLISH;
 
-    @Comment({"", "Increase this if your disk is lagging with higher player count"})
-    int cacheSizeLimit = 500;
-
     @Comment({"", "Increase this if your server is lagging with higher player count"})
-    int threadAmount = 10;
+    int threadAmount = 20;
 
     public GeneralConfig() {
         super("config");

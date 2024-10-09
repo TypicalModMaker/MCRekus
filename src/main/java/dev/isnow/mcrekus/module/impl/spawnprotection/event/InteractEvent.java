@@ -7,7 +7,6 @@ import dev.isnow.mcrekus.module.impl.spawnprotection.config.SpawnProtectionConfi
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.cuboid.Cuboid;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import java.util.Locale;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +30,7 @@ public class InteractEvent extends ModuleAccessor<SpawnProtectionModule> impleme
 
         final ItemMeta itemMeta = usedItem.getItemMeta();
 
-        if (itemMeta.displayName() == null) return;
+        if (itemMeta == null || itemMeta.displayName() == null) return;
 
         final Player player = event.getPlayer();
 
