@@ -32,6 +32,7 @@ public class ConfigManager {
 
     public void saveConfigs() {
         generalConfig.save();
+        databaseConfig.save();
     }
 
     public void reloadConfigs() {

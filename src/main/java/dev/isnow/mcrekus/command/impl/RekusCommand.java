@@ -9,7 +9,6 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.DateUtil;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 @CommandAlias("mcrekus|rekus")
 @Description("Master MCRekus command")

@@ -2,8 +2,6 @@ package dev.isnow.mcrekus.module.impl.spawnprotection.event;
 
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
-import dev.isnow.mcrekus.util.ComponentUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

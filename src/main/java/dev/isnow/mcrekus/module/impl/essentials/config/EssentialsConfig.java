@@ -382,4 +382,32 @@ public class EssentialsConfig extends ModuleConfig {
 
     @Comment({"", "Kick all reason"})
     private String kickAllReason = "&cPrzerwa techniczna";
+
+    @Comment({"", "Hat command wore a hat message"})
+    private String woreHatMessage = "[P] &aZałożono czapkę.";
+
+    @Comment({"", "Hat command no hat message"})
+    private String noHatMessage = "[P] &cZdjąłeś czapkę.";
+
+    @Comment({"", "Hat command other wore a hat message"})
+    private String otherWoreHatMessage = "[P] &aZałożono czapkę dla gracza %player%.";
+
+    @Comment({"", "Hat command other no hat message"})
+    private String otherNoHatMessage = "[P] &cZdjęto czapkę dla gracza %player%.";
+
+    @Comment({"", "Hat command player not found message"})
+    private String hatPlayerNotFoundMessage = "[P] &cGracz %player% nie został znaleziony.";
+
+    @Comment({"", "Offline Teleport no args message"})
+    private String offlineTeleportNoArgsMessage = "[P] &cUżycie: /otp <gracz>";
+
+    @Comment({"", "Offline Teleport player not found message"})
+    private String offlineTeleportPlayerNotFoundMessage = "[P] &cGracz %player% nie został znaleziony.";
+
+    @Comment({"", "Offline Teleport no location message"})
+    private String offlineTeleportNoLocationMessage = "[P] &cGracz %player% nie posiada zapisanej lokalizacji.";
+
+    @Comment({"", "Offline Teleport success message"})
+    private String offlineTeleportSuccessMessage = "[P] &aPrzeteleportowano do ostatniej lokalizacji gracza %player%.";
+
 }

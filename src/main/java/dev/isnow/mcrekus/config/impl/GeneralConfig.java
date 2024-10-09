@@ -32,16 +32,8 @@ public class GeneralConfig extends MasterConfig {
     @Comment({"", "Commands locale"})
     Locale commandsLocale = Locale.POLISH;
 
-    @Comment({"", "Increase this if your disk is lagging with higher player count"})
-    int cacheSizeLimit = 500;
-
     @Comment({"", "Increase this if your server is lagging with higher player count"})
-    int threadAmount = 10;
-
-    @Comment({"", "DO NOT TOUCH!"})
-    boolean firstRun = true;
-
-    int schemaVersion = 1;
+    int threadAmount = 20;
 
     public GeneralConfig() {
         super("config");

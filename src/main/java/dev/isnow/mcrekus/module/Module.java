@@ -8,15 +8,16 @@ import dev.isnow.mcrekus.util.RekusLogger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 @Getter
 public abstract class Module<T extends ModuleConfig> {
     private final String name;
     private final Set<BaseCommand> registeredCommands = new HashSet<>();
+    private final Set<Listener> registeredListeners = new HashSet<>();
     private final T config;
 
     public Module(final String name) {
@@ -45,7 +46,11 @@ public abstract class Module<T extends ModuleConfig> {
     public final void registerListener(final Class<? extends Listener> clazz) {
         RekusLogger.debug("Registering listener " + clazz.getSimpleName());
         try {
-            Bukkit.getPluginManager().registerEvents(clazz.newInstance(), MCRekus.getInstance());
+            final Listener listener = clazz.newInstance();
+
+            Bukkit.getPluginManager().registerEvents(listener, MCRekus.getInstance());
+
+            registeredListeners.add(listener);
         } catch (Exception e) {
             RekusLogger.info("Failed to register listener " + clazz.getSimpleName() + " for module " + name);
             e.printStackTrace();
@@ -67,6 +72,12 @@ public abstract class Module<T extends ModuleConfig> {
 
     public final void unRegisterCommands() {
         registeredCommands.removeIf(command -> MCRekus.getInstance().getCommandManager().unRegisterCommand(command));
+    }
+
+    public final void unRegisterListeners() {
+        for (final Listener listener : registeredListeners) {
+            HandlerList.unregisterAll(listener);
+        }
     }
 
     private void registerPlayerDataObject(final Class<? extends PlayerData> clazz) {

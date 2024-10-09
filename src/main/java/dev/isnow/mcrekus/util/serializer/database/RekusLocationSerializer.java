@@ -1,18 +1,20 @@
 package dev.isnow.mcrekus.util.serializer.database;
 
-import de.exlll.configlib.Serializer;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 @Converter
-public class RekusLocationSerializer implements AttributeConverter<RekusLocation, String> {
+public final class RekusLocationSerializer implements AttributeConverter<RekusLocation, String> {
+
     @Override
     public String convertToDatabaseColumn(final RekusLocation rekusLocation) {
+        if(rekusLocation == null) {
+            return "";
+        }
+
         final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(rekusLocation.getWorld()).append(";")
@@ -26,7 +28,11 @@ public class RekusLocationSerializer implements AttributeConverter<RekusLocation
     }
 
     @Override
-    public RekusLocation convertToEntityAttribute(String s) {
+    public RekusLocation convertToEntityAttribute(final String s) {
+        if(s.isEmpty()) {
+            return null;
+        }
+
         final String[] split = s.split(";");
         final World world = Bukkit.getWorld(split[0]);
         final double x = Double.parseDouble(split[1]);

@@ -1,11 +1,14 @@
 package dev.isnow.mcrekus.util.cuboid;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 @Data
+@ToString
 public class RekusLocation {
     public final String world;
     public final double x, y, z;

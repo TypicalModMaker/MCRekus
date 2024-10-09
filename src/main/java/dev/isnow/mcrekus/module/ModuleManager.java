@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.entity.Player;
 
 public class ModuleManager {
     private final MCRekus plugin;

@@ -1,12 +1,11 @@
 package dev.isnow.mcrekus.data.query;
 
-import dev.isnow.mcrekus.module.impl.essentials.home.Home;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import io.ebean.typequery.PLong;
 import io.ebean.typequery.PScalar;
 import io.ebean.typequery.PUuid;
 import java.lang.String;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Query bean for PlayerData.
@@ -30,8 +29,9 @@ public final class QPlayerData extends io.ebean.typequery.QueryBean<dev.isnow.mc
 
   public PLong<QPlayerData> id;
   public PUuid<QPlayerData> uuid;
-  public PScalar<QPlayerData, HashMap<String,Home>> homeLocations;
+  public PScalar<QPlayerData, Map<String,Home>> homeLocations;
   public PScalar<QPlayerData, RekusLocation> lastLocation;
+  public PLong<QPlayerData> version;
 
 
   /**
@@ -105,8 +105,9 @@ public final class QPlayerData extends io.ebean.typequery.QueryBean<dev.isnow.mc
   public static final class Alias {
     public static PLong<QPlayerData> id = _alias.id;
     public static PUuid<QPlayerData> uuid = _alias.uuid;
-    public static PScalar<QPlayerData, HashMap<String,Home>> homeLocations = _alias.homeLocations;
+    public static PScalar<QPlayerData, Map<String,Home>> homeLocations = _alias.homeLocations;
     public static PScalar<QPlayerData, RekusLocation> lastLocation = _alias.lastLocation;
+    public static PLong<QPlayerData> version = _alias.version;
   }
 
   /** Association query bean */
@@ -116,8 +117,9 @@ public final class QPlayerData extends io.ebean.typequery.QueryBean<dev.isnow.mc
 
     public PLong<R> id;
     public PUuid<R> uuid;
-    public PScalar<R, HashMap<String,Home>> homeLocations;
+    public PScalar<R, Map<String,Home>> homeLocations;
     public PScalar<R, RekusLocation> lastLocation;
+    public PLong<R> version;
 
     protected Assoc(String name, R root) { super(name, root); }
     protected Assoc(String name, R root, String prefix) { super(name, root, prefix); }

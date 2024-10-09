@@ -26,5 +26,6 @@ public class SpawnModule extends Module<SpawnConfig> {
     @Override
     public void onDisable(final MCRekus plugin) {
         unRegisterCommands();
+        unRegisterListeners();
     }
 }

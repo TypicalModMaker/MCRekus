@@ -2,209 +2,188 @@ package dev.isnow.mcrekus.database;
 
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.config.impl.GeneralConfig;
-import dev.isnow.mcrekus.config.impl.database.DatabaseType;
+import dev.isnow.mcrekus.config.impl.database.DatabaseConfig;
+import dev.isnow.mcrekus.data.HomeData;
 import dev.isnow.mcrekus.data.PlayerData;
-import dev.isnow.mcrekus.data.query.QPlayerData;
-import dev.isnow.mcrekus.util.FileUtil;
+import dev.isnow.mcrekus.data.PumpkinData;
+import dev.isnow.mcrekus.util.ExpiringSession;
 import dev.isnow.mcrekus.util.RekusLogger;
-import io.ebean.DB;
-import io.ebean.Database;
-import io.ebean.DatabaseFactory;
-import io.ebean.Transaction;
-import io.ebean.annotation.Platform;
-import io.ebean.config.DatabaseConfig;
-import io.ebean.datasource.DataSourceConfig;
-import io.ebean.dbmigration.DbMigration;
-import io.ebean.migration.MigrationConfig;
-import io.ebean.migration.MigrationRunner;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
-import org.bukkit.Bukkit;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import org.bukkit.OfflinePlayer;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
-@Getter
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class DatabaseManager {
+    private final SessionFactory sessionFactory;
 
-    static int SCHEMA_VERSION = 1;
+    public DatabaseManager() {
 
-    Database db;
+        SessionFactory sessionFactory;
 
-    public DatabaseManager(final ClassLoader pluginLoader) {
-        Database db;
-
-        final dev.isnow.mcrekus.config.impl.database.DatabaseConfig authConfig = MCRekus.getInstance().getConfigManager().getDatabaseConfig();
-
-        final DataSourceConfig dataSourceConfig = getDataSourceConfig(authConfig);
-
+        final DatabaseConfig authConfig = MCRekus.getInstance().getConfigManager().getDatabaseConfig();
         final GeneralConfig masterConfig = MCRekus.getInstance().getConfigManager().getGeneralConfig();
-        final DatabaseConfig config = getDatabaseConfig(dataSourceConfig, masterConfig);
 
-        final String dataPath = MCRekus.getInstance().getDataFolder().getAbsolutePath() + File.separator + "do_not_delete_databaseMigrations";
-
-        final boolean firstRun = masterConfig.isFirstRun();
-
-        if (firstRun) {
-            generateMigration(authConfig.getDatabaseType());
-        } else if (SCHEMA_VERSION > masterConfig.getSchemaVersion()) {
-            RekusLogger.info("Schema version changed! MCRekus will migrate the database automatically.");
-            generateMigration(authConfig.getDatabaseType());
-
-            final MigrationConfig migrationConfig = new MigrationConfig();
-            migrationConfig.setDbUsername(authConfig.getUsername());
-            migrationConfig.setAllowErrorInRepeatable(true);
-            migrationConfig.setDbPassword(authConfig.getPassword());
-            migrationConfig.setDbUrl(getUrl(authConfig));
-            migrationConfig.setMigrationPath("filesystem:" + dataPath);
-
-            final Optional<File> initMigration = dev.isnow.mcrekus.util.FileUtil.getOldestFile(new File(dataPath));
-
-            AtomicReference<Path> outsidePath = new AtomicReference<>();
-
-            initMigration.ifPresent(file -> {
-                outsidePath.set(Path.of(file.getParent() + File.separator +
-                        ".." + File.separator + file.getName()));
-                try {
-                    Files.move(file.toPath(), outsidePath.get(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    RekusLogger.error("Failed to move initial migration file outside migration folder. Error: " + e);
-                }
-            });
-
-            RekusLogger.info("Running Migrator...");
-            MigrationRunner runner = new MigrationRunner(migrationConfig);
-            runner.run();
-
-            initMigration.ifPresent(file -> {
-                try {
-                    Files.move(outsidePath.get(), Path.of(dataPath + File.separator + file.getName()), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    RekusLogger.error("Failed to move initial migration file inside migration folder. Error: " + e);
-                }
-            });
-        }
         try {
-            db = DatabaseFactory.createWithContextClassLoader(config, pluginLoader);
-
-            // Successfully migrated
-            if (!firstRun) {
-                masterConfig.setSchemaVersion(SCHEMA_VERSION);
-                MCRekus.getInstance().getConfigManager().saveConfigs();
-            }
-        } catch (final Exception e) {
+            sessionFactory = configureHibernate(masterConfig, authConfig);
+        } catch (Exception e) {
+            RekusLogger.error("Failed to initialize Hibernate session factory: " + e.getMessage());
             e.printStackTrace();
-            db = null;
+            sessionFactory = null;
         }
 
-        this.db = db;
+        this.sessionFactory = sessionFactory;
     }
 
-    private void generateMigration(final dev.isnow.mcrekus.config.impl.database.DatabaseType type) {
-        final Platform platform = Platform.valueOf(type.name());
+    private SessionFactory configureHibernate(final GeneralConfig mainConfig, final DatabaseConfig authConfig) {
+        final Configuration configuration = new Configuration();
+        configuration.setProperty("hibernate.dialect", getHibernateDialect(authConfig.getDatabaseType()));
+        configuration.setProperty("hibernate.connection.driver_class", getDriverClass(authConfig.getDatabaseType()));
+        configuration.setProperty("hibernate.connection.url", getUrl(authConfig));
+        configuration.setProperty("hibernate.connection.username", authConfig.getUsername());
+        configuration.setProperty("hibernate.connection.password", authConfig.getPassword());
 
-        DbMigration dbMigration = DbMigration.create();
-        dbMigration.setPlatform(platform);
-        dbMigration.setMigrationPath("do_not_delete_databaseMigrations");
-        dbMigration.setPathToResources(MCRekus.getInstance().getDataFolder().getAbsolutePath());
-        dbMigration.setStrictMode(false);
-        dbMigration.setApplyPrefix("V");
-        try {
-            dbMigration.generateMigration();
-        } catch (IOException e) {
-            RekusLogger.error("Failed to generate migration script! Contact 5170");
-            e.printStackTrace();
-        }
-    }
+        configuration.setProperty("hibernate.cache.use_second_level_cache", "true");
+        configuration.setProperty("hibernate.cache.use_query_cache", "true");
+        configuration.setProperty("hibernate.cache.region.factory_class", "jcache");
+        configuration.setProperty("hibernate.javax.cache.provider", "com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider");
 
-    private DatabaseConfig getDatabaseConfig(final DataSourceConfig dataSourceConfig, final GeneralConfig masterConfig) {
-        final DatabaseConfig config = new DatabaseConfig();
-        config.setDataSourceConfig(dataSourceConfig);
-        config.setName("db");
-
-        // Generate tables
-        if (masterConfig.isFirstRun()) {
-            config.ddlGenerate(true);
-            config.ddlRun(true);
+        if (mainConfig.isDebugMode()) {
+            RekusLogger.debug("Enabling Hibernate debug mode.");
+            configuration.setProperty("hibernate.show_sql", "true");
+            configuration.setProperty("hibernate.format_sql", "true");
+            configuration.setProperty("hibernate.use_sql_comments", "true");
         }
 
-        return config;
+        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+
+        configuration.addAnnotatedClass(PlayerData.class);
+        configuration.addAnnotatedClass(HomeData.class);
+        configuration.addAnnotatedClass(PumpkinData.class);
+
+        final ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties()).build();
+
+        Thread.currentThread().setContextClassLoader(MCRekus.class.getClassLoader());
+        return configuration.buildSessionFactory(serviceRegistry);
     }
 
-    private DataSourceConfig getDataSourceConfig(final dev.isnow.mcrekus.config.impl.database.DatabaseConfig authConfig) {
-        final DataSourceConfig dataSourceConfig = new DataSourceConfig();
-
-        dataSourceConfig.setUsername(authConfig.getUsername());
-        dataSourceConfig.setPassword(authConfig.getPassword());
-        dataSourceConfig.setUrl(getUrl(authConfig));
-
-        return dataSourceConfig;
-    }
-
-    private String getUrl(final dev.isnow.mcrekus.config.impl.database.DatabaseConfig authConfig) {
-        switch (authConfig.getDatabaseType()) {
-            case MYSQL -> {
-                return authConfig.getDatabaseType().getPrefix() + authConfig.getHost() + "/" + authConfig.getDatabase();
-            }
-            case MARIADB -> {
-                return authConfig.getDatabaseType().getPrefix() + authConfig.getHost() + "/" + authConfig.getDatabase() + authConfig.getDatabaseType().getSuffix();
-            }
-            case H2 -> {
-                return authConfig.getDatabaseType().getPrefix() + MCRekus.getInstance().getDataFolder().getAbsolutePath() + "/" + authConfig.getDatabase();
-            }
+    private String getUrl(DatabaseConfig authConfig) {
+        return switch (authConfig.getDatabaseType()) {
+            case MYSQL -> authConfig.getDatabaseType().getPrefix() + authConfig.getHost() + "/"
+                    + authConfig.getDatabase();
+            case MARIADB -> authConfig.getDatabaseType().getPrefix() + authConfig.getHost() + "/"
+                    + authConfig.getDatabase() + authConfig.getDatabaseType().getSuffix();
+            case H2 -> authConfig.getDatabaseType().getPrefix() + new File(MCRekus.getInstance().getDataFolder(), authConfig.getDatabase()).getAbsolutePath();
             default -> throw new IllegalArgumentException();
-        }
+        };
+    }
+
+    private String getHibernateDialect(final dev.isnow.mcrekus.config.impl.database.DatabaseType type) {
+        return switch (type) {
+            case MYSQL -> "org.hibernate.dialect.MySQLDialect";
+            case MARIADB -> "org.hibernate.dialect.MariaDBDialect";
+            case H2 -> "org.hibernate.dialect.H2Dialect";
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    private String getDriverClass(final dev.isnow.mcrekus.config.impl.database.DatabaseType type) {
+        return switch (type) {
+            case MYSQL -> "com.mysql.cj.jdbc.Driver";
+            case MARIADB -> "org.mariadb.jdbc.Driver";
+            case H2 -> "org.h2.Driver";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     public void shutdown() {
         RekusLogger.info("Shutting down the database connection.");
-
-        db.shutdown();
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
     }
 
-    public void saveUser(final PlayerData user) {
-        if(Bukkit.isPrimaryThread()) {
-            RekusLogger.warn("Saving user data on the main thread!!!");
+    public void saveUser(final PlayerData user, final ExpiringSession expiringSession) {
+        if (user == null) {
+            RekusLogger.warn("Attempted to save null user.");
+            return;
         }
 
-        RekusLogger.debug("Saving user " + user.getName());
-
-        db.save(user);
-    }
-
-    public PlayerData loadUserByUUID(final UUID uuid) {
-        if(Bukkit.isPrimaryThread()) {
-            RekusLogger.warn("Getting user data on the main thread!!!");
+        if (expiringSession.isOpen()) {
+            Transaction tx = null;
+            try {
+                tx = expiringSession.getSession().beginTransaction();
+                expiringSession.getSession().merge(user);
+                tx.commit();
+            } catch (Exception e) {
+                if (tx != null) tx.rollback();
+                RekusLogger.error("Error saving user: " + e.getMessage());
+            } finally {
+                expiringSession.closeSession();
+            }
         }
-
-        return new QPlayerData().where().uuid.eq(uuid).findOne();
     }
 
+    public void getUserAsync(final OfflinePlayer player, final BiConsumer<ExpiringSession, PlayerData> callback) {
+        CompletableFuture.runAsync(() -> {
+            final ExpiringSession session = new ExpiringSession(sessionFactory.openSession());
+
+            PlayerData user = session.getSession().createQuery("FROM PlayerData WHERE uuid = :uuid", PlayerData.class)
+                    .setParameter("uuid", player.getUniqueId())
+                    .uniqueResult();
+
+            callback.accept(session, user);
+        }, MCRekus.getInstance().getThreadPool()).exceptionally(e -> {
+            RekusLogger.error("Failed to get user " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            callback.accept(null, null);
+            return null;
+        });
+    }
+
+    public void getUserAsync(final String playerName, final BiConsumer<ExpiringSession, PlayerData> callback) {
+        CompletableFuture.runAsync(() -> {
+            final ExpiringSession session = new ExpiringSession(sessionFactory.openSession());
+
+            PlayerData user = session.getSession().createQuery("FROM PlayerData WHERE name = :player_name", PlayerData.class)
+                    .setParameter("player_name", playerName).uniqueResult();
+
+            callback.accept(session, user);
+        }, MCRekus.getInstance().getThreadPool()).exceptionally(e -> {
+            RekusLogger.error("Failed to get user " + playerName + ": " + e.getMessage());
+            e.printStackTrace();
+            callback.accept(null, null);
+            return null;
+        });
+    }
 
     public void saveAllUsers() {
-        RekusLogger.info("Saving all data to the database...");
-
-        final Transaction transaction = db.beginTransaction();
-
-        try {
-            for (final PlayerData data : MCRekus.getInstance().getPlayerDataManager().getAllPlayerData()) {
-                saveUser(data);
-            }
-
-            transaction.commit();
-        } catch (final Exception e) {
-            RekusLogger.error("Failed to save user data to the database! Error: " + e);
-            transaction.rollback();
-        } finally {
-            transaction.end();
+        try (final Session session = sessionFactory.openSession()) {
+            final Transaction tx = session.beginTransaction();
+            session.createQuery("FROM PlayerData", PlayerData.class).list().forEach(session::saveOrUpdate);
+            tx.commit();
+        } catch (HibernateException e) {
+            RekusLogger.error("Failed to save all users: " + e.getMessage());
         }
     }
 
+    public boolean isConnected() {
+        return sessionFactory != null && sessionFactory.isOpen();
+    }
+
+    public ExpiringSession openSession() {
+        return new ExpiringSession(sessionFactory.openSession());
+    }
+
+    public ExpiringSession openSession(final int delay) {
+        return new ExpiringSession(sessionFactory.openSession(), delay);
+    }
 }

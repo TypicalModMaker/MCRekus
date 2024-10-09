@@ -14,7 +14,11 @@ public class QuitEvent extends ModuleAccessor<SpawnModule> implements Listener {
     public void onQuit(final PlayerQuitEvent event) {
         getModule().getSpawnTeleportManager().getCooldown().removeCooldown(event.getPlayer().getUniqueId());
 
-        MCRekus.getInstance().getPlayerDataManager().getPlayerData(event.getPlayer().getUniqueId()).setLastLocation(RekusLocation.fromBukkitLocation(event.getPlayer().getLocation()));
+
+        MCRekus.getInstance().getDatabaseManager().getUserAsync(event.getPlayer(), (session, data) -> {
+            data.setLastLocation(RekusLocation.fromBukkitLocation(event.getPlayer().getLocation()));
+            MCRekus.getInstance().getDatabaseManager().saveUser(data, session);
+        });
     }
 
 }

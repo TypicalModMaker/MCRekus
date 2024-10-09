@@ -1,3 +1,0 @@
-generated-by: Ebean query bean generator
-entity-packages: dev.isnow.mcrekus.data
-

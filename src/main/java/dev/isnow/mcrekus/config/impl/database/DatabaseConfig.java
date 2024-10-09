@@ -5,7 +5,6 @@ import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.config.MasterConfig;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 @Getter
 @Setter
@@ -22,6 +21,9 @@ public class DatabaseConfig extends MasterConfig {
 
     @Comment({"", "The type of the database.", "Available types: MYSQL, MARIADB, H2"})
     private DatabaseType databaseType = DatabaseType.H2;
+
+    @Comment({"", "Migrate old json files to the database."})
+    private boolean migrate = false;
 
     public DatabaseConfig() {
         super("database");
