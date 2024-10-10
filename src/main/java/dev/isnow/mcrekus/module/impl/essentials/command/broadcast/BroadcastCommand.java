@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CommandAlias("bc|broadcast")
@@ -53,15 +54,15 @@ public class BroadcastCommand extends BaseCommand {
 
         switch (type) {
             case CHAT:
-                player.getServer().broadcast(ComponentUtil.deserialize(config.getBroadcastChatMessage(), null, "%message%", message));
+                Bukkit.broadcast(ComponentUtil.deserialize(config.getBroadcastChatMessage(), null, "%message%", message));
                 break;
             case TITLE:
                 final Title.Times times = Title.Times.times(Duration.ofSeconds(config.getBroadcastTitleFadeIn()), Duration.ofSeconds(config.getBroadcastTitleDuration()), Duration.ofSeconds(config.getBroadcastTitleFadeOut()));
                 final Title title = Title.title(ComponentUtil.deserialize(config.getBroadcastTitleMessage()), ComponentUtil.deserialize(message), times);
-                player.getServer().getOnlinePlayers().forEach(p -> p.showTitle(title));
+                Bukkit.getOnlinePlayers().forEach(p -> p.showTitle(title));
                 break;
             case ACTIONBAR:
-                player.getServer().getOnlinePlayers().forEach(p -> p.sendActionBar(ComponentUtil.deserialize(config.getBroadcastActionbarMessage(), null, "%message%", message)));
+                Bukkit.getOnlinePlayers().forEach(p -> p.sendActionBar(ComponentUtil.deserialize(config.getBroadcastActionbarMessage(), null, "%message%", message)));
                 break;
         }
     }

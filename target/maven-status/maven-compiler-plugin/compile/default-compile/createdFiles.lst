@@ -44,8 +44,11 @@ dev\isnow\mcrekus\data\PlayerData.class
 dev\isnow\mcrekus\module\impl\spawnprotection\command\SetupSpawnCommand.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\DamageEvent.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\SpreadEvent.class
+dev\isnow\mcrekus\module\impl\pumpkins\event\PumpkinSetupEvent.class
 dev\isnow\mcrekus\config\impl\GeneralConfig$1.class
 dev\isnow\mcrekus\module\impl\kingdoms\event\ChampionEvent$1.class
+dev\isnow\mcrekus\module\impl\pumpkins\config\PumpkinsConfig.class
+dev\isnow\mcrekus\module\impl\pumpkins\commands\SetupPumpkinsCommand.class
 dev\isnow\mcrekus\module\impl\deathchest\DeathChest$2.class
 dev\isnow\mcrekus\module\impl\deathchest\event\InventoryClickListener.class
 dev\isnow\mcrekus\util\cooldown\Cooldown.class
@@ -56,6 +59,7 @@ dev\isnow\mcrekus\module\impl\essentials\command\teleport\tpa\TpadenyCommand.cla
 dev\isnow\mcrekus\module\impl\crystal\event\ExplosionEvent.class
 dev\isnow\mcrekus\module\impl\essentials\event\JoinEvent.class
 dev\isnow\mcrekus\module\impl\essentials\command\EnderChestCommand.class
+dev\isnow\mcrekus\module\impl\pumpkins\event\PumpkinInteractEvent$1.class
 dev\isnow\mcrekus\module\impl\spawn\command\SpawnCommand$1.class
 dev\isnow\mcrekus\module\impl\worldprotection\event\WeatherEvent.class
 dev\isnow\mcrekus\module\ModuleManager.class
@@ -99,6 +103,7 @@ dev\isnow\mcrekus\module\impl\essentials\command\teleport\tpa\TpaCommand.class
 dev\isnow\mcrekus\util\serializer\config\RekusLocationSerializer.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\ExplosionEvent.class
 dev\isnow\mcrekus\module\impl\spawn\event\RespawnEvent$1.class
+dev\isnow\mcrekus\module\impl\pumpkins\event\PumpkinInteractEvent.class
 dev\isnow\mcrekus\module\impl\essentials\command\message\MessageCommand.class
 dev\isnow\mcrekus\module\impl\essentials\command\RenameCommand.class
 dev\isnow\mcrekus\module\impl\worldprotection\event\SpawnEvent$1.class
@@ -140,3 +145,4 @@ dev\isnow\mcrekus\module\impl\worldprotection\event\ExplodeEvent.class
 dev\isnow\mcrekus\util\migration\OldPlayerData.class
 dev\isnow\mcrekus\module\impl\kingdoms\config\KingdomsConfig.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\BlockEvent$1.class
+dev\isnow\mcrekus\module\impl\pumpkins\PumpkinsModule.class

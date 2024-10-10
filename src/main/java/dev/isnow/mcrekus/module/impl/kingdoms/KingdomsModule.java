@@ -38,6 +38,8 @@ public class KingdomsModule extends Module<KingdomsConfig> {
 
     @Override
     public void onDisable(MCRekus plugin) {
+        unRegisterListeners();
 
+        entityThreadPool.shutdownNow();
     }
 }

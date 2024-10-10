@@ -73,4 +73,8 @@ public class PlayerData extends BaseData {
     }
 
     public PlayerData() {}
+
+    public void addPumpkin(@NotNull PumpkinData pumpkinData) {
+        pumpkins.add(pumpkinData);
+    }
 }

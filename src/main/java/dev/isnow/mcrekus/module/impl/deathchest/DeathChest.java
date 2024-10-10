@@ -28,7 +28,7 @@ import org.bukkit.scheduler.BukkitTask;
 @Data
 @RequiredArgsConstructor
 public class DeathChest extends ModuleAccessor<DeathChestModule> {
-    private static final double ANGLE_INCREMENT = Math.PI / 16;
+    public static final double ANGLE_INCREMENT = Math.PI / 16;
     private static final double RADIUS = 0.5;
 
     public final String playerName;

@@ -1,5 +1,6 @@
 package dev.isnow.mcrekus;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.isnow.mcrekus.command.CommandManager;
 import dev.isnow.mcrekus.config.ConfigManager;
@@ -15,8 +16,13 @@ import io.github.mqzen.menus.Lotus;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import lombok.Setter;
+import me.tofaa.entitylib.APIConfig;
+import me.tofaa.entitylib.EntityLib;
+import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,6 +42,13 @@ public final class MCRekus extends JavaPlugin {
     private ExecutorService threadPool;
     private ScheduledExecutorService scheduler;
     private Lotus menuAPI;
+
+    @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+
+        PacketEvents.getAPI().load();
+    }
 
     @Override
     public void onEnable() {
@@ -81,6 +94,19 @@ public final class MCRekus extends JavaPlugin {
             }
         }
 
+        RekusLogger.info("Initializing PacketEvents");
+        PacketEvents.getAPI().init();
+
+        SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
+        APIConfig settings = new APIConfig(PacketEvents.getAPI())
+                .debugMode()
+                .tickTickables()
+                .trackPlatformEntities()
+                .usePlatformLogger();
+
+        EntityLib.init(platform, settings);
+
+
         RekusLogger.info("Loading modules");
         moduleManager = new ModuleManager(this);
         moduleManager.loadModules();
@@ -112,6 +138,10 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.info("Shutting down database");
         databaseManager.shutdown();
 
+        RekusLogger.info("Shutting down PacketEvents");
+        PacketEvents.getAPI().terminate();
+
+        RekusLogger.info("Shutting down thread pool");
         threadPool.shutdownNow();
 
         final String date = DateUtil.formatElapsedTime((System.currentTimeMillis() - startTime));

@@ -12,6 +12,9 @@ import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -163,6 +166,65 @@ public final class DatabaseManager {
             callback.accept(null, null);
             return null;
         });
+    }
+
+    public void getPumpkinAsync(final RekusLocation pumpkinLocation, final BiConsumer<ExpiringSession, PumpkinData> callback) {
+        CompletableFuture.runAsync(() -> {
+            final ExpiringSession session = new ExpiringSession(sessionFactory.openSession());
+
+            PumpkinData pumpkin = session.getSession().createQuery("FROM PumpkinData WHERE location = :location", PumpkinData.class)
+                    .setParameter("location", pumpkinLocation).uniqueResult();
+
+            callback.accept(session, pumpkin);
+        }, MCRekus.getInstance().getThreadPool()).exceptionally(e -> {
+            RekusLogger.error("Failed to get pumpkin at " + pumpkinLocation + ": " + e.getMessage());
+            e.printStackTrace();
+            callback.accept(null, null);
+            return null;
+        });
+    }
+
+
+    public void savePumpkin(final PumpkinData data, final ExpiringSession expiringSession) {
+        if (data == null) {
+            RekusLogger.warn("Attempted to save null data.");
+            return;
+        }
+
+        if (expiringSession.isOpen()) {
+            Transaction tx = null;
+            try {
+                tx = expiringSession.getSession().beginTransaction();
+                expiringSession.getSession().merge(data);
+                tx.commit();
+            } catch (Exception e) {
+                if (tx != null) tx.rollback();
+                RekusLogger.error("Error saving data: " + e.getMessage());
+            } finally {
+                expiringSession.closeSession();
+            }
+        }
+    }
+
+    public void deletePumpkin(final PumpkinData data, final ExpiringSession expiringSession) {
+        if (data == null) {
+            RekusLogger.warn("Attempted to delete null data.");
+            return;
+        }
+
+        if (expiringSession.isOpen()) {
+            Transaction tx = null;
+            try {
+                tx = expiringSession.getSession().beginTransaction();
+                expiringSession.getSession().delete(data);
+                tx.commit();
+            } catch (Exception e) {
+                if (tx != null) tx.rollback();
+                RekusLogger.error("Error deleting data: " + e.getMessage());
+            } finally {
+                expiringSession.closeSession();
+            }
+        }
     }
 
     public void saveAllUsers() {
