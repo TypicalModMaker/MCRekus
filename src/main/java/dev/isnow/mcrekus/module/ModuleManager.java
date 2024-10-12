@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class ModuleManager {
     private final MCRekus plugin;
-    private final Set<Module> modules = new HashSet<>();
+    private final Set<Module<?>> modules = new HashSet<>();
 
     public ModuleManager(final MCRekus plugin) {
         this.plugin = plugin;

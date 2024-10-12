@@ -45,4 +45,7 @@ public class SpawnProtectionConfig extends ModuleConfig {
 
     @Comment({"", "Trying to destroy a vehicle"})
     private String spawnDestroyVehicleMessage = "[P] &#FF0000N&#FF0202i&#FF0404e &#FF0707m&#FF0909o&#FF0B0Bż&#FF0D0De&#FF0F0Fs&#FF1111z &#FF1414u&#FF1616s&#FF1818u&#FF1A1An&#FF1C1Cą&#FF1D1Dć &#FF2121t&#FF2323e&#FF2525g&#FF2727o &#FF2A2Ap&#FF2C2Co&#FF2E2Ej&#FF3030a&#FF3232z&#FF3333d&#FF3535u&#FF3737.";
+
+    @Comment({"", "Trying to hook a player"})
+    private String spawnHookPlayerMessage = "[P] &#FF0000N&#FF0202i&#FF0404e &#FF0707m&#FF0909o&#FF0B0Bż&#FF0C0Ce&#FF0E0Es&#FF1010z &#FF1414w&#FF1515ę&#FF1717d&#FF1919k&#FF1B1Bo&#FF1C1Cw&#FF1E1Ea&#FF2020ć &#FF2323t&#FF2525e&#FF2727g&#FF2929o &#FF2C2Cg&#FF2E2Er&#FF3030a&#FF3232c&#FF3333z&#FF3535a&#FF3737!";
 }

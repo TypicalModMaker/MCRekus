@@ -87,6 +87,7 @@ dev\isnow\mcrekus\config\impl\database\DatabaseConfig.class
 dev\isnow\mcrekus\module\impl\spawners\SpawnersModule.class
 dev\isnow\mcrekus\module\impl\essentials\command\message\MsgToggleCommand.class
 dev\isnow\mcrekus\module\impl\spawn\SpawnModule.class
+dev\isnow\mcrekus\module\impl\spawnprotection\event\FishEvent.class
 dev\isnow\mcrekus\module\impl\essentials\command\HatCommand.class
 dev\isnow\mcrekus\module\impl\essentials\message\MessageManager.class
 dev\isnow\mcrekus\module\impl\essentials\command\KickAllCommand.class

@@ -6,7 +6,7 @@ import dev.isnow.mcrekus.util.RekusLogger;
 import lombok.Getter;
 
 @Getter
-public class ModuleAccessor<T extends Module> {
+public class ModuleAccessor<T extends Module<?>> {
     private final T module;
 
     @SuppressWarnings("unchecked")
