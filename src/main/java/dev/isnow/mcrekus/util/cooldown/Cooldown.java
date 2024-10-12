@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class Cooldown<T> {
     private final long startingCooldown;
-    private HashMap<T, Long> cooldowns = new HashMap<>();
+    private final HashMap<T, Long> cooldowns = new HashMap<>();
 
     public Cooldown(final long startingCooldown) {
         this.startingCooldown = startingCooldown;

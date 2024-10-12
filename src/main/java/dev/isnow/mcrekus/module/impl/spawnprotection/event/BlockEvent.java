@@ -1,6 +1,5 @@
 package dev.isnow.mcrekus.module.impl.spawnprotection.event;
 
-import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
 import dev.isnow.mcrekus.util.ComponentUtil;

@@ -14,9 +14,7 @@ import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.PermissionUtil;
-import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import java.util.HashMap;
 import org.bukkit.entity.Player;
 
 @CommandAlias("sethome|ustawdom")

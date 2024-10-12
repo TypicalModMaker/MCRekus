@@ -3,12 +3,8 @@ package dev.isnow.mcrekus.module.impl.kingdoms.config;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.module.ModuleConfig;
-import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Sound;
 
 @Getter
 @Setter

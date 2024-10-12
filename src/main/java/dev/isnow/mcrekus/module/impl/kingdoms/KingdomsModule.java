@@ -5,13 +5,10 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.kingdoms.champion.Champion;
 import dev.isnow.mcrekus.module.impl.kingdoms.config.KingdomsConfig;
-import dev.isnow.mcrekus.module.impl.spawnprotection.config.SpawnProtectionConfig;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.Getter;
-import org.bukkit.entity.Player;
 
 @Getter
 public class KingdomsModule extends Module<KingdomsConfig> {

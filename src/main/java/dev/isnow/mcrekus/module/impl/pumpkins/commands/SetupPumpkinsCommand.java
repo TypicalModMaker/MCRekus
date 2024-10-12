@@ -6,8 +6,6 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
-import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
-import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.module.impl.pumpkins.PumpkinsModule;
 import dev.isnow.mcrekus.module.impl.pumpkins.config.PumpkinsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;

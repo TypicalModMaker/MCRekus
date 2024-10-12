@@ -8,13 +8,10 @@ import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.data.PumpkinData;
 import dev.isnow.mcrekus.util.ExpiringSession;
 import dev.isnow.mcrekus.util.RekusLogger;
+import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
-import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,7 +25,6 @@ public final class DatabaseManager {
     private final SessionFactory sessionFactory;
 
     public DatabaseManager() {
-
         SessionFactory sessionFactory;
 
         final DatabaseConfig authConfig = MCRekus.getInstance().getConfigManager().getDatabaseConfig();
@@ -183,7 +179,6 @@ public final class DatabaseManager {
             return null;
         });
     }
-
 
     public void savePumpkin(final PumpkinData data, final ExpiringSession expiringSession) {
         if (data == null) {

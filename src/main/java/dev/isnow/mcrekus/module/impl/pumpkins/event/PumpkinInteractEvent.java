@@ -1,33 +1,36 @@
 package dev.isnow.mcrekus.module.impl.pumpkins.event;
 
+import static dev.isnow.mcrekus.module.impl.deathchest.DeathChest.ANGLE_INCREMENT;
+
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
-import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleData;
+import com.github.retrooper.packetevents.protocol.particle.data.ParticleDustData;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleType;
-import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.module.ModuleAccessor;
-import dev.isnow.mcrekus.module.impl.essentials.event.DeathEvent;
 import dev.isnow.mcrekus.module.impl.pumpkins.PumpkinsModule;
 import dev.isnow.mcrekus.module.impl.pumpkins.config.PumpkinsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import me.tofaa.entitylib.meta.EntityMeta;
+import java.time.Duration;
+import java.util.HashMap;
 import me.tofaa.entitylib.meta.other.FireworkRocketMeta;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
 import net.kyori.adventure.title.Title;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,15 +41,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
-
-import static dev.isnow.mcrekus.module.impl.deathchest.DeathChest.ANGLE_INCREMENT;
 
 public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> implements Listener {
 
@@ -99,33 +93,37 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
                 final PumpkinsConfig config = getModule().getConfig();
 
                 new BukkitRunnable() {
+                    int i = 0;
+                    int t = 0;
                     double radius = 3.0;
                     double angle = 0;
                     final Location loc = block.getLocation().clone();
 
-
                     @Override
                     public void run() {
-                        if (radius <= 0.05) {
+
+                        if(radius <= 0) {
                             createFirework(loc, player);
-
-                            for (int i = 0; i < 100; i++) {
-                                final double randomAngle = Math.random() * 2 * Math.PI;
-                                final double randomRadius = Math.random() * 3;
-                                final double x = randomRadius * Math.cos(randomAngle);
-                                final double z = randomRadius * Math.sin(randomAngle);
-                                final Location particleLoc = loc.clone().add(x, 0, z);
-                                sendParticle(player, ParticleTypes.EXPLOSION, particleLoc, null);
-                            }
-
                             final Title.Times times = Title.Times.times(Duration.ofSeconds(config.getPumpkinInteractTitleFadeIn()), Duration.ofSeconds(config.getPumpkinInteractTitleStay()), Duration.ofSeconds(config.getPumpkinInteractTitleFadeOut()));
                             final Title title = Title.title(ComponentUtil.deserialize(config.getPumpkinInteractTitle()), ComponentUtil.deserialize(config.getPumpkinInteractSubTitle().replaceAll("%amount%", String.valueOf(userData.getPumpkins().size()))), times);
 
-                            player.showTitle(title);
                             player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
+
+                            player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1.5f);
+                            Bukkit.getScheduler().runTaskLater(MCRekus.getInstance(), () ->
+                                    player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1.7f), 10L);
+                            Bukkit.getScheduler().runTaskLater(MCRekus.getInstance(), () ->
+                                    player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2.0f), 20L);
+                            Bukkit.getScheduler().runTaskLater(MCRekus.getInstance(), () ->
+                                    player.playSound(player, Sound.ENTITY_GENERIC_EXPLODE, 1, 0.9f), 20L);
+
+
+
+                            player.showTitle(title);
                             this.cancel();
                             return;
                         }
+
 
                         angle += ANGLE_INCREMENT;
                         final double x = radius * Math.cos(angle);
@@ -135,11 +133,20 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
 
                         Location particleLoc = loc.clone().add(x, 0, z);
 
-                        sendParticle(player, ParticleTypes.DUST, particleLoc, null);
-                        sendParticle(player, ParticleTypes.ENTITY_EFFECT, particleLoc, null);
-                        if (Math.random() < 0.1) {
-                            sendParticle(player, ParticleTypes.END_ROD, particleLoc, null);
+//                        currentLocation.getWorld().spawnParticle(org.bukkit.Particle.FLAME, currentLocation, 0, 0, 0, 0, 0);
+                        particleLoc.getWorld().spawnParticle(org.bukkit.Particle.SPELL_MOB, particleLoc, 0, 0, 0, 0, 0);
+                        particleLoc.getWorld().spawnParticle(org.bukkit.Particle.REDSTONE, particleLoc, 0, 0, 0, 0, 0, new org.bukkit.Particle.DustOptions(Color.PURPLE, 1));
+
+                        player.playSound(player, Sound.BLOCK_NOTE_BLOCK_HAT, 1, 0.5f + (t * 0.025f));
+
+                        if (i == 10) {
+                            particleLoc.getWorld()
+                                    .spawnParticle(org.bukkit.Particle.END_ROD, particleLoc, 0, 0,
+                                            0, 0, 0);
+                            i = 0;
                         }
+                        t++;
+                        i++;
                     }
                 }.runTaskTimer(MCRekus.getInstance(), 0, 1);
 
@@ -166,32 +173,44 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
 
         fireworkRocketMeta.setFireworkItem(SpigotConversionUtil.fromBukkitItemStack(firework));
         entity.spawn(SpigotConversionUtil.fromBukkitLocation(loc.clone().add(0.5, 0, 0.5)));
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                entity.despawn();
+                entity.remove();
+            }
+        }.runTaskLaterAsynchronously(MCRekus.getInstance(),20 * 3);
     }
 
-    private void sendParticle(final Player player, final ParticleType particleType, final Location loc, final Color color) {
-        WrapperPlayServerParticle packet;
+    private void sendParticleDust(final Player player, final ParticleType<ParticleDustData> particle, final Location loc) {
 
-        if (color != null) {
-            final ParticleColorData data = new ParticleColorData(color.asARGB());
+        Particle<ParticleDustData> particleObject = new Particle<>(particle);
 
-            packet = new WrapperPlayServerParticle(
-                    new com.github.retrooper.packetevents.protocol.particle.Particle<>((ParticleType<ParticleColorData>) particleType, data),
-                    true,
-                    new Vector3d(loc.getX(), loc.getY(), loc.getZ()),
-                    new Vector3f(0, 0, 0f),
-                    0,
-                    1
-            );
-        } else {
-            packet = new WrapperPlayServerParticle(
-                    new com.github.retrooper.packetevents.protocol.particle.Particle<>(particleType),
-                    true,
-                    new Vector3d(loc.getX(), loc.getY(), loc.getZ()),
-                    new Vector3f(0.5f, 0.5f, 0.5f),
-                    0,
-                    1
-            );
-        }
+        WrapperPlayServerParticle packet = new WrapperPlayServerParticle(
+                particleObject,
+                true,
+                new Vector3d(loc.getX(), loc.getY(), loc.getZ()),
+                new Vector3f(0.5f, 0.5f, 0.5f),
+                0,
+                1
+        );
+
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+    }
+
+    private void sendParticle(final Player player, final ParticleType<ParticleData> particle, final Location loc) {
+
+        Particle<?> particleObject = new Particle<>(particle);
+
+        WrapperPlayServerParticle packet = new WrapperPlayServerParticle(
+                particleObject,
+                true,
+                new Vector3d(loc.getX(), loc.getY(), loc.getZ()),
+                new Vector3f(0.5f, 0.5f, 0.5f),
+                0,
+                1
+        );
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
     }

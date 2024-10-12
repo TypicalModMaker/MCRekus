@@ -31,7 +31,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor

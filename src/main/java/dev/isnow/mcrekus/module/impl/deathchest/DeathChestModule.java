@@ -4,9 +4,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.deathchest.config.DeathChestConfig;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import eu.decentsoftware.holograms.api.DHAPI;
 import java.util.HashMap;
-import java.util.UUID;
 import lombok.Getter;
 
 @Getter

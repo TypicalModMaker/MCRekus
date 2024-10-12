@@ -410,4 +410,16 @@ public class EssentialsConfig extends ModuleConfig {
     @Comment({"", "Offline Teleport success message"})
     private String offlineTeleportSuccessMessage = "[P] &aPrzeteleportowano do ostatniej lokalizacji gracza %player%.";
 
+    @Comment({"", "Gamma command ON"})
+    private String gammaOnMessage = "[P] &aWłączono gammę.";
+
+    @Comment({"", "Gamma command OFF"})
+    private String gammaOffMessage = "[P] &cWyłączono gammę.";
+
+    @Comment({"", "Bin command opened message"})
+    private String binOpenedMessage = "[P] &aOtwarto kosz.";
+
+    @Comment({"", "Bin gui name"})
+    private String binGuiName = "&aKosz";
+
 }

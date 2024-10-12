@@ -15,6 +15,6 @@ public class CrystalModule extends Module {
 
     @Override
     public void onDisable(MCRekus plugin) {
-
+        unRegisterListeners();
     }
 }

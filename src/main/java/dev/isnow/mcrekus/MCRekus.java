@@ -13,11 +13,10 @@ import dev.isnow.mcrekus.util.DateUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.migration.MigrationUtil;
 import io.github.mqzen.menus.Lotus;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import me.tofaa.entitylib.APIConfig;
@@ -95,17 +94,19 @@ public final class MCRekus extends JavaPlugin {
         }
 
         RekusLogger.info("Initializing PacketEvents");
-        PacketEvents.getAPI().init();
+        try {
+            PacketEvents.getAPI().init();
 
-        SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
-        APIConfig settings = new APIConfig(PacketEvents.getAPI())
-                .debugMode()
-                .tickTickables()
-                .trackPlatformEntities()
-                .usePlatformLogger();
+            SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
+            APIConfig settings = new APIConfig(PacketEvents.getAPI())
+                    .tickTickables()
+                    .trackPlatformEntities()
+                    .usePlatformLogger();
 
-        EntityLib.init(platform, settings);
-
+            EntityLib.init(platform, settings);
+        } catch (Exception e) {
+            RekusLogger.error("Failed to initialize PacketEvents: " + e.getMessage());
+        }
 
         RekusLogger.info("Loading modules");
         moduleManager = new ModuleManager(this);

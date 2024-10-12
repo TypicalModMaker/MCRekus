@@ -18,13 +18,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.kingdoms.constants.group.upgradable.champion.ChampionUpgrade;
 import org.kingdoms.constants.player.KingdomPlayer;
-import org.kingdoms.events.general.ChampionAbilityEvent;
 import org.kingdoms.events.invasion.KingdomInvadeEndEvent;
 import org.kingdoms.events.invasion.KingdomInvadeEvent;
 import org.kingdoms.managers.entity.KingdomEntityRegistry;
@@ -123,7 +120,7 @@ public class ChampionEvent extends ModuleAccessor<KingdomsModule> implements Lis
                 }
 
                 for(final Player player : entities) {
-                    if(player.getLocation().distance(entity.getLocation()) > (10 - invasion.getDefender().getUpgradeLevel(ChampionUpgrade.DRAG)))  {
+                    if(player.getLocation().distance(entity.getLocation()) > 10)  {
                         player.teleport(entity.getLocation());
                         return;
                     }
@@ -134,7 +131,7 @@ public class ChampionEvent extends ModuleAccessor<KingdomsModule> implements Lis
                 entity.setTarget(nearestPlayer);
                 championEntity.setTarget(nearestPlayer);
             }
-        }.runTaskTimer(MCRekus.getInstance(), 0, 10);
+        }.runTaskTimer(MCRekus.getInstance(), 0, 5);
 
         final List<Player> attackers = Arrays.stream(entity.getChunk().getEntities()).filter(entity1 -> {
             if(!(entity1 instanceof Player player)) {

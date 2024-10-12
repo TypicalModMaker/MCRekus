@@ -3,6 +3,7 @@ package dev.isnow.mcrekus.module.impl.pumpkins.config;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.module.ModuleConfig;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,7 +31,7 @@ public class PumpkinsConfig extends ModuleConfig {
     private String pumpkinInteractTitle = "&aZnaleziono &#FF6300Dynie&a!";
 
     @Comment({"", "Pumpkin interact subtitle"})
-    private String pumpkinInteractSubTitle = "&7(&a%amount%&7/&a20&7)";
+    private String pumpkinInteractSubTitle = "&7(&a%amount%&7/&a%max%&7)";
 
     @Comment({"", "Pumpkin interact title fade in"})
     private int pumpkinInteractTitleFadeIn = 1;
@@ -40,4 +41,10 @@ public class PumpkinsConfig extends ModuleConfig {
 
     @Comment({"", "Pumpkin interact title fade out"})
     private int pumpkinInteractTitleFadeOut = 1;
+
+    private int pumpkinAmount = 20;
+
+    private List<String> commandsCollectedAll = List.of("bc chat &a%player% zebrał wszystkie dynie!");
+
+
 }

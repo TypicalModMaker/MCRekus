@@ -5,7 +5,6 @@ import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.hibernate.Transaction;
 
 public class QuitEvent implements Listener {
 

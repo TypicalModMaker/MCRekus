@@ -3,7 +3,6 @@ package dev.isnow.mcrekus.module.impl.deathchest;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.deathchest.config.DeathChestConfig;
-import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
@@ -103,6 +102,7 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
                 String s = hologramList.get(i);
                 s = s.replaceAll("%player%", playerName);
                 s = s.replaceAll("%time%", sdf.format(new Date(deathTime)));
+                s = s.replaceAll("%time-remaining%", String.valueOf(time));
                 hologramList.set(i, s);
             }
 

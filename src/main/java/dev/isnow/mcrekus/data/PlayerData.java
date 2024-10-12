@@ -8,16 +8,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Version;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +47,9 @@ public class PlayerData extends BaseData {
     @Column(name = "player_name", nullable = false)
     private String name;
 
+    @Column(name = "player_time", nullable = false)
+    private long time;
+
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "collceted_pumpkins",
@@ -58,7 +57,6 @@ public class PlayerData extends BaseData {
             inverseJoinColumns = { @JoinColumn(name = "id") }
     )
     Set<PumpkinData> pumpkins = new HashSet<>();
-
 
     public PlayerData(final Player player) {
         this.uuid = player.getUniqueId();

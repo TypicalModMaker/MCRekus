@@ -1,7 +1,5 @@
 package dev.isnow.mcrekus.util.migration;
 
-import static org.hibernate.engine.jdbc.batch.internal.BatchBuilderInitiator.BUILDER;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.isnow.mcrekus.MCRekus;
@@ -10,14 +8,11 @@ import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.util.ExpiringSession;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
