@@ -3,6 +3,7 @@ package dev.isnow.mcrekus.module.impl.spawners.event;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
@@ -44,20 +45,16 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
         }
 
         final SpawnersConfig config = getModule().getConfig();
+        final RekusLocation location = RekusLocation.fromBukkitLocation(event.getBlock().getLocation());
 
-        if (getModule().isSpawnerBroken(event.getBlock().getLocation())) {
+        final RekusSpawner spawner = getModule().getSpawners().get(location);
+
+        if (spawner.isBroken()) {
             player.sendMessage(ComponentUtil.deserialize(config.getCantBreakBrokenSpawnerMessage()));
             event.setCancelled(true);
         } else {
-            final BukkitTask task = getModule().getSpawnerTask(RekusLocation.fromBukkitLocation(event.getBlock().getLocation()));
-            if (task != null) {
-                task.cancel();
-            }
-
-            final RekusLocation location = RekusLocation.fromBukkitLocation(event.getBlock().getLocation());
-
-            getModule().removeSpawnerTask(location);
-            getModule().removeSpawnerToRepair(location);
+            spawner.getTask().cancel();
+            getModule().getSpawners().remove(location);
 
             RekusLogger.debug("Spawner broken at " + location);
         }
@@ -69,12 +66,12 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
         if (playerItem.getEnchantmentLevel(Enchantment.SILK_TOUCH) == 0) return;
 
 
-        final ItemStack spawner = new ItemStack(Material.SPAWNER);
-        final BlockStateMeta bsm = (BlockStateMeta) spawner.getItemMeta();
+        final ItemStack spawnerItem = new ItemStack(Material.SPAWNER);
+        final BlockStateMeta bsm = (BlockStateMeta) spawnerItem.getItemMeta();
         bsm.setBlockState(event.getBlock().getState());
-        spawner.setItemMeta(bsm);
+        spawnerItem.setItemMeta(bsm);
 
-        event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), spawner);
+        event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), spawnerItem);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -90,7 +87,9 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
 
         final RekusLocation location = RekusLocation.fromBukkitLocation(event.getBlock().getLocation());
 
-        getModule().scheduleBreakingSpawner(location);
+        final RekusSpawner spawner = new RekusSpawner(location);
+        getModule().getSpawners().put(location, spawner);
+
         RekusLogger.debug("Spawner placed at " + location);
     }
 

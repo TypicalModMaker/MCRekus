@@ -2,6 +2,8 @@ package dev.isnow.mcrekus.module.impl.spawners.event;
 
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
+import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +17,9 @@ public class SpawnEvent extends ModuleAccessor<SpawnersModule> implements Listen
 
         final CreatureSpawner spawner = event.getSpawner();
 
-        if (!getModule().isSpawnerBroken(spawner.getLocation())) return;
+        final RekusSpawner rekusSpawner = getModule().getSpawners().get(RekusLocation.fromBukkitLocation(spawner.getLocation()));
+
+        if (!rekusSpawner.isBroken()) return;
 
         event.setCancelled(true);
     }

@@ -9,7 +9,9 @@ import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.progress.ProgressTracker;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -24,10 +26,10 @@ public class SpawnersCommand extends BaseCommand {
     private final ModuleAccessor<SpawnersModule> moduleAccessor = new ModuleAccessor<>(SpawnersModule.class);
 
     @Default
-    @CommandCompletion("testBar|addBrokenSpawner start|stop")
+    @CommandCompletion("testBar start|stop")
     public void execute(Player player, String[] args) {
         if(args.length < 1) {
-            player.sendMessage(ComponentUtil.deserialize("&cUsage: /spawners <testBar|addBrokenSpawner>"));
+            player.sendMessage(ComponentUtil.deserialize("&cUsage: /spawners <testBar>"));
             return;
         }
 
@@ -45,7 +47,7 @@ public class SpawnersCommand extends BaseCommand {
                     return;
                 }
 
-                final ProgressTracker progressTracker = new ProgressTracker(player, null);
+                final ProgressTracker progressTracker = new ProgressTracker(player);
                 progressTracker.setup();
                 moduleAccessor.getModule().addProgressTracker(player, progressTracker);
             } else if(args[1].equalsIgnoreCase("stop")) {
@@ -58,22 +60,6 @@ public class SpawnersCommand extends BaseCommand {
                 progressTracker.getTask().cancel();
                 moduleAccessor.getModule().removeProgressTracker(player);
             }
-        }
-
-        if(args[0].equalsIgnoreCase("addBrokenSpawner")) {
-            final Block block = player.getTargetBlockExact(5);
-            if (block == null) {
-                player.sendMessage(ComponentUtil.deserialize("&cYou must be looking at a block!"));
-                return;
-            }
-
-            if (block.getType() != org.bukkit.Material.SPAWNER) {
-                player.sendMessage(ComponentUtil.deserialize("&cYou must be looking at a spawner!"));
-                return;
-            }
-
-            moduleAccessor.getModule().addBrokenSpawner(block.getLocation());
-            player.sendMessage(ComponentUtil.deserialize("&aAdded broken spawner!"));
         }
     }
 

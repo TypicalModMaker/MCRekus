@@ -7,6 +7,7 @@ import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
 import dev.isnow.mcrekus.module.impl.spawners.progress.ProgressTracker;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import java.time.Duration;
@@ -53,9 +54,13 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
 
         final Location location = block.getLocation();
 
-        if (!getModule().isSpawnerBroken(location)) return;
+        final RekusLocation spawnerLocation = RekusLocation.fromBukkitLocation(location);
 
-        final String cooldown = getModule().getCooldown().isOnCooldown(player.getUniqueId());
+        final RekusSpawner spawner = getModule().getSpawners().get(spawnerLocation);
+
+        if (!spawner.isBroken()) return;
+
+        final String cooldown = spawner.getCooldowns().isOnCooldown(player.getUniqueId());
 
         final SpawnersConfig config = getModule().getConfig();
 
@@ -64,17 +69,20 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
             return;
         }
 
-        if (!getModule().isSpawnerBeingRepaired(location)) {
-            final ProgressTracker progressTracker = new ProgressTracker(player, RekusLocation.fromBukkitLocation(location));
-            progressTracker.setup();
-            getModule().addProgressTracker(player, progressTracker);
-            return;
-        } else {
-            final Player repairingPlayer = getModule().getRepairingPlayer(location);
-            if (repairingPlayer != null && repairingPlayer != player) {
-                player.sendMessage(ComponentUtil.deserialize(config.getBeingRepairedByAnotherPlayerMessage()));
+        if (spawner.getRepairingPlayer() == null) {
+            if(getModule().hasProgressTracker(player)) {
+                player.sendMessage(ComponentUtil.deserialize(config.getRepairingDifferentSpawnerMessage()));
                 return;
             }
+
+            final ProgressTracker progressTracker = new ProgressTracker(player);
+            progressTracker.setup();
+            getModule().addProgressTracker(player, progressTracker);
+            spawner.setRepairingPlayer(player);
+            return;
+        } else if (spawner.getRepairingPlayer() != player) {
+            player.sendMessage(ComponentUtil.deserialize(config.getBeingRepairedByAnotherPlayerMessage()));
+            return;
         }
 
         final ProgressTracker progressTracker = getModule().getProgressTracker(player);
@@ -87,7 +95,8 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
             if(progressTracker.getProgress() == -1) {
                 progressTracker.getTask().cancel();
                 getModule().removeProgressTracker(player);
-                getModule().getCooldown().addCooldown(player.getUniqueId());
+
+                spawner.addCooldown(player.getUniqueId());
                 player.sendMessage(ComponentUtil.deserialize(config.getFailedToRepairMessage()));
             } else {
                 String randomMessage = ProgressTracker.SPAWNER_MESSAGES.get(nextInt(0, ProgressTracker.SPAWNER_MESSAGES.size()));
@@ -109,7 +118,9 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
             progressTracker.getTask().cancel();
             progressTracker.showBar();
             getModule().removeProgressTracker(player);
-            getModule().repairBrokenSpawner(location);
+
+
+            spawner.repairSpawner();
 
             player.resetTitle();
             player.showTitle(Title.title(
@@ -125,11 +136,6 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
                     player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2.0f), 20L);
             Bukkit.getScheduler().runTaskLater(MCRekus.getInstance(), () ->
                     player.playSound(player, Sound.ENTITY_GENERIC_EXPLODE, 1, 0.9f), 20L);
-
-            final RekusLocation spawnerLocation = RekusLocation.fromBukkitLocation(location);
-
-            getModule().removeSpawnerTask(spawnerLocation);
-            getModule().scheduleBreakingSpawner(spawnerLocation);
         } else {
             final int baseLineLength = ProgressTracker.BASE_LINE.length();
 

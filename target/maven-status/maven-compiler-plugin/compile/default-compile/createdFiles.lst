@@ -78,6 +78,7 @@ dev\isnow\mcrekus\database\DatabaseManager$1.class
 dev\isnow\mcrekus\module\impl\essentials\command\home\SetHomeCommand.class
 dev\isnow\mcrekus\util\migration\OldHome.class
 dev\isnow\mcrekus\module\impl\essentials\event\QuitEvent.class
+dev\isnow\mcrekus\module\impl\spawners\spawners\RekusSpawner$1.class
 dev\isnow\mcrekus\module\impl\essentials\config\EssentialsConfig.class
 dev\isnow\mcrekus\module\impl\spawn\teleport\SpawnTeleportManager.class
 dev\isnow\mcrekus\module\impl\essentials\command\RepairCommand.class
@@ -106,7 +107,6 @@ dev\isnow\mcrekus\module\impl\essentials\menu\HomeMenu.class
 dev\isnow\mcrekus\module\impl\spawners\config\SpawnersConfig.class
 dev\isnow\mcrekus\data\base\BaseData.class
 dev\isnow\mcrekus\module\impl\essentials\command\home\HomeCommand.class
-dev\isnow\mcrekus\module\impl\spawners\SpawnersModule$2.class
 dev\isnow\mcrekus\module\impl\essentials\command\AnvilCommand.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\SpawnEvent.class
 dev\isnow\mcrekus\module\impl\essentials\command\message\IgnoreCommand.class
@@ -130,6 +130,7 @@ dev\isnow\mcrekus\module\impl\essentials\command\broadcast\BroadcastCommand.clas
 dev\isnow\mcrekus\module\impl\essentials\command\FeedCommand.class
 dev\isnow\mcrekus\util\serializer\database\RekusLocationSerializer.class
 dev\isnow\mcrekus\config\ConfigManager.class
+dev\isnow\mcrekus\module\impl\spawners\spawners\RekusSpawner.class
 dev\isnow\mcrekus\util\cuboid\RekusLocation.class
 dev\isnow\mcrekus\module\impl\essentials\event\TeleportMoveEvent.class
 dev\isnow\mcrekus\util\Locale.class

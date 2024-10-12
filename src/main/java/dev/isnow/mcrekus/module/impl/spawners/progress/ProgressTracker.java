@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import java.time.Duration;
@@ -36,7 +37,6 @@ public class ProgressTracker extends ModuleAccessor<SpawnersModule> {
     }
 
     private final Player player;
-    private final RekusLocation spawnerLocation;
 
     private BukkitTask task;
 

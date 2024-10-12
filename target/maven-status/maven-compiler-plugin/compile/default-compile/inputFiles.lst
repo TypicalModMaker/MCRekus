@@ -29,6 +29,7 @@ C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\modul
 C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\module\impl\essentials\command\teleport\OfflineTeleportCommand.java
 C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\module\impl\spawn\event\QuitEvent.java
 C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\module\impl\spawn\command\SpawnCommand.java
+C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\module\impl\spawners\spawners\RekusSpawner.java
 C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\module\impl\essentials\command\HatCommand.java
 C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\database\DatabaseManager.java
 C:\Users\maksy\Desktop\Development\MCRekus\src\main\java\dev\isnow\mcrekus\util\RekusLogger.java

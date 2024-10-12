@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
 import dev.isnow.mcrekus.module.impl.spawners.progress.ProgressTracker;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cooldown.Cooldown;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
@@ -32,10 +33,7 @@ public class SpawnersModule extends Module<SpawnersConfig> {
     }
 
     private final HashMap<Player, ProgressTracker> playerTasks = new HashMap<>();
-    private final ArrayList<Location> brokenSpawners = new ArrayList<>();
-    private final Cooldown<UUID> cooldown = new Cooldown<>(getConfig().getCooldownTime() * 1000L);
-
-    private final HashMap<RekusLocation, BukkitTask> spawners = new HashMap<>();
+    private final HashMap<RekusLocation, RekusSpawner> spawners = new HashMap<>();
 
     private BukkitTask particleTask;
 
@@ -47,7 +45,8 @@ public class SpawnersModule extends Module<SpawnersConfig> {
         particleTask = new BukkitRunnable() {
             @Override
             public void run() {
-                for(final Location location : brokenSpawners) {
+
+                for(final Location location : spawners.values().stream().filter(RekusSpawner::isBroken).map(rekusSpawner -> rekusSpawner.getLocation().toBukkitLocation()).toList()) {
                     for(double z = 0.2; z < 1; z += 0.2) {
                         for(double x = 0.2; x < 1; x += 0.2) {
                             location.getWorld().spawnParticle(org.bukkit.Particle.FLAME, location.clone().add(x, 1, z), 1, 0, 0, 0, 0);
@@ -73,7 +72,7 @@ public class SpawnersModule extends Module<SpawnersConfig> {
         unRegisterCommands();
 
         particleTask.cancel();
-        for(final BukkitTask task : spawners.values()) {
+        for(final BukkitTask task : spawners.values().stream().map(RekusSpawner::getTask).toList()) {
             task.cancel();
         }
 
@@ -98,60 +97,6 @@ public class SpawnersModule extends Module<SpawnersConfig> {
         return playerTasks.containsKey(player);
     }
 
-    public boolean isSpawnerBroken(final Location location) {
-        return brokenSpawners.contains(location);
-    }
-
-    public void addBrokenSpawner(final Location location) {
-        brokenSpawners.add(location);
-    }
-
-    public boolean isSpawnerBeingRepaired(final Location location) {
-        return playerTasks.values().stream().anyMatch(progressTracker -> progressTracker.getSpawnerLocation().equals(RekusLocation.fromBukkitLocation(location)));
-    }
-
-    public Player getRepairingPlayer(final Location location) {
-        return playerTasks.entrySet().stream().filter(entry -> entry.getValue().getSpawnerLocation().equals(RekusLocation.fromBukkitLocation(location))).map(
-                Entry::getKey).findFirst().orElse(null);
-    }
-
-    public void repairBrokenSpawner(final Location location) {
-        brokenSpawners.remove(location);
-    }
-
-    public void addSpawnerToRepair(final RekusLocation location, final BukkitTask task) {
-        spawners.put(location, task);
-    }
-
-    public void removeSpawnerToRepair(final RekusLocation location) {
-        spawners.remove(location);
-    }
-
-    public void scheduleBreakingSpawner(final RekusLocation spawner) {
-        final BukkitTask breakingTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if(isSpawnerBroken(spawner.toBukkitLocation())) {
-                    RekusLogger.warn("Tried to break a spawner at " + spawner + " whilst its broken!");
-                    cancel();
-                    removeSpawnerTask(spawner);
-                    return;
-                }
-
-                addBrokenSpawner(spawner.toBukkitLocation());
-            }
-        }.runTaskLaterAsynchronously(MCRekus.getInstance(), new Random().nextInt(getConfig().getMinTimeTillBreak(), getConfig().getMaxTimeTillBreak()) * 20L);
-        addSpawnerToRepair(spawner, breakingTask);
-    }
-
-    public BukkitTask getSpawnerTask(final RekusLocation location) {
-        return spawners.get(location);
-    }
-
-    public void removeSpawnerTask(final RekusLocation location) {
-        spawners.remove(location);
-    }
-
     public void loadChunk(final Chunk chunk) {
         final World world = chunk.getWorld();
 
@@ -167,13 +112,15 @@ public class SpawnersModule extends Module<SpawnersConfig> {
 
                     if (type == Material.SPAWNER) {
                         final RekusLocation location = new RekusLocation(world, chunk.getX() * 16 + x, y, chunk.getZ() * 16 + z);
-                        final BukkitTask task = getSpawnerTask(location);
-                        if(isSpawnerBroken(location.toBukkitLocation()) || (task != null && !task.isCancelled())) {
-                            continue;
-                        }
+                        final RekusSpawner spawner = getSpawners().get(location);
 
-                        RekusLogger.debug("Found spawner at " + location);
-                        scheduleBreakingSpawner(location);
+                        if(spawner == null) {
+                            RekusLogger.debug("Found spawner at " + location);
+                            final RekusSpawner foundSpawner = new RekusSpawner(location);
+                            getSpawners().put(location, foundSpawner);
+                        } else {
+                            RekusLogger.debug("Spawner already exists at " + location);
+                        }
                     }
                 }
             }

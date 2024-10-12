@@ -18,7 +18,7 @@ public class SpawnersConfig extends ModuleConfig {
     private int minTimeTillBreak = 15 * 60;
     private int maxTimeTillBreak = 25 * 60;
 
-    private String cooldownMessage = "&cMusisz odczekać %time% sekund zanim znowu zaczniesz naprawiać spawnery!";
+    private String cooldownMessage = "&cMusisz odczekać %time% sekund zanim znowu zaczniesz naprawiać ten spawner!";
 
     private String beingRepairedByAnotherPlayerMessage = "&cTen spawner jest aktualnie naprawiany przez innego gracza!";
 
@@ -27,4 +27,6 @@ public class SpawnersConfig extends ModuleConfig {
     private String fixingSpawnerSubtitle = "<gradient:#D7753C:#DD7248>Naprawianie spawnera...</gradient>";
 
     private String cantBreakBrokenSpawnerMessage = "&cNie możesz zniszczyć spawnera, który jest zepsuty!";
+
+    private String repairingDifferentSpawnerMessage = "&cAktualnie naprawiasz inny spawner!";
 }
