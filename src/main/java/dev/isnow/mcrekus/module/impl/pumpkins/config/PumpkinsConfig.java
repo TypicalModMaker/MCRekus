@@ -47,4 +47,6 @@ public class PumpkinsConfig extends ModuleConfig {
     private List<String> commandsCollectedAll = List.of("bc chat &a%player% zebrał wszystkie dynie!");
 
 
+
+
 }

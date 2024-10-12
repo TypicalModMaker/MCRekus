@@ -11,11 +11,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Random;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class ProgressTracker extends ModuleAccessor<SpawnersModule> {
     public static final String BASE_LINE = "━━━━━━━━━";

@@ -103,7 +103,7 @@ public class SpawnersModule extends Module<SpawnersConfig> {
         final ChunkSnapshot chunkSnapshot = chunk.getChunkSnapshot(false, false, false, false);
 
         final int maxHeight = world.getMaxHeight() - 1;
-        final int minHeight = world.getMinHeight() + 1;
+        final int minHeight = world.getMinHeight();
 
         for (int x = 0; x <= 15; x++) {
             for (int y = minHeight; y <= maxHeight; y++) {

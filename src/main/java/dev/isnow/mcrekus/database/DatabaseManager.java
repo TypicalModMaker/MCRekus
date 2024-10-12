@@ -211,6 +211,10 @@ public final class DatabaseManager {
             Transaction tx = null;
             try {
                 tx = expiringSession.getSession().beginTransaction();
+                for(final PlayerData player : data.getCollectedPlayers()) {
+                    player.getPumpkins().remove(data);
+                    expiringSession.getSession().merge(player);
+                }
                 expiringSession.getSession().delete(data);
                 tx.commit();
             } catch (Exception e) {

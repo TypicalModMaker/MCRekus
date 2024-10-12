@@ -38,38 +38,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> implements Listener {
-
-    private final HashMap<Player, Long> lastInteractionTime = new HashMap<>();
-
-    @EventHandler
-    public void onQuit(final PlayerQuitEvent event) {
-        lastInteractionTime.remove(event.getPlayer());
-    }
-
     @EventHandler
     public void onInteract(final PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         final Block block = event.getClickedBlock();
 
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
         if (block == null) return;
 
         if (block.getType() != Material.PLAYER_HEAD) return;
 
-        if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-
-        if (lastInteractionTime.containsKey(player)) {
-            final long lastInteraction = lastInteractionTime.get(player);
-
-            if (System.currentTimeMillis() - lastInteraction < 5000) {
-                return;
-            }
-        }
-        lastInteractionTime.put(player, System.currentTimeMillis());
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         final DatabaseManager databaseManager = MCRekus.getInstance().getDatabaseManager();
 
@@ -116,8 +102,6 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
                                     player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2.0f), 20L);
                             Bukkit.getScheduler().runTaskLater(MCRekus.getInstance(), () ->
                                     player.playSound(player, Sound.ENTITY_GENERIC_EXPLODE, 1, 0.9f), 20L);
-
-
 
                             player.showTitle(title);
                             this.cancel();
