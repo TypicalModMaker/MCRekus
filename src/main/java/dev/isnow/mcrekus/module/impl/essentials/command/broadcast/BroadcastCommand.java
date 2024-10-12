@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @CommandAlias("bc|broadcast")
@@ -34,7 +35,7 @@ public class BroadcastCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("@broadcastType [message]")
-    public void execute(Player player, String[] args) {
+    public void execute(CommandSender player, String[] args) {
         final EssentialsConfig config = moduleAccessor.getModule().getConfig();
 
         if(args.length == 0) {

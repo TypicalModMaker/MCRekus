@@ -24,6 +24,7 @@ dev\isnow\mcrekus\module\impl\essentials\menu\HomeMenu$1.class
 dev\isnow\mcrekus\module\impl\essentials\menu\BinMenu.class
 dev\isnow\mcrekus\module\impl\spawn\config\SpawnConfig.class
 dev\isnow\mcrekus\module\impl\spawnprotection\SpawnProtectionModule.class
+dev\isnow\mcrekus\util\Range.class
 dev\isnow\mcrekus\module\impl\kingdoms\champion\Champion.class
 dev\isnow\mcrekus\module\impl\essentials\event\DeathEvent.class
 dev\isnow\mcrekus\module\impl\essentials\teleport\TeleportManager.class
@@ -113,6 +114,7 @@ dev\isnow\mcrekus\module\impl\essentials\command\message\IgnoreCommand.class
 dev\isnow\mcrekus\module\impl\essentials\command\teleport\tpa\TpaCommand.class
 dev\isnow\mcrekus\util\serializer\config\RekusLocationSerializer.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\ExplosionEvent.class
+dev\isnow\mcrekus\module\impl\pumpkins\config\PumpkinReward.class
 dev\isnow\mcrekus\module\impl\spawn\event\RespawnEvent$1.class
 dev\isnow\mcrekus\module\impl\pumpkins\event\PumpkinInteractEvent.class
 dev\isnow\mcrekus\module\impl\essentials\command\message\MessageCommand.class
@@ -139,6 +141,7 @@ dev\isnow\mcrekus\module\impl\spawn\event\RespawnEvent.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\BlockEvent.class
 dev\isnow\mcrekus\data\PumpkinData.class
 dev\isnow\mcrekus\module\impl\essentials\command\time\DayCommand.class
+dev\isnow\mcrekus\util\serializer\config\RangeSerializer.class
 dev\isnow\mcrekus\command\CommandManager.class
 dev\isnow\mcrekus\module\impl\essentials\command\teleport\TeleportCommand.class
 dev\isnow\mcrekus\module\impl\spawners\progress\ProgressTracker.class

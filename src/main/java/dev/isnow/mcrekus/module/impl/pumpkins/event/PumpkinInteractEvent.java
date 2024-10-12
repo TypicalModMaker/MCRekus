@@ -15,13 +15,13 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.pumpkins.PumpkinsModule;
+import dev.isnow.mcrekus.module.impl.pumpkins.config.PumpkinReward;
 import dev.isnow.mcrekus.module.impl.pumpkins.config.PumpkinsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import java.time.Duration;
-import java.util.HashMap;
 import me.tofaa.entitylib.meta.other.FireworkRocketMeta;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
 import net.kyori.adventure.title.Title;
@@ -37,7 +37,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -91,7 +90,7 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
                         if(radius <= 0) {
                             createFirework(loc, player);
                             final Title.Times times = Title.Times.times(Duration.ofSeconds(config.getPumpkinInteractTitleFadeIn()), Duration.ofSeconds(config.getPumpkinInteractTitleStay()), Duration.ofSeconds(config.getPumpkinInteractTitleFadeOut()));
-                            final Title title = Title.title(ComponentUtil.deserialize(config.getPumpkinInteractTitle()), ComponentUtil.deserialize(config.getPumpkinInteractSubTitle().replaceAll("%amount%", String.valueOf(userData.getPumpkins().size()))), times);
+                            final Title title = Title.title(ComponentUtil.deserialize(config.getPumpkinInteractTitle()), ComponentUtil.deserialize(config.getPumpkinInteractSubTitle().replaceAll("%amount%", String.valueOf(userData.getPumpkins().size())).replaceAll("%max%", String.valueOf(config.getPumpkinAmount()))), times);
 
                             player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
 
@@ -105,6 +104,12 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
 
                             player.showTitle(title);
                             this.cancel();
+
+                            final PumpkinReward reward = config.getRewards().stream().filter(pumpkinReward -> pumpkinReward.getRange().isInRange(userData.getPumpkins().size())).findFirst().orElse(null);
+                            if (reward != null) {
+                                reward.getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", player.getName())));
+                            }
+
                             return;
                         }
 

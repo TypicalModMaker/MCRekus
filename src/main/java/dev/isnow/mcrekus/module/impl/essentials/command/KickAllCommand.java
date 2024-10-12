@@ -10,6 +10,7 @@ import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @CommandAlias("kickall")
@@ -21,7 +22,7 @@ public final class KickAllCommand extends BaseCommand {
     private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
 
     @Default
-    public void execute(final Player player, final String[] args) {
+    public void execute(final CommandSender player, final String[] args) {
         final EssentialsConfig config = moduleAccessor.getModule().getConfig();
 
         for(final Player p : Bukkit.getOnlinePlayers()) {

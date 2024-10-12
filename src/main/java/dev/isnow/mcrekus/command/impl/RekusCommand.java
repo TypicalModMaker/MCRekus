@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.DateUtil;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ public class RekusCommand extends BaseCommand {
             player.sendMessage(ComponentUtil.deserialize("&aCommands:"));
             player.sendMessage(ComponentUtil.deserialize("&a/mcrekus reload - Reloads the general config and modules"));
             player.sendMessage(ComponentUtil.deserialize("&a/mcrekus manualsave - Saves all player data to the database manually"));
+            player.sendMessage(ComponentUtil.deserialize("&a/mcrekus dbstatistics - Shows database statistics [DEBUG MODE ONLY]"));
             return;
         }
 
@@ -47,6 +49,14 @@ public class RekusCommand extends BaseCommand {
             player.sendMessage(ComponentUtil.deserialize("&aSaving player data..."));
             MCRekus.getInstance().getThreadPool().execute(() -> MCRekus.getInstance().getDatabaseManager().saveAllUsers());
             player.sendMessage(ComponentUtil.deserialize("&aSaved player data successfully!"));
+        }
+
+        if (args[0].equalsIgnoreCase("dbstatistics")) {
+            final DatabaseManager databaseManager = MCRekus.getInstance().getDatabaseManager();
+            player.sendMessage(ComponentUtil.deserialize("&aDatabase statistics:"));
+            player.sendMessage(ComponentUtil.deserialize("&aHit count: " + MCRekus.getInstance().getDatabaseManager().hitCount()));
+            player.sendMessage(ComponentUtil.deserialize("&aMiss count: " + MCRekus.getInstance().getDatabaseManager().missCount()));
+            player.sendMessage(ComponentUtil.deserialize("&aPut count: " + MCRekus.getInstance().getDatabaseManager().putCount()));
         }
     }
 }

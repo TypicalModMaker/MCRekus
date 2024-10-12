@@ -3,6 +3,7 @@ package dev.isnow.mcrekus.module.impl.pumpkins.config;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.module.ModuleConfig;
+import dev.isnow.mcrekus.util.Range;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,9 +45,12 @@ public class PumpkinsConfig extends ModuleConfig {
 
     private int pumpkinAmount = 20;
 
-    private List<String> commandsCollectedAll = List.of("bc chat &a%player% zebrał wszystkie dynie!");
-
-
+    private List<PumpkinReward> rewards = List.of(
+        new PumpkinReward(new Range(1, 5), List.of("bc chat &a%player% zebrał 1-5 dyni!")),
+        new PumpkinReward(new Range(6, 10), List.of("bc chat &a%player% zebrał 6-10 dyni!")),
+        new PumpkinReward(new Range(11, 15), List.of("bc chat &a%player% zebrał 11-15 dyni!")),
+        new PumpkinReward(new Range(16, 20), List.of("bc chat &a%player% zebrał 16-20 dyni!"))
+    );
 
 
 }

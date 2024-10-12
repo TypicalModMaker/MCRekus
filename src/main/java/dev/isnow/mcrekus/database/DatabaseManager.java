@@ -59,6 +59,7 @@ public final class DatabaseManager {
             configuration.setProperty("hibernate.show_sql", "true");
             configuration.setProperty("hibernate.format_sql", "true");
             configuration.setProperty("hibernate.use_sql_comments", "true");
+            configuration.setProperty("hibernate.generate_statistics", "true");
         }
 
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
@@ -246,5 +247,17 @@ public final class DatabaseManager {
 
     public ExpiringSession openSession(final int delay) {
         return new ExpiringSession(sessionFactory.openSession(), delay);
+    }
+
+    public long hitCount() {
+        return sessionFactory.getStatistics().getSecondLevelCacheHitCount();
+    }
+
+    public long missCount() {
+        return sessionFactory.getStatistics().getSecondLevelCacheMissCount();
+    }
+
+    public long putCount() {
+        return sessionFactory.getStatistics().getSecondLevelCachePutCount();
     }
 }

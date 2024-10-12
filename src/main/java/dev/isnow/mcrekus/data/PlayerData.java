@@ -52,9 +52,9 @@ public class PlayerData extends BaseData {
 
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
-            name = "collceted_pumpkins",
-            joinColumns = { @JoinColumn(name = "playeruuid") },
-            inverseJoinColumns = { @JoinColumn(name = "id") }
+            name = "mcrekus_collected_pumpkins",
+            joinColumns = { @JoinColumn(name = "player_id") },
+            inverseJoinColumns = { @JoinColumn(name = "pumpkin_id") }
     )
     Set<PumpkinData> pumpkins = new HashSet<>();
 

@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class Range {
-    int min;
-    int max;
+    final int min;
+    final int max;
 
     public boolean isInRange(int value) {
         return value >= min && value <= max;

@@ -2,7 +2,9 @@ package dev.isnow.mcrekus.config;
 
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
+import dev.isnow.mcrekus.util.Range;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import dev.isnow.mcrekus.util.serializer.config.RangeSerializer;
 import dev.isnow.mcrekus.util.serializer.config.RekusLocationSerializer;
 import java.nio.file.Path;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import lombok.Getter;
 public abstract class RekusConfig {
     private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
             .addSerializer(RekusLocation.class, new RekusLocationSerializer())
+            .addSerializer(Range.class, new RangeSerializer())
             .build();
 
     private final String name;
