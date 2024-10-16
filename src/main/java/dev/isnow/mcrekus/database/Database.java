@@ -8,6 +8,7 @@ import dev.isnow.mcrekus.util.ExpiringSession;
 import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import lombok.Data;
@@ -149,6 +150,20 @@ public class Database {
                 callback.accept(session, entity);
             } catch (Exception e) {
                 RekusLogger.error("Failed to fetch entity: " + e.getMessage());
+                callback.accept(null, null);
+            }
+        }, MCRekus.getInstance().getThreadPool());
+    }
+
+    public <T> void fetchAllAsync(final String query, final Class<T> clazz, final BiConsumer<ExpiringSession, List<T>> callback) {
+        CompletableFuture.runAsync(() -> {
+            try (ExpiringSession session = openSession()) {
+                List<T> entities = session.getSession().createQuery(query, clazz)
+                        .setCacheable(true)
+                        .list();
+                callback.accept(session, entities);
+            } catch (Exception e) {
+                RekusLogger.error("Failed to fetch entities: " + e.getMessage());
                 callback.accept(null, null);
             }
         }, MCRekus.getInstance().getThreadPool());

@@ -39,7 +39,7 @@ public class ReflectionUtil {
                 }
             }
         } else {
-            RekusLogger.error("Resource is null!");
+            RekusLogger.error("Resource is null! " + packageName);
         }
 
         Thread.currentThread().setContextClassLoader(originalClassLoader);

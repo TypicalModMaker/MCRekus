@@ -49,6 +49,7 @@ public class RankingModule extends Module<RankingConfig> {
 
         registerListeners("event");
         registerCommands("command");
+
         new RankingExtension().register();
     }
 

@@ -1,5 +1,6 @@
 package dev.isnow.mcrekus.module.impl.spawners.event;
 
+import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import io.papermc.lib.PaperLib;
@@ -11,9 +12,11 @@ public class ChunkEvent extends ModuleAccessor<SpawnersModule> implements Listen
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        PaperLib.getChunkAtAsync(event.getChunk().getBlock(1, 1, 1).getLocation()).thenAccept(chunk -> {
-            getModule().loadChunk(chunk);
-        });
+//        MCRekus.getInstance().getThreadPool().execute(() -> {
+//            PaperLib.getChunkAtAsync(event.getChunk().getBlock(1, 1, 1).getLocation()).thenAccept(chunk -> {
+//                getModule().loadChunk(chunk);
+//            });
+//        });
     }
 
 }

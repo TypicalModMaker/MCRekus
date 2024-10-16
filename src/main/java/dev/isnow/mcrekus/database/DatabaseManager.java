@@ -6,9 +6,11 @@ import dev.isnow.mcrekus.config.impl.GeneralConfig;
 import dev.isnow.mcrekus.config.impl.database.DatabaseConfig;
 import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.data.PumpkinData;
+import dev.isnow.mcrekus.data.SpawnerData;
 import dev.isnow.mcrekus.util.ExpiringSession;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import java.util.List;
 import java.util.function.BiConsumer;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
@@ -36,6 +38,14 @@ public final class DatabaseManager {
 
     public void getPumpkinAsync(final RekusLocation pumpkinLocation, final BiConsumer<ExpiringSession, PumpkinData> callback) {
         database.fetchEntityAsync("FROM PumpkinData WHERE location = :location", "location", pumpkinLocation, PumpkinData.class, callback);
+    }
+
+    public void getSpawnerAsync(final RekusLocation spawnerLocation, final BiConsumer<ExpiringSession, SpawnerData> callback) {
+        database.fetchEntityAsync("FROM SpawnerData WHERE location = :location", "location", spawnerLocation, SpawnerData.class, callback);
+    }
+
+    public void getSpawnersAsync(final BiConsumer<ExpiringSession, List<SpawnerData>> callback) {
+        database.fetchAllAsync("FROM SpawnerData", SpawnerData.class, callback);
     }
 
     public void preloadPlayer(final Player player) {

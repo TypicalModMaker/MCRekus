@@ -318,7 +318,7 @@
     <distributionManagement>
         <repository>
             <id>update-dev</id>
-            <url>sftp://root@${env.BUILD_IP}/home/earthsmpagr/plugins</url>
+            <url>sftp://root@${env.BUILD_IP}/home/earthsmp/plugins</url>
         </repository>
     </distributionManagement>
 </project>

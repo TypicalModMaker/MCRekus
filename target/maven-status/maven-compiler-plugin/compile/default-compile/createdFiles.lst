@@ -8,6 +8,7 @@ dev\isnow\mcrekus\module\impl\essentials\command\GamemodeCommand.class
 dev\isnow\mcrekus\module\impl\deathchest\DeathChest.class
 dev\isnow\mcrekus\module\impl\kingdoms\KingdomsModule.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\SpawnEvent$1.class
+dev\isnow\mcrekus\data\SpawnerData.class
 dev\isnow\mcrekus\module\impl\spawnprotection\event\InteractEvent.class
 dev\isnow\mcrekus\database\DatabaseManager.class
 dev\isnow\mcrekus\module\impl\spawn\event\SpawnMoveEvent.class

@@ -1,6 +1,7 @@
 package dev.isnow.mcrekus.module.impl.spawners;
 
 import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.data.SpawnerData;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
 import dev.isnow.mcrekus.module.impl.spawners.progress.ProgressTracker;
@@ -69,10 +70,7 @@ public class SpawnersModule extends Module<SpawnersConfig> {
             }
         }.runTaskTimerAsynchronously(plugin, 0, 20L);
 
-        for (final Chunk chunk : Bukkit.getWorlds().getFirst().getLoadedChunks()) {
-            loadChunk(chunk);
-        }
-
+        loadSpawners();
     }
 
     @Override
@@ -106,33 +104,13 @@ public class SpawnersModule extends Module<SpawnersConfig> {
         return playerTasks.containsKey(player);
     }
 
-    public void loadChunk(final Chunk chunk) {
-        final World world = chunk.getWorld();
-
-        final ChunkSnapshot chunkSnapshot = chunk.getChunkSnapshot(false, false, false, false);
-
-        final int maxHeight = world.getMaxHeight() - 1;
-        final int minHeight = world.getMinHeight();
-
-        for (int x = 0; x <= 15; x++) {
-            for (int y = minHeight; y <= maxHeight; y++) {
-                for (int z = 0; z <= 15; z++) {
-                    final Material type = chunkSnapshot.getBlockType(x, y, z);
-
-                    if (type == Material.SPAWNER) {
-                        final RekusLocation location = new RekusLocation(world, chunk.getX() * 16 + x, y, chunk.getZ() * 16 + z);
-                        final RekusSpawner spawner = getSpawners().get(location);
-
-                        if(spawner == null) {
-                            RekusLogger.debug("Found spawner at " + location);
-                            final RekusSpawner foundSpawner = new RekusSpawner(location);
-                            getSpawners().put(location, foundSpawner);
-                        } else {
-                            RekusLogger.debug("Spawner already exists at " + location);
-                        }
-                    }
-                }
+    public void loadSpawners() {
+        MCRekus.getInstance().getDatabaseManager().getSpawnersAsync((session, spawnerData) -> {
+            for(final SpawnerData data : spawnerData) {
+                final RekusLocation location = data.getLocation();
+                final RekusSpawner spawner = new RekusSpawner(location);
+                spawners.put(location, spawner);
             }
-        }
+        });
     }
 }

@@ -1,5 +1,7 @@
 package dev.isnow.mcrekus.module.impl.spawners.event;
 
+import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.data.SpawnerData;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
@@ -63,6 +65,11 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
             getModule().getSpawners().remove(location);
 
             RekusLogger.debug("Spawner broken at " + location);
+            MCRekus.getInstance().getDatabaseManager().getSpawnerAsync(location, (session, data) -> {
+                if (data != null) {
+                    data.delete(session);
+                }
+            });
         }
     }
 
@@ -79,6 +86,9 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
         getModule().getSpawners().put(location, spawner);
 
         RekusLogger.debug("Spawner placed at " + location);
+
+        final SpawnerData data = new SpawnerData(location);
+        data.save();
     }
 
 }
