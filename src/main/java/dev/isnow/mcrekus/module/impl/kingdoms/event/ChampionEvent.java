@@ -60,8 +60,6 @@ public class ChampionEvent extends ModuleAccessor<KingdomsModule> implements Lis
             }
 
             if ((from.getBlockX() >> 4) != (to.getBlockX() >> 4) || (from.getBlockZ() >> 4) != (to.getBlockZ() >> 4)) {
-                RekusLogger.info(to.getChunk().getX() + " | " + champion.getStartingLocation().getChunk().getX());
-                RekusLogger.info(to.getChunk().getZ() + " | " + champion.getStartingLocation().getChunk().getZ());
                 if (to.getChunk().getChunkKey() == champion.getStartingLocation().getChunk().getChunkKey()) {
                     if (champion.getTeleportationTask() != null) {
                         RekusLogger.debug("Cancelling tp task | chunk re-enter");

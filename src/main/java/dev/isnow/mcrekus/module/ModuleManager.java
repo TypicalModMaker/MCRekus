@@ -63,10 +63,10 @@ public class ModuleManager {
     }
 
     public Module<?> getModuleByName(final String moduleName) {
-        return modules.stream().filter(module -> module.getName().equals(moduleName)).findFirst().orElseThrow(NullPointerException::new);
+        return modules.stream().filter(module -> module.getName().equals(moduleName)).findFirst().orElse(null);
     }
 
     public Module<?> getModuleByClass(final Class<?> clazz) {
-        return modules.stream().filter(module -> module.getClass().getName().equals(clazz.getName())).findFirst().orElseThrow(NullPointerException::new);
+        return modules.stream().filter(module -> module.getClass().getName().equals(clazz.getName())).findFirst().orElse(null);
     }
 }

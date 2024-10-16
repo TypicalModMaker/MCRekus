@@ -50,7 +50,7 @@ public class DelHomeCommand extends BaseCommand {
             data.getHomeLocations().remove(homeName);
             player.sendMessage(ComponentUtil.deserialize(config.getDelHomeMessage(), null, "%home%", homeName));
 
-            MCRekus.getInstance().getDatabaseManager().saveUser(data, session);
+            data.save(session);
         });
     }
 }

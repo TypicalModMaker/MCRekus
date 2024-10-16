@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -18,7 +19,9 @@ public abstract class Module<T extends ModuleConfig> {
     private final String name;
     private final Set<BaseCommand> registeredCommands = new HashSet<>();
     private final Set<Listener> registeredListeners = new HashSet<>();
-    private final T config;
+
+    @Setter
+    private T config;
 
     public Module(final String name) {
         this.name = name;
@@ -27,7 +30,7 @@ public abstract class Module<T extends ModuleConfig> {
     }
 
     @SuppressWarnings("unchecked")
-    private T createConfig() {
+    public T createConfig() {
         try {
             final Class<T> configClass = ReflectionUtil.getGenericTypeClass(this, 0);
             if(configClass == null) {

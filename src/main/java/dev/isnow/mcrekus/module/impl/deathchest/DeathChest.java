@@ -7,6 +7,7 @@ import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -92,11 +93,11 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
 
         final boolean hologramHook = MCRekus.getInstance().getHookManager().isHologramHook();
 
-        if (hologramHook)  {
-            final List<String> hologramList = Arrays.asList(config.getHologram());
+        final SimpleDateFormat sdf = new SimpleDateFormat(config.getTimeFormat());
+        sdf.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
 
-            final SimpleDateFormat sdf = new SimpleDateFormat(config.getTimeFormat());
-            sdf.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        if (hologramHook)  {
+            final List<String> hologramList = new ArrayList<>(Arrays.asList(config.getHologram()));
 
             for (int i = 0; i < hologramList.size(); i++) {
                 String s = hologramList.get(i);
@@ -119,17 +120,7 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
                 time--;
 
                 if(hologramHook) {
-                    final Hologram hologram = DHAPI.getHologram(hologramRandom);
-
-                    if (hologram == null) {
-                        time = 0;
-                        return;
-                    }
-
-                    final List<String> hologramLines = Arrays.asList(config.getHologram());
-
-                    final SimpleDateFormat sdf = new SimpleDateFormat(config.getTimeFormat());
-                    sdf.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+                    final List<String> hologramLines = new ArrayList<>(Arrays.asList(config.getHologram()));
 
                     for (int i = 0; i < hologramLines.size(); i++) {
                         String s = hologramLines.get(i);

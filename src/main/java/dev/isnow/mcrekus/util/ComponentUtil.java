@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -16,23 +17,39 @@ import org.bukkit.entity.Player;
 
 @UtilityClass
 public class ComponentUtil {
+    private final Pattern tinify_pattern = Pattern.compile("<tinify>(.*?)</tinify>");
+    private final Pattern all =  Pattern.compile(".*");
+    private final Pattern right = Pattern.compile(">>");
+    private final Pattern left = Pattern.compile("<<");
+
     private final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER =
             LegacyComponentSerializer.legacyAmpersand().toBuilder()
                     .hexColors()
                     .useUnusualXRepeatedCharacterHexFormat()
                     .build();
+
     private final MiniMessage MINI_MESSAGE = MiniMessage.builder().postProcessor(it ->
             it.replaceText(replacementBuilder -> {
-                replacementBuilder.match(
-                        Pattern.compile(
-                                ".*"
-                        )
-                ).replacement((matchResult, builder) -> LEGACY_COMPONENT_SERIALIZER.deserialize(matchResult.group()));
+                replacementBuilder.match(all).replacement((matchResult, builder) -> LEGACY_COMPONENT_SERIALIZER.deserialize(matchResult.group()));
             }).replaceText(replacementBuilder -> {
-                replacementBuilder.match(Pattern.compile(">>")).replacement("»");
+                replacementBuilder.match(right).replacement("»");
             }).replaceText(replacementBuilder -> {
-                replacementBuilder.match(Pattern.compile("<<")).replacement("«");
-            })).build();
+                replacementBuilder.match(left).replacement("«");
+            })).preProcessor(str -> {
+                final Matcher matcher = tinify_pattern.matcher(str);
+
+                final StringBuilder result = new StringBuilder();
+
+                while (matcher.find()) {
+                    final String innerText = matcher.group(1);
+                    final String tinifiedText = tinifyText(MiniMessage.miniMessage().stripTags(innerText));
+
+                    matcher.appendReplacement(result, Matcher.quoteReplacement(tinifiedText));
+                }
+
+                matcher.appendTail(result);
+                return result.toString();
+            }).build();
 
     public Component deserialize(final String input) {
         return deserialize(input, null);
@@ -96,5 +113,39 @@ public class ComponentUtil {
 
     public String formatLocation(final Location input, final boolean longVersion) {
         return "X: " + input.getBlockX() + (longVersion ? " Y: " + input.getBlockY() : "") + " Z: " + input.getBlockZ();
+    }
+
+    private String tinifyText(String text) {
+        final StringBuilder tinified = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            if (Character.isLetter(c)) {
+                tinified.append(toSmallCaps(c));
+            } else {
+                tinified.append(c);
+            }
+        }
+        return tinified.toString();
+    }
+
+    private char toSmallCaps(char c) {
+        final String smallCaps = "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘꞯʀꜱᴛᴜᴠᴡxʏᴢ";
+
+        c = Character.toLowerCase(c);
+
+        if (c >= 'a' && c <= 'z') {
+            return smallCaps.charAt(c - 'a');
+        }
+
+        return switch (c) {
+            case 'ą' -> 'ᴀ';
+            case 'ć' -> 'ᴄ';
+            case 'ę' -> 'ᴇ';
+            case 'ł' -> 'ᴌ';
+            case 'ń' -> 'ɴ';
+            case 'ó' -> 'ᴏ';
+            case 'ś' -> 's';
+            case 'ź', 'ż' -> 'ᴢ';
+            default -> c;
+        };
     }
 }

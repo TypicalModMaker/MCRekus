@@ -20,7 +20,7 @@ public class DatabaseConfig extends MasterConfig {
     private String database = "mcrekus";
 
     @Comment({"", "The type of the database.", "Available types: MYSQL, MARIADB, H2"})
-    private DatabaseType databaseType = DatabaseType.H2;
+    private DatabaseTypeConfig databaseType = DatabaseTypeConfig.H2;
 
     @Comment({"", "Migrate old json files to the database."})
     private boolean migrate = false;

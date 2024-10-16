@@ -7,7 +7,7 @@ import lombok.Getter;
 import org.hibernate.Session;
 
 @Getter
-public final class ExpiringSession {
+public final class ExpiringSession implements AutoCloseable {
     private final Session session;
     private final int delay;
     private ScheduledFuture<?> scheduledFuture;
@@ -45,5 +45,10 @@ public final class ExpiringSession {
 
     public boolean isOpen() {
         return session.isOpen();
+    }
+
+    @Override
+    public void close() throws Exception {
+        closeSession();
     }
 }

@@ -27,10 +27,7 @@ public class InventoryClickListener extends ModuleAccessor<DeathChestModule> imp
 
         final DeathChest deathChest = getModule().getDeathChests().get(RekusLocation.fromBukkitLocation(chest.getLocation()));
 
-        if (deathChest == null) {
-            RekusLogger.info("DeathChest is null");
-            return;
-        }
+        if (deathChest == null) return;
 
         final long count = Arrays.stream(event.getClickedInventory().getContents()).filter(itemStack -> itemStack != null && itemStack.getType() != Material.AIR).count();
 

@@ -5,6 +5,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.kingdoms.champion.Champion;
 import dev.isnow.mcrekus.module.impl.kingdoms.config.KingdomsConfig;
+import dev.isnow.mcrekus.module.impl.kingdoms.placeholderapi.KingdomsNameExtension;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,9 +24,13 @@ public class KingdomsModule extends Module<KingdomsConfig> {
 
     @Override
     public void onEnable(MCRekus plugin) {
-        if(!plugin.getHookManager().isKingdomsHook()) {
+        if (!plugin.getHookManager().isKingdomsHook()) {
             plugin.getLogger().warning("Kingdoms hook is not enabled, this module will not work.");
             return;
+        }
+
+        if (plugin.getHookManager().isPlaceholerAPIHook()) {
+            new KingdomsNameExtension().register();
         }
 
         entityThreadPool = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setNameFormat("mcrekus-entity-thread-%d").build());

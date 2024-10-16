@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class TeleportUtil {
     public void teleportPlayers(final Player executor, final Player target, final Player destination, final EssentialsConfig config) {
         if (target == null && executor != null) {
-            executor.sendMessage(ComponentUtil.deserialize(config.getTeleportPlayerNotFoundMessage(), null, "%player%", destination));
+            executor.sendMessage(ComponentUtil.deserialize(config.getTeleportPlayerNotFoundMessage(), null));
             return;
         }
 

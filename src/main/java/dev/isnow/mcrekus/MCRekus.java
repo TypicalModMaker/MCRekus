@@ -8,9 +8,13 @@ import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.event.LoginEvent;
 import dev.isnow.mcrekus.event.QuitEvent;
 import dev.isnow.mcrekus.hook.HookManager;
+import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.ModuleManager;
+import dev.isnow.mcrekus.module.impl.timeshop.TimeShopModule;
+import dev.isnow.mcrekus.util.DataUtil;
 import dev.isnow.mcrekus.util.DateUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
+import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import dev.isnow.mcrekus.util.migration.MigrationUtil;
 import io.github.mqzen.menus.Lotus;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -23,6 +27,7 @@ import me.tofaa.entitylib.APIConfig;
 import me.tofaa.entitylib.EntityLib;
 import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter@Setter
@@ -75,7 +80,7 @@ public final class MCRekus extends JavaPlugin {
         databaseManager = new DatabaseManager();
         Thread.currentThread().setContextClassLoader(originalClassLoader);
 
-        if (!databaseManager.isConnected()) {
+        if (!databaseManager.getDatabase().isConnected()) {
             RekusLogger.info("Failed to connect to the database! This plugin won't work without an database.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -90,6 +95,10 @@ public final class MCRekus extends JavaPlugin {
                     RekusLogger.error("Failed to migrate data: " + e.getMessage());
                     e.printStackTrace();
                 }
+            }
+
+            for(final Player player : Bukkit.getOnlinePlayers()) {
+                databaseManager.preloadPlayer(player);
             }
         }
 
@@ -136,16 +145,20 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.info("Disabled modules successfully!");
 
         RekusLogger.info("Saving player data");
-        databaseManager.saveAllUsers();
+        for(final Player onlinePlayer : MCRekus.getInstance().getServer().getOnlinePlayers()) {
+            DataUtil.saveData(onlinePlayer);
+        }
 
         RekusLogger.info("Shutting down database");
-        databaseManager.shutdown();
+        threadPool.shutdown();
+        try {
+            threadPool.awaitTermination(15000, java.util.concurrent.TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ignored) {}
+
+        databaseManager.getDatabase().shutdown();
 
         RekusLogger.info("Shutting down PacketEvents");
         PacketEvents.getAPI().terminate();
-
-        RekusLogger.info("Shutting down thread pool");
-        threadPool.shutdownNow();
 
         final String date = DateUtil.formatElapsedTime((System.currentTimeMillis() - startTime));
         RekusLogger.info("Finished disabling in " + date + " seconds.");

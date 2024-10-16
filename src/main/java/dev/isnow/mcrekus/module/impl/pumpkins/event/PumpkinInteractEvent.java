@@ -65,7 +65,7 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
                 if (userData == null) return;
 
                 if (userData.getPumpkins().stream().anyMatch(pumpkin -> pumpkin.getId() == pumpkinData.getId())) {
-                    RekusLogger.info("Player has already collected this pumpkin");
+                    RekusLogger.debug("Player has already collected this pumpkin");
                     userSession.closeSession();
                     session.closeSession();
                     return;
@@ -73,7 +73,7 @@ public class PumpkinInteractEvent extends ModuleAccessor<PumpkinsModule> impleme
 
                 userData.addPumpkin(pumpkinData);
 
-                databaseManager.saveUser(userData, userSession);
+                userData.save(userSession);
 
                 final PumpkinsConfig config = getModule().getConfig();
 

@@ -6,12 +6,15 @@ import co.aikar.commands.CommandCompletions;
 import co.aikar.commands.PaperCommandManager;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.command.impl.RekusCommand;
+import dev.velix.imperat.BukkitImperat;
 
 public class CommandManager {
 
     private final PaperCommandManager internalCommandManager;
 
     public CommandManager(final MCRekus plugin) {
+        BukkitImperat commandManager = BukkitImperat.create(plugin);
+
         internalCommandManager = new PaperCommandManager(plugin);
         internalCommandManager.getLocales().setDefaultLocale(plugin.getConfigManager().getGeneralConfig().getCommandsLocale().getJavaLocale());
 

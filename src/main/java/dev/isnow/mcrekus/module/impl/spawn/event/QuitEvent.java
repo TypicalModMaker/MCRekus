@@ -17,7 +17,8 @@ public class QuitEvent extends ModuleAccessor<SpawnModule> implements Listener {
 
         MCRekus.getInstance().getDatabaseManager().getUserAsync(event.getPlayer(), (session, data) -> {
             data.setLastLocation(RekusLocation.fromBukkitLocation(event.getPlayer().getLocation()));
-            MCRekus.getInstance().getDatabaseManager().saveUser(data, session);
+
+            data.save(session);
         });
     }
 

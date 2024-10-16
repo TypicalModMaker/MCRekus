@@ -17,16 +17,16 @@ public class PumpkinsConfig extends ModuleConfig {
     }
 
     @Comment({"", "Setup Pumpkins command ON message"})
-    private String setupPumpkinsON = "&aWłączono tryb ustawiania &#FF6300Dyni";
+    private String setupPumpkinsON = "[P] &aWłączono tryb ustawiania &#FF6300Dyni";
 
     @Comment({"", "Setup Pumpkins command OFF message"})
-    private String setupPumpkinsOFF = "&cWyłączono tryb ustawiania &#FF6300Dyni";
+    private String setupPumpkinsOFF = "[P] &cWyłączono tryb ustawiania &#FF6300Dyni";
 
     @Comment({"", "Setup Pumpkin place message"})
-    private String setupPumpkinPlace = "&aUstawiono &#FF6300Dynie";
+    private String setupPumpkinPlace = "[P] &aUstawiono &#FF6300Dynie";
 
     @Comment({"", "Setup Pumpkin remove message"})
-    private String setupPumpkinRemove = "&cUsunięto &#FF6300Dynie";
+    private String setupPumpkinRemove = "[P] &cUsunięto &#FF6300Dynie";
 
     @Comment({"", "Pumpkin interact title"})
     private String pumpkinInteractTitle = "&aZnaleziono &#FF6300Dynie&a!";

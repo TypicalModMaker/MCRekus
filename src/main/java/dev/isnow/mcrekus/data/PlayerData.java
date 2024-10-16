@@ -1,6 +1,9 @@
 package dev.isnow.mcrekus.data;
 
+import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.data.base.BaseData;
+import dev.isnow.mcrekus.module.Module;
+import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import dev.isnow.mcrekus.util.serializer.database.RekusLocationSerializer;
 import jakarta.persistence.Cacheable;
@@ -50,7 +53,11 @@ public class PlayerData extends BaseData {
     @Column(name = "player_time", nullable = false)
     private long time;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @Column(name = "elo", nullable = false)
+    private int elo;
+
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH})
     @JoinTable(
             name = "mcrekus_collected_pumpkins",
             joinColumns = { @JoinColumn(name = "player_id") },
@@ -63,11 +70,21 @@ public class PlayerData extends BaseData {
         this.name = player.getName();
 
         this.lastLocation = RekusLocation.fromBukkitLocation(player.getLocation());
+
+        Module<?> rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
+        if(rankingModule != null) {
+            this.elo = ((RankingModule) rankingModule).getConfig().getDefaultElo();
+        }
     }
 
     public PlayerData(final UUID uuid, final String name) {
         this.uuid = uuid;
         this.name = name;
+
+        Module<?> rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
+        if(rankingModule != null) {
+            this.elo = ((RankingModule) rankingModule).getConfig().getDefaultElo();
+        }
     }
 
     public PlayerData() {}

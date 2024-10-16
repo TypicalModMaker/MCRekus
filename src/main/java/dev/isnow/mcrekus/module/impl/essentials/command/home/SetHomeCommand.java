@@ -65,7 +65,7 @@ public class SetHomeCommand extends BaseCommand {
                 player.playSound(player.getLocation(), config.getSetHomeSound(), 1.0F, 1.0F);
             }
 
-            MCRekus.getInstance().getDatabaseManager().saveUser(data, session);
+            data.save(session);
         });
     }
 }

@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @CommandAlias("bc|broadcast")
 @Description("Command to broadcast message")

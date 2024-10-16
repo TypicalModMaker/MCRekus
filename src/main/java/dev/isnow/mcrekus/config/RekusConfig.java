@@ -3,6 +3,7 @@ package dev.isnow.mcrekus.config;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import dev.isnow.mcrekus.util.Range;
+import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import dev.isnow.mcrekus.util.serializer.config.RangeSerializer;
 import dev.isnow.mcrekus.util.serializer.config.RekusLocationSerializer;
@@ -26,6 +27,7 @@ public abstract class RekusConfig {
 
     public RekusConfig load() {
         if(!path.toFile().exists()) {
+            RekusLogger.debug("Config file " + path.getFileName() + " does not exist, creating...");
             save();
         }
 
@@ -34,6 +36,11 @@ public abstract class RekusConfig {
 
     public <T> void save() {
         YamlConfigurations.save(path, (Class<T>) this.getClass(), (T) this, PROPERTIES);
+    }
+
+    public void delete() {
+        final boolean deleted = path.toFile().delete();
+        RekusLogger.debug("Deleted config file " + path.getFileName() + " (" + deleted + ")");
     }
 
 }

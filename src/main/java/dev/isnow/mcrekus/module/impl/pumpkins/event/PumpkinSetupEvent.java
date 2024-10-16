@@ -1,6 +1,7 @@
 package dev.isnow.mcrekus.module.impl.pumpkins.event;
 
 import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.data.PumpkinData;
 import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.module.ModuleAccessor;
@@ -34,11 +35,9 @@ public class PumpkinSetupEvent extends ModuleAccessor<PumpkinsModule> implements
         player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
         player.sendMessage(ComponentUtil.deserialize(config.getSetupPumpkinPlace()));
 
-        PumpkinData data = new PumpkinData(RekusLocation.fromBukkitLocation(block.getLocation()));
+        final PumpkinData data = new PumpkinData(RekusLocation.fromBukkitLocation(block.getLocation()));
 
-        final DatabaseManager databaseManager = MCRekus.getInstance().getDatabaseManager();
-
-        databaseManager.savePumpkin(data, databaseManager.openSession());
+        data.save();
     }
 
     @EventHandler
@@ -55,14 +54,17 @@ public class PumpkinSetupEvent extends ModuleAccessor<PumpkinsModule> implements
         databaseManager.getPumpkinAsync(RekusLocation.fromBukkitLocation(block.getLocation()), (session, pumpkinData) -> {
             if (pumpkinData == null) return;
 
-            databaseManager.deletePumpkin(pumpkinData, session);
+            for (final PlayerData playerData : pumpkinData.getCollectedPlayers()) {
+                playerData.getPumpkins().remove(pumpkinData);
+                session.getSession().merge(player);
+            }
+
+            pumpkinData.delete(session);
 
             final PumpkinsConfig config = getModule().getConfig();
 
             player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1, 0.1F);
             player.sendMessage(ComponentUtil.deserialize(config.getSetupPumpkinRemove()));
-
-            session.closeSession();
         });
     }
 

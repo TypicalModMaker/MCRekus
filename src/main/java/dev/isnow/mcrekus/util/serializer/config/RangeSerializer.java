@@ -2,8 +2,6 @@ package dev.isnow.mcrekus.util.serializer.config;
 
 import de.exlll.configlib.Serializer;
 import dev.isnow.mcrekus.util.Range;
-import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import java.util.Map;
 
 public class RangeSerializer implements Serializer<Range, String> {
     @Override

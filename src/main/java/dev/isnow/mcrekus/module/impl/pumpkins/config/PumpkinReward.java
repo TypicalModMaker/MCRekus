@@ -4,7 +4,6 @@ import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.util.Range;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

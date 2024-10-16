@@ -6,13 +6,10 @@ import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
 import dev.isnow.mcrekus.module.impl.spawners.progress.ProgressTracker;
 import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.RekusLogger;
-import dev.isnow.mcrekus.util.cooldown.Cooldown;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import java.util.ArrayList;
+import dev.rosewood.rosestacker.api.RoseStackerAPI;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Random;
-import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -39,6 +36,11 @@ public class SpawnersModule extends Module<SpawnersConfig> {
 
     @Override
     public void onEnable(final MCRekus plugin) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("RoseStacker")) {
+            RekusLogger.error("RoseStacker is not enabled! Disabling Spawners module...");
+            return;
+        }
+
         registerCommands("command");
         registerListeners("event");
 

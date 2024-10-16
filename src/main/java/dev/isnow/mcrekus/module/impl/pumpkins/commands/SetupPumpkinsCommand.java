@@ -37,7 +37,8 @@ public class SetupPumpkinsCommand extends BaseCommand {
             databaseManager.getUserAsync(player, (session, user) -> {
                 user.getPumpkins().clear();
 
-                databaseManager.saveUser(user, session);
+                user.save(session);
+
                 player.sendMessage(ComponentUtil.deserialize("&aProgress reset!"));
             });
         } else if(args[0].equalsIgnoreCase("setup")) {

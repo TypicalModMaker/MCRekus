@@ -58,6 +58,8 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
 
         final RekusSpawner spawner = getModule().getSpawners().get(spawnerLocation);
 
+        if (spawner == null) return;
+
         if (!spawner.isBroken()) return;
 
         final String cooldown = spawner.getCooldowns().isOnCooldown(player.getUniqueId());
@@ -94,7 +96,9 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
             progressTracker.setProgress(progressTracker.getProgress() - 1);
             if(progressTracker.getProgress() == -1) {
                 progressTracker.getTask().cancel();
+                spawner.setRepairingPlayer(null);
                 getModule().removeProgressTracker(player);
+
 
                 spawner.addCooldown(player.getUniqueId());
                 player.sendMessage(ComponentUtil.deserialize(config.getFailedToRepairMessage()));
@@ -118,8 +122,7 @@ public class InteractEvent extends ModuleAccessor<SpawnersModule> implements Lis
             progressTracker.getTask().cancel();
             progressTracker.showBar();
             getModule().removeProgressTracker(player);
-
-
+            spawner.setRepairingPlayer(null);
             spawner.repairSpawner();
 
             player.resetTitle();

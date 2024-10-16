@@ -78,7 +78,7 @@ public class MigrationUtil {
             migratedUsers.add(data);
         }
 
-        final ExpiringSession expiringSession = MCRekus.getInstance().getDatabaseManager().openSession(60);
+        final ExpiringSession expiringSession = MCRekus.getInstance().getDatabaseManager().getDatabase().openSession();
 
         Transaction tx = null;
         try {
