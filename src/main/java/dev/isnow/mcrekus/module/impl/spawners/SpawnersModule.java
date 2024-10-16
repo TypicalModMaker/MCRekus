@@ -9,7 +9,9 @@ import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import dev.rosewood.rosestacker.api.RoseStackerAPI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -48,7 +50,12 @@ public class SpawnersModule extends Module<SpawnersConfig> {
             @Override
             public void run() {
 
-                for(final Location location : spawners.values().stream().filter(RekusSpawner::isBroken).map(rekusSpawner -> rekusSpawner.getLocation().toBukkitLocation()).toList()) {
+                List<Location> locations = spawners.values().stream()
+                        .filter(RekusSpawner::isBroken)
+                        .map(rekusSpawner -> rekusSpawner.getLocation().toBukkitLocation())
+                        .collect(Collectors.toList());
+
+                for(final Location location : locations) {
                     for(double z = 0.2; z < 1; z += 0.2) {
                         for(double x = 0.2; x < 1; x += 0.2) {
                             location.getWorld().spawnParticle(org.bukkit.Particle.FLAME, location.clone().add(x, 1, z), 1, 0, 0, 0, 0);

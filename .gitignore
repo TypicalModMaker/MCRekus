@@ -90,3 +90,5 @@ fabric.properties
 
 mcrekus.iml
 Vehicles.jar
+target/
+.idea
