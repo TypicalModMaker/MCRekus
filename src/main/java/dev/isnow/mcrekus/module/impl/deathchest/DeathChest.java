@@ -3,6 +3,7 @@ package dev.isnow.mcrekus.module.impl.deathchest;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.deathchest.config.DeathChestConfig;
+import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
@@ -21,6 +22,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -40,9 +43,18 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
     public BukkitTask particleTask;
     public BukkitTask countdownTask;
 
+    public Inventory inventory;
+
     public Hologram hologram;
 
-    public void setup() {
+    public void setup(final List<ItemStack> items) {
+        inventory = Bukkit.createInventory(null, 36, ComponentUtil.deserialize("&cSkrzynka śmierci gracza <tinify>" + playerName + "</tinify>"));
+
+        for(ItemStack item : items) {
+            if(item == null) continue;
+            inventory.addItem(item);
+        }
+
         final DeathChestConfig config = getModule().getConfig();
 
         time = config.getTime();

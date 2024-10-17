@@ -26,20 +26,11 @@ public class DeathEvent extends ModuleAccessor<DeathChestModule> implements List
         final Block playerBlock = event.getPlayer().getLocation().getBlock();
 
         playerBlock.setType(Material.CHEST);
-        final Chest chest = (Chest) playerBlock.getState();
-
-        for (final ItemStack drop : drops) {
-            if (drop == null) {
-                continue;
-            }
-
-            chest.getInventory().addItem(drop);
-        }
 
         event.getDrops().clear();
 
         final DeathChest deathChest = new DeathChest(event.getPlayer().getName(), playerBlock.getLocation());
-        deathChest.setup();
+        deathChest.setup(drops);
 
         getModule().getDeathChests().put(RekusLocation.fromBukkitLocation(playerBlock.getLocation()), deathChest);
     }

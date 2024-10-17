@@ -6,12 +6,15 @@ import dev.isnow.mcrekus.module.impl.deathchest.DeathChestModule;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import java.util.Arrays;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 
 public class InventoryClickListener extends ModuleAccessor<DeathChestModule> implements Listener {
 
@@ -36,7 +39,17 @@ public class InventoryClickListener extends ModuleAccessor<DeathChestModule> imp
         if ((event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || event.getAction() == InventoryAction.PICKUP_ALL) && count == 1) {
             deathChest.remove();
         }
+    }
 
+    @EventHandler
+    public void onChestOpen(final InventoryOpenEvent event) {
+        if (event.getInventory().getHolder() instanceof Chest chest) {
+            final DeathChest deathChest = getModule().getDeathChests().get(RekusLocation.fromBukkitLocation(chest.getLocation()));
+
+            if (deathChest == null) return;
+
+            event.getPlayer().openInventory(deathChest.getInventory());
+        }
     }
 
 }
