@@ -106,15 +106,15 @@ public final class MCRekus extends JavaPlugin {
             if(!PacketEvents.getAPI().isInitialized()) {
                 RekusLogger.info("Initializing PacketEvents");
                 PacketEvents.getAPI().init();
+
+                SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
+                APIConfig settings = new APIConfig(PacketEvents.getAPI())
+                        .tickTickables()
+                        .trackPlatformEntities()
+                        .usePlatformLogger();
+
+                EntityLib.init(platform, settings);
             }
-
-            SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
-            APIConfig settings = new APIConfig(PacketEvents.getAPI())
-                    .tickTickables()
-                    .trackPlatformEntities()
-                    .usePlatformLogger();
-
-            EntityLib.init(platform, settings);
         } catch (Exception e) {
             RekusLogger.error("Failed to initialize PacketEvents: " + e.getMessage());
         }

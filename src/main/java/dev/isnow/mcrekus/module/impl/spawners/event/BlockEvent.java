@@ -75,7 +75,6 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(final SpawnerStackEvent event) {
-        RekusLogger.info(String.valueOf(event.getStack().getStackSize()));
         if(event.getStack().getStackSize() != 0) {
             return;
         }
