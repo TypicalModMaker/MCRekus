@@ -24,30 +24,26 @@ public class InventoryClickListener extends ModuleAccessor<DeathChestModule> imp
             return;
         }
 
-        if (!(event.getClickedInventory().getHolder() instanceof Chest chest)) {
-            return;
-        }
 
-        final DeathChest deathChest = getModule().getDeathChests().get(RekusLocation.fromBukkitLocation(chest.getLocation()));
+        final DeathChest deathChest = getModule().getDeathChests().values().stream().filter(deathChest1 -> deathChest1.getInventory().equals(event.getClickedInventory())).findFirst().orElse(null);
 
         if (deathChest == null) return;
 
         final long count = Arrays.stream(event.getClickedInventory().getContents()).filter(itemStack -> itemStack != null && itemStack.getType() != Material.AIR).count();
-
-        RekusLogger.info(event.getAction().toString());
 
         if ((event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || event.getAction() == InventoryAction.PICKUP_ALL) && count == 1) {
             deathChest.remove();
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onChestOpen(final InventoryOpenEvent event) {
         if (event.getInventory().getHolder() instanceof Chest chest) {
+
             final DeathChest deathChest = getModule().getDeathChests().get(RekusLocation.fromBukkitLocation(chest.getLocation()));
 
             if (deathChest == null) return;
-
+            event.setCancelled(true);
             event.getPlayer().openInventory(deathChest.getInventory());
         }
     }

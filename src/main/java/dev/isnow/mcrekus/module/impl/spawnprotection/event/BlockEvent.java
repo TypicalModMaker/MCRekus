@@ -55,7 +55,7 @@ public class BlockEvent extends ModuleAccessor<SpawnProtectionModule> implements
         final Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) return;
 
-        if(clickedBlock.getType() == Material.CHEST || clickedBlock.getType() == Material.ENDER_CHEST || clickedBlock.getType() == Material.SHULKER_BOX) return;
+        if(clickedBlock.getType() == Material.BARREL || clickedBlock.getType() == Material.CHEST || clickedBlock.getType() == Material.ENDER_CHEST || clickedBlock.getType() == Material.SHULKER_BOX) return;
 
         if (!getModule().getSpawnCuboid().isIn(clickedBlock)) return;
 

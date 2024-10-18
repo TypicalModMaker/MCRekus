@@ -301,6 +301,14 @@
       </dependency>
 
       <dependency>
+          <groupId>VehiclesWASD</groupId>
+          <artifactId>VehiclesWASD</artifactId>
+          <scope>system</scope>
+          <version>1.0</version>
+          <systemPath>${pom.basedir}/VehiclesWASD.jar</systemPath>
+      </dependency>
+
+      <dependency>
           <groupId>com.github.decentsoftware-eu</groupId>
           <artifactId>decentholograms</artifactId>
           <version>2.8.11</version>
@@ -311,6 +319,20 @@
           <groupId>dev.rosewood</groupId>
           <artifactId>rosestacker</artifactId>
           <version>1.5.28</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>com.github.MilkBowl</groupId>
+          <artifactId>VaultAPI</artifactId>
+          <version>1.7</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot</artifactId>
+          <version>1.20.4-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
   </dependencies>

@@ -26,6 +26,7 @@ import lombok.Setter;
 import me.tofaa.entitylib.APIConfig;
 import me.tofaa.entitylib.EntityLib;
 import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,7 +46,9 @@ public final class MCRekus extends JavaPlugin {
 
     private ExecutorService threadPool;
     private ScheduledExecutorService scheduler;
+
     private Lotus menuAPI;
+    private Economy economy;
 
     @Override
     public void onLoad() {
@@ -73,6 +76,9 @@ public final class MCRekus extends JavaPlugin {
         RekusLogger.info("Loading hooks");
         hookManager = new HookManager();
         menuAPI = Lotus.load(this);
+        if(hookManager.isVaultHook()) {
+            economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+        }
 
         RekusLogger.info("Initializing database connection");
 
@@ -103,18 +109,14 @@ public final class MCRekus extends JavaPlugin {
         }
 
         try {
-            if(!PacketEvents.getAPI().isInitialized()) {
-                RekusLogger.info("Initializing PacketEvents");
-                PacketEvents.getAPI().init();
+            RekusLogger.info("Initializing PacketEvents");
+            PacketEvents.getAPI().init();
 
-                SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
-                APIConfig settings = new APIConfig(PacketEvents.getAPI())
-                        .tickTickables()
-                        .trackPlatformEntities()
-                        .usePlatformLogger();
+            SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(this);
+            APIConfig settings = new APIConfig(PacketEvents.getAPI())
+                    .usePlatformLogger();
 
-                EntityLib.init(platform, settings);
-            }
+            EntityLib.init(platform, settings);
         } catch (Exception e) {
             RekusLogger.error("Failed to initialize PacketEvents: " + e.getMessage());
         }

@@ -27,6 +27,8 @@ public class KillEvent extends ModuleAccessor<RankingModule> implements Listener
 
         final PlayerHit playerHit = getModule().getHitCache().get(player);
 
+        getModule().getHitCache().remove(player);
+
         if (playerHit.isAfterCombat(getModule().getConfig().getCombatLogTime())) return;
 
         getModule().handleKill(player, playerHit.getPlayer());

@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.deathchest.config.DeathChestConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
@@ -22,6 +23,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -50,8 +53,9 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
     public void setup(final List<ItemStack> items) {
         inventory = Bukkit.createInventory(null, 36, ComponentUtil.deserialize("&cSkrzynka śmierci gracza <tinify>" + playerName + "</tinify>"));
 
-        for(ItemStack item : items) {
+        for(final ItemStack item : items) {
             if(item == null) continue;
+            RekusLogger.debug(item.getType().toString());
             inventory.addItem(item);
         }
 
@@ -169,6 +173,10 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
 
         if (hologramHook) {
             hologram.destroy();
+        }
+
+        for(final HumanEntity player : inventory.getViewers()) {
+            player.closeInventory();
         }
 
         getModule().getDeathChests().remove(RekusLocation.fromBukkitLocation(blockLocation));

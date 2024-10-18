@@ -5,12 +5,13 @@ import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.deathchest.config.DeathChestConfig;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 
 @Getter
 public class DeathChestModule extends Module<DeathChestConfig> {
 
-    public final HashMap<RekusLocation, DeathChest> deathChests = new HashMap<>();
+    public final ConcurrentHashMap<RekusLocation, DeathChest> deathChests = new ConcurrentHashMap<>();
 
     public DeathChestModule() {
         super("DeathChest");

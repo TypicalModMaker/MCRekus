@@ -3,7 +3,9 @@ package dev.isnow.mcrekus.module.impl.deathchest.event;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.deathchest.DeathChest;
 import dev.isnow.mcrekus.module.impl.deathchest.DeathChestModule;
+import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,7 +19,7 @@ public class DeathEvent extends ModuleAccessor<DeathChestModule> implements List
 
     @EventHandler
     public void onDeath(final PlayerDeathEvent event) {
-        final List<ItemStack> drops = event.getDrops();
+        final List<ItemStack> drops = new ArrayList<>(event.getDrops());
 
         if (drops.isEmpty()) {
             return;

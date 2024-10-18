@@ -11,6 +11,7 @@ public class HookManager {
     private final boolean kingdomsHook;
     private final boolean vehiclesHook;
     private final boolean hologramHook;
+    private final boolean vaultHook;
 
     public HookManager() {
         placeholerAPIHook = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
@@ -31,6 +32,11 @@ public class HookManager {
         hologramHook = Bukkit.getServer().getPluginManager().getPlugin("DecentHolograms") != null;
         if (hologramHook) {
             RekusLogger.info("Hooking into DecentHolograms");
+        }
+
+        vaultHook = Bukkit.getServer().getPluginManager().getPlugin("Vault") != null;
+        if (vaultHook) {
+            RekusLogger.info("Hooking into Vault");
         }
     }
 }

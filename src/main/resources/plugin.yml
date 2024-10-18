@@ -11,6 +11,7 @@ softdepend:
   - PacketEvents
   - DecentHolograms
   - Kingdoms
+  - Vault
   - RoseStacker
 libraries:
   - org.hibernate:hibernate-core:6.2.8.Final

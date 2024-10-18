@@ -55,7 +55,16 @@ public class BlockEvent extends ModuleAccessor<SpawnersModule> implements Listen
         final SpawnersConfig config = getModule().getConfig();
         final RekusLocation location = RekusLocation.fromBukkitLocation(event.getStack().getLocation());
 
-        final RekusSpawner spawner = getModule().getSpawners().get(location);
+        RekusSpawner spawner = getModule().getSpawners().get(location);
+
+        if (spawner == null) {
+            spawner = new RekusSpawner(location);
+
+            getModule().getSpawners().put(location, spawner);
+
+            final SpawnerData spawnerData = new SpawnerData(location);
+            spawnerData.save();
+        }
 
         if (spawner.isBroken()) {
             player.sendMessage(ComponentUtil.deserialize(config.getCantBreakBrokenSpawnerMessage()));

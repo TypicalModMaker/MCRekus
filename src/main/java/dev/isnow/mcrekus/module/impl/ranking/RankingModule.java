@@ -8,6 +8,7 @@ import dev.isnow.mcrekus.module.impl.ranking.kill.PlayerKill;
 import dev.isnow.mcrekus.module.impl.ranking.placeholderapi.RankingExtension;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class RankingModule extends Module<RankingConfig> {
     private final HashMap<Player, PlayerHit> hitCache = new HashMap<>();
 
     private final HashMap<UUID, LinkedList<PlayerKill>> killCache = new HashMap<>();
+
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.###");
 
     public RankingModule() {
         super("Ranking");
@@ -123,8 +126,7 @@ public class RankingModule extends Module<RankingConfig> {
         player.showTitle(playerTitle);
         killer.showTitle(killerTitle);
 
-
-        final Component message = ComponentUtil.deserialize("<color:#AB1B1B>☠ <hover:show_text:'&e" + playerElo + " &7➡ &e" + newPlayerElo + "'>" + player.getName() + "<reset> &7został zabity przez <color:#1CCB4C>\uD83D\uDDE1 <hover:show_text:'&e" + killerElo + " &7➡ &e" + newKillerElo + "'>" + killer.getName() + "<reset> &7(<color:#AB1B1B>" + killer.getHealth() + "❤&7)");
+        final Component message = ComponentUtil.deserialize("<color:#AB1B1B>☠ <hover:show_text:'&e" + playerElo + " &7➡ &e" + newPlayerElo + "'>" + player.getName() + "<reset> &7został zabity przez <color:#1CCB4C>\uD83D\uDDE1 <hover:show_text:'&e" + killerElo + " &7➡ &e" + newKillerElo + "'>" + killer.getName() + "<reset> &7(<color:#AB1B1B>" + decimalFormat.format(killer.getHealth()) + "❤&7)");
         Bukkit.broadcast(message);
     }
 

@@ -37,4 +37,8 @@ public class RekusLocation {
     public static RekusLocation fromBukkitLocation(Location loc) {
         return new RekusLocation(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw());
     }
+
+    public static RekusLocation fromBukkitLocationTrimmed(Location loc) {
+        return new RekusLocation(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 0, 0);
+    }
 }

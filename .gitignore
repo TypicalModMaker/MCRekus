@@ -90,6 +90,7 @@ fabric.properties
 
 mcrekus.iml
 Vehicles.jar
+VehiclesWASD.jar
 target/
 .idea
 /target/

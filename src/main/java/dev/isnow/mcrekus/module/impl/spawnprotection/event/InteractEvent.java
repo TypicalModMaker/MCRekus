@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -63,7 +64,20 @@ public class InteractEvent extends ModuleAccessor<SpawnProtectionModule> impleme
     }
 
     @EventHandler
-    public void onEntityInteract(PlayerInteractEvent event) {
+    public void onPainting(final HangingBreakByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        if (player.hasPermission("mcrekus.spawnprotection")) return;
+
+        if (!getModule().getSpawnCuboid().isIn(event.getEntity())) return;
+
+        event.setCancelled(true);
+
+        player.sendMessage(ComponentUtil.deserialize(getModule().getConfig().getSpawnBlockInteractMessage()));
+    }
+
+    @EventHandler
+    public void onEntityInteract(final PlayerInteractEvent event) {
         if (event.getAction() != Action.PHYSICAL) return;
 
         if (event.getPlayer().hasPermission("mcrekus.spawnprotection")) return;

@@ -5,12 +5,13 @@ import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.module.impl.ranking.hit.PlayerHit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class QuitEvent extends ModuleAccessor<RankingModule> implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(final PlayerQuitEvent event) {
         final Player player = event.getPlayer();
 

@@ -7,12 +7,13 @@ import dev.isnow.mcrekus.module.impl.timeshop.TimeShopModule;
 import dev.isnow.mcrekus.util.DataUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class QuitEvent implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(final PlayerQuitEvent event) {
         DataUtil.saveData(event.getPlayer());
     }
