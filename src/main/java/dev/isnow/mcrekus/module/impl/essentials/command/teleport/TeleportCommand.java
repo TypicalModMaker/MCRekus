@@ -11,6 +11,7 @@ import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.TeleportUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -32,7 +33,13 @@ public class TeleportCommand extends BaseCommand {
                 player.sendMessage(ComponentUtil.deserialize(config.getTeleportNoArgsMessage()));
                 return;
             case 1:
-                Player target = player.getServer().getPlayer(args[0]);
+                Player target = Bukkit.getPlayer(args[0]);
+
+                if (target == null) {
+                    player.sendMessage(ComponentUtil.deserialize(config.getTeleportPlayerNotFoundMessage(), null, "%player%", args[0]));
+                    return;
+                }
+
                 TeleportUtil.teleportPlayers(player, player, target, config);
                 return;
             case 2:

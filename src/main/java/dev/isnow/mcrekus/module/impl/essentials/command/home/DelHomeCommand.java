@@ -28,7 +28,7 @@ public class DelHomeCommand extends BaseCommand {
         final EssentialsConfig config = moduleAccessor.getModule().getConfig();
 
         if(args.length == 0) {
-            player.sendMessage(ComponentUtil.deserialize(config.getDelHomeMessage()));
+            player.sendMessage(ComponentUtil.deserialize(config.getDelHomeUsageMessage()));
             return;
         }
 

@@ -44,7 +44,7 @@ public class InvseeCommand extends BaseCommand {
         }
 
         final InvseeMenu menu = new InvseeMenu(player, target);
-
+        menu.doRunnable();
         moduleAccessor.getModule().getInvseeMenus().put(target, menu);
         MCRekus.getInstance().getMenuAPI().openMenu(player, menu);
     }

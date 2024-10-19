@@ -80,6 +80,7 @@ public class GamemodeCommand extends BaseCommand {
 
             if (gameMode != null) {
                 target.setGameMode(gameMode);
+                player.setAllowFlight(gameMode == GameMode.CREATIVE || gameMode == GameMode.SPECTATOR);
                 player.sendMessage(ComponentUtil.deserialize(config.getGamemodeChangedOtherMessage(), null, "%gamemode%", getTranslation(gameMode), "%player%", target.getName()));
                 if(config.getGamemodeChangedSound() != null) {
                     player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);

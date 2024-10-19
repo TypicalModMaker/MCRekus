@@ -1,5 +1,6 @@
 package dev.isnow.mcrekus.event.custom;
 
+import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -12,6 +13,7 @@ public class PlayerDropItemSlotEvent extends Event implements Cancellable {
     private final Player player;
     private final ItemStack item;
     private final Inventory inventory;
+    private final DiggingAction action;
     private final int slot;
 
     private boolean cancelled = false;
@@ -26,12 +28,14 @@ public class PlayerDropItemSlotEvent extends Event implements Cancellable {
      * @param player The player dropping the item
      * @param item The ItemStack being dropped
      * @param inventory The inventory that the item was dropped from
+     * @param action The action performed, either DROP_ITEM or DROP_ITEM_STACK
      * @param slot The slot of the item dropped, -1 if cursor
      */
-    public PlayerDropItemSlotEvent(Player player, ItemStack item, Inventory inventory, int slot) {
+    public PlayerDropItemSlotEvent(final Player player, final ItemStack item, final Inventory inventory, final DiggingAction action, final int slot) {
         this.player = player;
         this.item = item;
         this.inventory = inventory;
+        this.action = action;
         this.slot = slot;
     }
 
@@ -78,6 +82,14 @@ public class PlayerDropItemSlotEvent extends Event implements Cancellable {
         return this.slot;
     }
 
+    /**
+     * Get the action performed by the player.
+     * This will be either DROP_ITEM or DROP_ITEM_STACK.
+     * @return DiggingAction
+     */
+    public DiggingAction getAction() {
+        return this.action;
+    }
     /**
      * Whether or not this item dropped is from the player's cursor.
      * @return Is cursor

@@ -1,6 +1,7 @@
 package dev.isnow.mcrekus;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerCommon;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.isnow.mcrekus.command.CommandManager;
@@ -29,6 +30,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.glassfish.jaxb.runtime.v2.runtime.reflect.Lister.Pack;
 
 @Getter@Setter
 public final class MCRekus extends JavaPlugin {
@@ -40,6 +42,7 @@ public final class MCRekus extends JavaPlugin {
     private ModuleManager moduleManager;
     private CommandManager commandManager;
     private DatabaseManager databaseManager;
+    private PacketListenerCommon packetListener;
 
     private boolean shuttingDown;
 
@@ -51,11 +54,15 @@ public final class MCRekus extends JavaPlugin {
 
     @Override
     public void onLoad() {
+//        if(PacketEvents.getAPI().isLoaded() || PacketEvents.getAPI().isInitialized()) {
+//            return;
+//        }
+        packetListener = new RekusPacketListener().asAbstract(PacketListenerPriority.NORMAL);
+
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
 
         PacketEvents.getAPI().load();
-        PacketEvents.getAPI().getEventManager().registerListener(new RekusPacketListener(),
-                PacketListenerPriority.NORMAL);
+        PacketEvents.getAPI().getEventManager().registerListener(packetListener);
     }
 
     @Override
@@ -160,6 +167,7 @@ public final class MCRekus extends JavaPlugin {
         databaseManager.getDatabase().shutdown();
 
         RekusLogger.info("Shutting down PacketEvents");
+        PacketEvents.getAPI().getEventManager().unregisterListener(packetListener);
         PacketEvents.getAPI().terminate();
 
         final String date = DateUtil.formatElapsedTime((System.currentTimeMillis() - startTime));
