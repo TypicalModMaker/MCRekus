@@ -5,7 +5,6 @@ import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

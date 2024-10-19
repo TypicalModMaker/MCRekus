@@ -5,7 +5,6 @@ import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.PortalCreateEvent;
-import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 
 public class PortalEvent extends ModuleAccessor<SpawnProtectionModule> implements Listener {
 

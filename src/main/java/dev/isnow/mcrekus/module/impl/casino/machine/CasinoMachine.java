@@ -22,17 +22,12 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
-import org.bukkit.block.data.Rotatable;
-import org.bukkit.block.data.type.Switch.Face;
 import org.bukkit.craftbukkit.v1_20_R3.block.impl.CraftButtonAbstract;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.material.Attachable;
-import org.bukkit.material.Directional;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.units.qual.A;
 
 @EqualsAndHashCode(callSuper = false)
 @Data

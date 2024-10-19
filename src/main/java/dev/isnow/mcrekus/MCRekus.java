@@ -8,13 +8,10 @@ import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.event.LoginEvent;
 import dev.isnow.mcrekus.event.QuitEvent;
 import dev.isnow.mcrekus.hook.HookManager;
-import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.ModuleManager;
-import dev.isnow.mcrekus.module.impl.timeshop.TimeShopModule;
 import dev.isnow.mcrekus.util.DataUtil;
 import dev.isnow.mcrekus.util.DateUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
-import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import dev.isnow.mcrekus.util.migration.MigrationUtil;
 import io.github.mqzen.menus.Lotus;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -142,14 +139,14 @@ public final class MCRekus extends JavaPlugin {
             return;
         }
 
-        RekusLogger.info("Disabling modules");
-        moduleManager.unloadModules();
-        RekusLogger.info("Disabled modules successfully!");
-
         RekusLogger.info("Saving player data");
         for(final Player onlinePlayer : MCRekus.getInstance().getServer().getOnlinePlayers()) {
             DataUtil.saveData(onlinePlayer);
         }
+
+        RekusLogger.info("Disabling modules");
+        moduleManager.unloadModules();
+        RekusLogger.info("Disabled modules successfully!");
 
         RekusLogger.info("Shutting down database");
         threadPool.shutdown();

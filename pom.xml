@@ -77,7 +77,7 @@
             <configuration>
                 <serverId>update-dev</serverId>
                 <fromFile>target/MCRekus.jar</fromFile>
-                <url>scp://root@${env.BUILD_IP}/home/earthsmp/plugins</url>
+                <url>scp://root@${env.BUILD_IP}/home/earthsmpdev_nowy/plugins</url>
             </configuration>
         </plugin>
     </plugins>
@@ -340,7 +340,7 @@
     <distributionManagement>
         <repository>
             <id>update-dev</id>
-            <url>sftp://root@${env.BUILD_IP}/home/earthsmp/plugins</url>
+            <url>sftp://root@${env.BUILD_IP}/home/earthsmpdev_nowy/plugins</url>
         </repository>
     </distributionManagement>
 </project>

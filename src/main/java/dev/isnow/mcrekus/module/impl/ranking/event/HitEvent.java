@@ -8,7 +8,6 @@ import dev.isnow.mcrekus.module.impl.ranking.hit.PlayerHit;
 import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 

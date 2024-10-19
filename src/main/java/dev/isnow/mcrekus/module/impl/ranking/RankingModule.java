@@ -10,18 +10,16 @@ import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.text.DecimalFormat;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
-import me.clip.placeholderapi.PlaceholderAPI;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
@@ -29,9 +27,12 @@ public class RankingModule extends Module<RankingConfig> {
     private final HashMap<Player, Integer> rankingCache = new HashMap<>();
     private final HashMap<Player, PlayerHit> hitCache = new HashMap<>();
 
-    private final HashMap<UUID, LinkedList<PlayerKill>> killCache = new HashMap<>();
+    private final HashMap<UUID, List<PlayerKill>> killCache = new HashMap<>();
 
     private final DecimalFormat decimalFormat = new DecimalFormat("#.###");
+
+    @Setter
+    private boolean disableKillCache = false;
 
     public RankingModule() {
         super("Ranking");
@@ -61,12 +62,12 @@ public class RankingModule extends Module<RankingConfig> {
         unRegisterListeners();
         unRegisterCommands();
 
-        for(final Player player : Bukkit.getOnlinePlayers()) {
-            MCRekus.getInstance().getDatabaseManager().getUserAsync(player, (session, data) -> {
-                data.setElo(rankingCache.get(player));
-                data.save(session);
-            });
-        }
+//        for(final Player player : Bukkit.getOnlinePlayers()) {
+//            MCRekus.getInstance().getDatabaseManager().getUserAsync(player, (session, data) -> {
+//                data.setElo(rankingCache.get(player));
+//                data.save(session);
+//            });
+//        }
     }
 
     public void handleKill(final Player player, final Player killer) {
@@ -92,7 +93,7 @@ public class RankingModule extends Module<RankingConfig> {
             final PlayerKill foundKill = killCache.get(player.getUniqueId()).stream().filter(kill -> kill.getKiller().equals(killer.getUniqueId())).findFirst().orElse(null);
 
             if(foundKill != null) {
-                if (foundKill.getTime() + (15000 * 60) > System.currentTimeMillis()) {
+                if (!disableKillCache && foundKill.getTime() + (15000 * 60) > System.currentTimeMillis()) {
                     giveRank = false;
                     killer.sendMessage(ComponentUtil.deserialize("[P] <color:#AB1B1B>Zabiłeś gracza, którego pokonałeś w ciągu ostatnich 15 minut. Nie otrzymałeś punktów rankingowych."));
                 } else {

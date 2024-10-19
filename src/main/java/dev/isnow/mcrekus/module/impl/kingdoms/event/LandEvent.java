@@ -2,7 +2,7 @@ package dev.isnow.mcrekus.module.impl.kingdoms.event;
 
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.util.ComponentUtil;
-import dev.isnow.mcrekus.util.RekusLogger;
+import java.time.Duration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,8 +10,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.kingdoms.constants.group.Kingdom;
 import org.kingdoms.constants.land.Land;
 import org.kingdoms.events.lands.LandChangeEvent;
-
-import java.time.Duration;
 
 public class LandEvent implements Listener {
     @EventHandler

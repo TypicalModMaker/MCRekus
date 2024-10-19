@@ -3,7 +3,6 @@ package dev.isnow.mcrekus.module.impl.timeshop;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.timeshop.config.TimeShopConfig;
-import dev.isnow.mcrekus.util.RekusLogger;
 import java.util.HashMap;
 import lombok.Getter;
 import org.bukkit.Bukkit;

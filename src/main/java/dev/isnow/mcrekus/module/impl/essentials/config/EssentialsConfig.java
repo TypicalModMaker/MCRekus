@@ -422,4 +422,10 @@ public class EssentialsConfig extends ModuleConfig {
     @Comment({"", "Bin gui name"})
     private String binGuiName = "&aKosz";
 
+    @Comment({"", "Invsee command usage message"})
+    private String invseeUsageMessage = "[P] &cUżycie: /invsee <gracz>";
+
+    @Comment({"", "Invsee player not found message"})
+    private String invseePlayerNotFoundMessage = "[P] &cGracz %player% nie został znaleziony.";
+
 }

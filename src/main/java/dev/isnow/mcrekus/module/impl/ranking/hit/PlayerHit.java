@@ -1,9 +1,6 @@
 package dev.isnow.mcrekus.module.impl.ranking.hit;
 
-import dev.isnow.mcrekus.MCRekus;
-import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import lombok.Data;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 @Data

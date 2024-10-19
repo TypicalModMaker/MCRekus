@@ -51,11 +51,11 @@ public class HatCommand extends BaseCommand {
         if (targetInventory.getHelmet() != null) {
             inventory.addItem(targetInventory.getHelmet());
             targetInventory.setHelmet(null);
-            player.sendMessage(ComponentUtil.deserialize(config.getOtherNoHatMessage(), null, "%player%", target));
+            player.sendMessage(ComponentUtil.deserialize(config.getOtherNoHatMessage(), null, "%player%", target.getName()));
         } else {
             targetInventory.setHelmet(inventory.getItemInMainHand());
             inventory.setItemInMainHand(null);
-            player.sendMessage(ComponentUtil.deserialize(config.getOtherWoreHatMessage(), null, "%player%", target));
+            player.sendMessage(ComponentUtil.deserialize(config.getOtherWoreHatMessage(), null, "%player%", target.getName()));
         }
 
     }

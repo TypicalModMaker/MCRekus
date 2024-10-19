@@ -28,5 +28,7 @@ public class BreakEvent extends ModuleAccessor<DeathChestModule> implements List
         }
 
         deathChest.remove();
+
+        event.setCancelled(true);
     }
 }

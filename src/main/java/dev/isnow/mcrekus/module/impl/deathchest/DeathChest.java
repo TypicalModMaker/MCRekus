@@ -24,7 +24,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -175,7 +174,9 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
             hologram.destroy();
         }
 
-        for(final HumanEntity player : inventory.getViewers()) {
+        final List<HumanEntity> list = new ArrayList<>(inventory.getViewers());
+
+        for(final HumanEntity player : list) {
             player.closeInventory();
         }
 

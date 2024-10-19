@@ -6,7 +6,6 @@ import dev.isnow.mcrekus.module.impl.casino.CasinoModule;
 import dev.isnow.mcrekus.module.impl.casino.config.CasinoConfig;
 import dev.isnow.mcrekus.module.impl.casino.machine.CasinoMachine;
 import dev.isnow.mcrekus.util.ComponentUtil;
-import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;

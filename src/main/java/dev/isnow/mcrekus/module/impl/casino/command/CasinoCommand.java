@@ -8,15 +8,9 @@ import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.casino.CasinoModule;
 import dev.isnow.mcrekus.module.impl.casino.machine.CasinoMachine;
-import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
-import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 @CommandAlias("setupcasino")

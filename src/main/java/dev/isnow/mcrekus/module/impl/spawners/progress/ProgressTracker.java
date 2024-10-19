@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
+import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -107,6 +108,18 @@ public class ProgressTracker extends ModuleAccessor<SpawnersModule> {
         task = new BukkitRunnable() {
             @Override
             public void run() {
+                if(!player.isOnline()) {
+                    cancel();
+                    final RekusSpawner spawner = getModule().getSpawners().values().stream().filter(rekusSpawner -> rekusSpawner.getRepairingPlayer() == player).findFirst().orElse(null);
+
+                    if(spawner != null) {
+                        spawner.addCooldown(player.getUniqueId());
+                        spawner.setRepairingPlayer(null);
+                    }
+
+                    getModule().removeProgressTracker(player);
+                    return;
+                }
                 updatePosition();
 
                 showTitle();

@@ -1,9 +1,7 @@
 package dev.isnow.mcrekus.module.impl.spawners.event;
 
-import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
-import io.papermc.lib.PaperLib;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;

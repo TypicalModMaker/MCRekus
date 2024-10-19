@@ -1,12 +1,10 @@
 package dev.isnow.mcrekus.util;
 
 import dev.isnow.mcrekus.MCRekus;
-import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.module.impl.timeshop.TimeShopModule;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import javax.xml.stream.Location;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 
@@ -30,7 +28,10 @@ public class DataUtil {
             if(rankingModule != null) {
                 final RankingModule ranking = (RankingModule) rankingModule;
 
-                data.setElo(ranking.getRankingCache().get(player));
+                final int elo = ranking.getRankingCache().get(player);
+                RekusLogger.info("Saving elo: " + elo);
+
+                data.setElo(elo);
                 ranking.getRankingCache().remove(player);
             }
 

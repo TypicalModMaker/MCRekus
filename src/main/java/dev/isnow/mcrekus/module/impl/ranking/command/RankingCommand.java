@@ -7,8 +7,6 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
-import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
-import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import org.bukkit.Sound;
@@ -23,14 +21,22 @@ public class RankingCommand extends BaseCommand {
     private final ModuleAccessor<RankingModule> moduleAccessor = new ModuleAccessor<>(RankingModule.class);
 
     @Default
-    @CommandCompletion("set|add|remove|reset @players [amount]")
+    @CommandCompletion("set|add|remove|reset|disablehitcache @players [amount]")
     public void execute(Player player, String[] args) {
-        if(args.length < 2) {
-            player.sendMessage(ComponentUtil.deserialize("[P] &cUsage: /ranking <set|add|remove|reset> <player> [amount]"));
+        if(args.length < 1) {
+            player.sendMessage(ComponentUtil.deserialize("[P] &cUsage: /ranking <set|add|remove|reset|disablehitcache> <player> [amount]"));
             return;
         }
 
         final String action = args[0];
+
+        if(action.equalsIgnoreCase("disablehitcache")) {
+            final boolean disable = moduleAccessor.getModule().isDisableKillCache();
+            moduleAccessor.getModule().setDisableKillCache(!disable);
+            player.sendMessage(ComponentUtil.deserialize("[P] &aKill cache is now " + (!disable ? "disabled" : "enabled")));
+            return;
+        }
+
         final Player target = player.getServer().getPlayer(args[1]);
         if(target == null) {
             player.sendMessage(ComponentUtil.deserialize("[P] &cPlayer not found!"));

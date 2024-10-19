@@ -3,9 +3,6 @@ package dev.isnow.mcrekus.module.impl.ranking.config;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.module.ModuleConfig;
-import dev.isnow.mcrekus.module.impl.pumpkins.config.PumpkinReward;
-import dev.isnow.mcrekus.util.Range;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 

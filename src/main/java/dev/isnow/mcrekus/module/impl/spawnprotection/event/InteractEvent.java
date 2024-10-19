@@ -65,7 +65,7 @@ public class InteractEvent extends ModuleAccessor<SpawnProtectionModule> impleme
 
     @EventHandler
     public void onPainting(final HangingBreakByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(event.getRemover() instanceof Player player)) return;
 
         if (player.hasPermission("mcrekus.spawnprotection")) return;
 
