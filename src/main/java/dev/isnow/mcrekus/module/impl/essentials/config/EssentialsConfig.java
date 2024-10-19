@@ -428,4 +428,10 @@ public class EssentialsConfig extends ModuleConfig {
     @Comment({"", "Invsee player not found message"})
     private String invseePlayerNotFoundMessage = "[P] &cGracz %player% nie został znaleziony.";
 
+    @Comment({"", "Invsee gui name"})
+    private String invseeGuiName = "&aEkwipunek gracza %player%";
+
+    @Comment({"", "Invsee already open message"})
+    private String invseeAlreadyOpenMessage = "[P] &cGracz %player% ma już otwarty ekwipunek przez innego administratora.";
+
 }

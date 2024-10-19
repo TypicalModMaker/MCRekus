@@ -1,6 +1,5 @@
 package dev.isnow.mcrekus.module.impl.kingdoms.event;
 
-import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

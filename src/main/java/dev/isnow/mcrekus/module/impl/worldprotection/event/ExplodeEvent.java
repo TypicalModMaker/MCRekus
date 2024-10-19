@@ -6,6 +6,7 @@ import dev.isnow.mcrekus.module.impl.worldprotection.config.WorldProtectionConfi
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +24,7 @@ public class ExplodeEvent extends ModuleAccessor<WorldProtectionModule> implemen
             case TNTPrimed tntPrimed when config.isDisableTNTExplosion() -> event.setCancelled(true);
             case ExplosiveMinecart explosiveMinecart when config.isDisableTNTMinecartExplosion() -> event.setCancelled(true);
             case Fireball fireball when config.isDisableFireballExplosion() -> event.setCancelled(true);
+            case WitherSkull skull when config.isDisableWitherSkullExplosion() -> event.setCancelled(true);
             default -> {}
         }
 

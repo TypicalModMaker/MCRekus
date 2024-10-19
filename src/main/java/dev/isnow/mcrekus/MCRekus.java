@@ -1,6 +1,7 @@
 package dev.isnow.mcrekus;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.isnow.mcrekus.command.CommandManager;
 import dev.isnow.mcrekus.config.ConfigManager;
@@ -9,6 +10,7 @@ import dev.isnow.mcrekus.event.LoginEvent;
 import dev.isnow.mcrekus.event.QuitEvent;
 import dev.isnow.mcrekus.hook.HookManager;
 import dev.isnow.mcrekus.module.ModuleManager;
+import dev.isnow.mcrekus.packet.RekusPacketListener;
 import dev.isnow.mcrekus.util.DataUtil;
 import dev.isnow.mcrekus.util.DateUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
@@ -52,6 +54,8 @@ public final class MCRekus extends JavaPlugin {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
 
         PacketEvents.getAPI().load();
+        PacketEvents.getAPI().getEventManager().registerListener(new RekusPacketListener(),
+                PacketListenerPriority.NORMAL);
     }
 
     @Override

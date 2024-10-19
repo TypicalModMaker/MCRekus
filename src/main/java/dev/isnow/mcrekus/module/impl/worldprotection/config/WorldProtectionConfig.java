@@ -40,4 +40,7 @@ public class WorldProtectionConfig extends ModuleConfig {
 
     @Comment({"", "Disable storm"})
     private boolean disableStorm = true;
+
+    @Comment({"", "Disable wither skull explosion"})
+    private boolean disableWitherSkullExplosion = true;
 }
