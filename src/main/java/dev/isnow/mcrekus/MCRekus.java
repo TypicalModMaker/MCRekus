@@ -144,15 +144,14 @@ public final class MCRekus extends JavaPlugin {
             DataUtil.saveData(onlinePlayer);
         }
 
-        RekusLogger.info("Disabling modules");
-        moduleManager.unloadModules();
-        RekusLogger.info("Disabled modules successfully!");
-
-        RekusLogger.info("Shutting down database");
+        RekusLogger.info("Shutting down thread pool");
         threadPool.shutdown();
         try {
             threadPool.awaitTermination(15000, java.util.concurrent.TimeUnit.MILLISECONDS);
         } catch (InterruptedException ignored) {}
+        RekusLogger.info("Disabling modules");
+        moduleManager.unloadModules();
+        RekusLogger.info("Disabled modules successfully!");
 
         databaseManager.getDatabase().shutdown();
 
