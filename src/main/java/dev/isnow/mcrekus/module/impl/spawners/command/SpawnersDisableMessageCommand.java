@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("spawnersdisablemessage|spawner")
 @Description("Command to manage spawners")
-@CommandPermission("mcrekus.spawners")
+@CommandPermission("mcrekus.spawner")
 @SuppressWarnings("unused")
 public class SpawnersDisableMessageCommand extends BaseCommand {
 
