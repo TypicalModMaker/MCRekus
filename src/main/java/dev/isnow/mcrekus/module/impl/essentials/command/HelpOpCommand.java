@@ -46,5 +46,6 @@ public class HelpOpCommand extends BaseCommand {
                 .forEach(p -> p.sendMessage(ComponentUtil.deserialize(config.getHelpopMessage(), player, "%message%", message, "%player%", player.getName())));
 
         player.sendMessage(ComponentUtil.deserialize(config.getHelpopMessageSentMessage()));
+        cooldown.addCooldown(player.getUniqueId());
     }
 }
