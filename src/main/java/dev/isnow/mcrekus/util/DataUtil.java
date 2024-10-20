@@ -29,7 +29,7 @@ public class DataUtil {
                 final RankingModule ranking = (RankingModule) rankingModule;
 
                 final int elo = ranking.getRankingCache().get(player);
-                RekusLogger.info("Saving elo: " + elo);
+                RekusLogger.debug("Saving elo: " + elo);
 
                 data.setElo(elo);
                 ranking.getRankingCache().remove(player);

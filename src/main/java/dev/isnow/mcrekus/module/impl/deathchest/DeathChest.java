@@ -50,7 +50,7 @@ public class DeathChest extends ModuleAccessor<DeathChestModule> {
     public Hologram hologram;
 
     public void setup(final List<ItemStack> items) {
-        inventory = Bukkit.createInventory(null, 36, ComponentUtil.deserialize("&cSkrzynka śmierci gracza <tinify>" + playerName + "</tinify>"));
+        inventory = Bukkit.createInventory(null, 45, ComponentUtil.deserialize("&cSkrzynka śmierci gracza <tinify>" + playerName + "</tinify>"));
 
         for(final ItemStack item : items) {
             if(item == null) continue;

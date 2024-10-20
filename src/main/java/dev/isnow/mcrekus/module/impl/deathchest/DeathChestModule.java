@@ -17,12 +17,12 @@ public class DeathChestModule extends Module<DeathChestConfig> {
     }
 
     @Override
-    public void onEnable(MCRekus plugin) {
+    public void onEnable(final MCRekus plugin) {
         registerListeners("event");
     }
 
     @Override
-    public void onDisable(MCRekus plugin) {
+    public void onDisable(final MCRekus plugin) {
         unRegisterListeners();
 
         for(final DeathChest deathChest : deathChests.values()) {
