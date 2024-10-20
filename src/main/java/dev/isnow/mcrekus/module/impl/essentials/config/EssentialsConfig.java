@@ -39,7 +39,7 @@ public class EssentialsConfig extends ModuleConfig {
     @Comment({"", "Home delay time (in seconds)"})
     private int homeDelayTime = 5;
 
-    @Comment({"", "Helpop use cooldown time (in seconds"})
+    @Comment({"", "Helpop use cooldown time (in seconds)"})
     private int helpopCooldownTime = 60;
 
     @Comment({"", "Max allowed homes by default"})
@@ -112,7 +112,7 @@ public class EssentialsConfig extends ModuleConfig {
     private String repairUsageMessage = "[P] &cUżycie: /repair [all]";
 
     @Comment({"", "Repair cooldown message"})
-    private String repairCooldownMessage = "[P] &cMusisz poczekać %time% sekund przed kolejnym naprawieniem.";
+    private String repairCooldownMessage = "[P] &cMusisz odczekać %time% sekund przed kolejnym naprawieniem.";
 
     @Comment({"", "Repair no permission message"})
     private String repairNoPermissionMessage = "[P] &cNie masz uprawnień do naprawiania wszystkich przedmiotów.";
@@ -162,7 +162,7 @@ public class EssentialsConfig extends ModuleConfig {
     private String tpaRequestReceivedMessage = "[P] &aOtrzymano prośbę o teleportację od gracza &e%player%&a. Czas na odpowiedź: %time% sekund.";
 
     @Comment({"", "TPA cooldown message"})
-    private String tpaCooldownMessage = "[P] &cMusisz poczekać %time% sekund przed kolejnym zapytaniem.";
+    private String tpaCooldownMessage = "[P] &cMusisz odczekać %time% sekund przed kolejnym zapytaniem.";
 
     @Comment({"", "TPA request expired message"})
     private String tpaRequestExpiredSenderMessage = "[P] &cProśba o teleportację do %player% wygasła.";
@@ -207,7 +207,7 @@ public class EssentialsConfig extends ModuleConfig {
     private String helpopMessageSentMessage = "[P] &aWiadomość została wysłana do administracji.";
 
     @Comment({"", "Helpop cooldown message"})
-    private String helpopCooldownMessage = "[P] &cMusisz poczekać %time% sekund przed kolejnym wysłaniem wiadomości.";
+    private String helpopCooldownMessage = "[P] &cMusisz odczekać %time% sekund przed kolejnym wysłaniem wiadomości.";
 
     @Comment({"", "Helpop message"})
     private String helpopMessage = "[P] &c[HELP] &f%player%: %message%";
@@ -434,4 +434,15 @@ public class EssentialsConfig extends ModuleConfig {
     @Comment({"", "Invsee already open message"})
     private String invseeAlreadyOpenMessage = "[P] &cGracz %player% ma już otwarty ekwipunek przez innego administratora.";
 
+    @Comment({"", "BanXray usage message"})
+    private String banXrayUsageMessage = "[P] &cUżycie: /banxray <gracz> <reszta argumentów z /ban>";
+
+    @Comment({"", "BanXray player not found message"})
+    private String banXrayPlayerNotFoundMessage = "[P] &cGracz %player% nie został znaleziony.";
+
+    @Comment({"", "BanXray success message"})
+    private String banXraySuccessMessage = "[P] &aWyczyszczono i zbanowano gracza %player%.";
+
+    @Comment({"", "BanXray not successful message"})
+    private String banXrayNotSuccessfulMessage = "[P] &cNie udało się wyczyścić i zbanować gracza %player%.";
 }

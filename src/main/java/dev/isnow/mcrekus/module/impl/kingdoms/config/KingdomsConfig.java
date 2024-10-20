@@ -28,4 +28,7 @@ public class KingdomsConfig extends ModuleConfig {
 
     @Comment("Invasion player list message for allies")
     private String invasionPlayerListMessageAlly = "&#66FB5FKrólestwa &8» &fJesteś pomocnikiem w inwazji na królestwo &#961E1E%kingdom_name% &ftwoim dowódcą jest: &#66FB5F%player%";
+
+    @Comment("Cant explode bed in nether message")
+    private String kingdomsBedMessage = "[P] &cNie możesz eksplodować łóżek w Netherze!";
 }

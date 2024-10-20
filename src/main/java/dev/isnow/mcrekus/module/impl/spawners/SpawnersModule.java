@@ -8,6 +8,7 @@ import dev.isnow.mcrekus.module.impl.spawners.progress.ProgressTracker;
 import dev.isnow.mcrekus.module.impl.spawners.spawners.RekusSpawner;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -28,6 +29,7 @@ public class SpawnersModule extends Module<SpawnersConfig> {
     }
 
     private final HashMap<Player, ProgressTracker> playerTasks = new HashMap<>();
+    private final List<Player> spawnersMessageDisabled = new ArrayList<>();
     private final HashMap<RekusLocation, RekusSpawner> spawners = new HashMap<>();
 
     private BukkitTask particleTask;

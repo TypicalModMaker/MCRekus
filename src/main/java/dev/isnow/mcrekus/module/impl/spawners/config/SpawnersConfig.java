@@ -31,4 +31,10 @@ public class SpawnersConfig extends ModuleConfig {
     private String repairingDifferentSpawnerMessage = "[P] &cAktualnie naprawiasz inny spawner!";
 
     private String cantBreakSpawnerMessage = "[P] &cNie możesz zniszczyć tego spawnera!";
+
+    private String spawnerBrokenMessage = "[P] &cSpawner na twoim chunku zepsuł się! <newline>[P] &cNapraw go, klikając na niego prawym przyciskiem myszy.";
+
+    private String spawnerMessageTurnedOn = "[P] &aWłączyłeś wiadomości o spawnerach!";
+
+    private String spawnerMessageTurnedOff = "[P] &cWyłączyłeś wiadomości o spawnerach!";
 }

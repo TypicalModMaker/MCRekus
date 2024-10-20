@@ -8,6 +8,9 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class BreakEvent extends ModuleAccessor<DeathChestModule> implements Listener {
@@ -30,5 +33,25 @@ public class BreakEvent extends ModuleAccessor<DeathChestModule> implements List
         deathChest.remove();
 
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onExplode(final BlockExplodeEvent event) {
+        event.blockList().forEach(block -> {
+            if (block.getType() != Material.CHEST) return;
+
+            final DeathChest deathChest = getModule().getDeathChests().get(RekusLocation.fromBukkitLocation(block.getLocation()));
+
+            if (deathChest == null) return;
+
+            for(final ItemStack item : deathChest.getInventory().getContents()) {
+                if(item == null) continue;
+
+                block.getWorld().dropItemNaturally(block.getLocation(), item);
+                deathChest.getInventory().remove(item);
+            }
+
+            deathChest.remove();
+        });
     }
 }

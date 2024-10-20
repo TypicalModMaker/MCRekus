@@ -1,6 +1,8 @@
 package dev.isnow.mcrekus.util.cuboid;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,13 +10,20 @@ import org.bukkit.World;
 
 @Data
 @ToString
+@EqualsAndHashCode
 public class RekusLocation {
-    public final String world;
+    @Setter
+    public String world;
+
     public final double x, y, z;
     public final float pitch, yaw;
 
     public RekusLocation(World world, double x, double y, double z, float pitch, float yaw) {
-        this.world = world.getName();
+        if(world == null) {
+            this.world = "";
+        } else {
+            this.world = world.getName();
+        }
         this.x = x;
         this.y = y;
         this.z = z;
