@@ -1,4 +1,4 @@
-package dev.isnow.mcrekus.module.impl.essentials.command;
+package dev.isnow.mcrekus.module.impl.xray.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -10,6 +10,8 @@ import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
+import dev.isnow.mcrekus.module.impl.xray.XrayModule;
+import dev.isnow.mcrekus.module.impl.xray.config.XrayConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,12 +23,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 @SuppressWarnings("unused")
 public class BanXrayCommand extends BaseCommand {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    private final ModuleAccessor<XrayModule> moduleAccessor = new ModuleAccessor<>(XrayModule.class);
 
     @Default
     @CommandCompletion("@players [Czas]")
     public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final XrayConfig config = moduleAccessor.getModule().getConfig();
 
         if(args.length == 0) {
             player.sendMessage(ComponentUtil.deserialize(config.getBanXrayUsageMessage()));

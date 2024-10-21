@@ -445,4 +445,10 @@ public class EssentialsConfig extends ModuleConfig {
 
     @Comment({"", "BanXray not successful message"})
     private String banXrayNotSuccessfulMessage = "[P] &cNie udało się wyczyścić i zbanować gracza %player%.";
+
+    @Comment({"", "Riptide cooldown in seconds"})
+    private int riptideCooldown = 15;
+
+    @Comment({"", "Riptide cooldown message"})
+    private String riptideCooldownMessage = "[P] &cMusisz odczekać %time% sekund przed kolejnym użyciem trójzębu.";
 }
