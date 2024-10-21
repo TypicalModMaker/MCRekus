@@ -5,9 +5,16 @@ import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerCommon;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Client;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import dev.isnow.mcrekus.event.custom.PlayerDropItemSlotEvent;
 import dev.isnow.mcrekus.util.RekusLogger;
 import org.bukkit.Bukkit;
@@ -33,6 +40,26 @@ public class RekusPacketListener implements PacketListener {
                 Bukkit.getPluginManager().callEvent(customEvent);
                 if (customEvent.isCancelled()) event.setCancelled(true);
             }
+        }
+    }
+
+    @Override
+    public void onPacketSend(final PacketSendEvent event) {
+        final Player player = event.getPlayer();
+
+        if (player == null) return;
+
+        if (event.getPacketType() == Server.SPAWN_ENTITY) {
+            final WrapperPlayServerSpawnEntity wrapper = new WrapperPlayServerSpawnEntity(event);
+
+            if (wrapper.getClientVersion() == ClientVersion.V_1_20_3) return;
+
+            if (wrapper.getEntityType() != EntityTypes.GOAT) return;
+
+            if (wrapper.getData() != 0 || wrapper.getHeadYaw() != 0 || wrapper.getYaw() != 0 || wrapper.getPitch() != 0) return;
+
+            RekusLogger.debug("Cancelling crash packet");
+            event.setCancelled(true);
         }
     }
 

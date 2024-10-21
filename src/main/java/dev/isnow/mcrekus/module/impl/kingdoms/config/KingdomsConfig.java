@@ -31,4 +31,7 @@ public class KingdomsConfig extends ModuleConfig {
 
     @Comment("Cant explode bed in nether message")
     private String kingdomsBedMessage = "[P] &cNie możesz eksplodować łóżek w Netherze!";
+
+    @Comment("Cant place mines message")
+    private String cantPlaceMinesMessage = "[P] &cNie możesz umieszczać min jako pacyfista!";
 }
