@@ -6,29 +6,19 @@ import dev.isnow.mcrekus.module.impl.kingdoms.KingdomsModule;
 import dev.isnow.mcrekus.module.impl.kingdoms.config.KingdomsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import jdk.jfr.Enabled;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.kingdoms.constants.group.Kingdom;
 import org.kingdoms.constants.land.Land;
 import org.kingdoms.constants.land.abstraction.KingdomItem;
 import org.kingdoms.constants.land.location.SimpleLocation;
-import org.kingdoms.constants.land.structures.Structure;
 import org.kingdoms.constants.land.turrets.Turret;
 import org.kingdoms.constants.player.KingdomPlayer;
-import org.kingdoms.events.items.KingdomItemBreakEvent;
 import org.kingdoms.events.items.KingdomItemPlaceEvent;
 import org.kingdoms.events.items.KingdomItemRemoveContext;
 
@@ -36,8 +26,11 @@ public class MineEvent extends ModuleAccessor<KingdomsModule> implements Listene
 
     @EventHandler
     public void onBlockPlace(final KingdomItemPlaceEvent<? extends KingdomItem<?>> event) {
+        if(event.getBukkitEvent() == null) return;
+
         final BlockPlaceEvent blockPlaceEvent = (BlockPlaceEvent) event.getBukkitEvent();
         RekusLogger.debug("BlockPlaceEvent");
+
 
         final Player player = blockPlaceEvent.getPlayer();
         if (player.hasPermission("mcrekus.mine.bypass")) return;

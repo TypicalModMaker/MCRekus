@@ -12,7 +12,9 @@ softdepend:
   - DecentHolograms
   - Kingdoms
   - Vault
+  - DeluxeCoinflip
   - RoseStacker
+  - NoteBlockAPI
   - OreAnnouncer
 libraries:
   - org.hibernate:hibernate-core:6.2.8.Final

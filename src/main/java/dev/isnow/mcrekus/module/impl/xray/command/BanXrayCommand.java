@@ -8,8 +8,6 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
-import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
-import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.module.impl.xray.XrayModule;
 import dev.isnow.mcrekus.module.impl.xray.config.XrayConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;

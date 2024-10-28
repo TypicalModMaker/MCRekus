@@ -14,7 +14,6 @@ import me.micartey.webhookly.embeds.EmbedObject;
 import me.micartey.webhookly.embeds.Thumbnail;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
 
 public class XrayAlertEvent extends ModuleAccessor<XrayModule> implements Listener {
 
@@ -49,7 +48,7 @@ public class XrayAlertEvent extends ModuleAccessor<XrayModule> implements Listen
 
         embed.setDescription("test");
         embed.setDescription(
-                "> Wykopał **" + totalBlocks + "** debrisu w ciągu **" + formatElapsed(elapsedTime) + "**!\\n" +
+                "> Wykopał **" + totalBlocks + "** debrisu w ciągu **" + DurationUtils.formatElapsed(elapsedTime) + "**!\\n" +
                 "\\n" +
                 "> Kordynaty:\\n" +
                 "> X: " + (int) location.getX() + "\\n" +
@@ -67,14 +66,5 @@ public class XrayAlertEvent extends ModuleAccessor<XrayModule> implements Listen
         embed.setThumbnail(new Thumbnail("https://mc-heads.net/head/" + player.getPlayerUUID()));
 
         return embed;
-    }
-
-    private String formatElapsed(long timestamp) {
-        return DurationUtils.formatWith(
-                (System.currentTimeMillis() / 1000L) - timestamp,
-                "H' godzin'",
-                "m' minut'",
-                "s' sekund'"
-        );
     }
 }

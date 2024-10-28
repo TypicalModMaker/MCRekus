@@ -2,7 +2,6 @@ package dev.isnow.mcrekus.data;
 
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.data.base.BaseData;
-import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import dev.isnow.mcrekus.util.serializer.database.RekusLocationSerializer;
@@ -71,9 +70,9 @@ public class PlayerData extends BaseData {
 
         this.lastLocation = RekusLocation.fromBukkitLocation(player.getLocation());
 
-        Module<?> rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
+        RankingModule rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
         if(rankingModule != null) {
-            this.elo = ((RankingModule) rankingModule).getConfig().getDefaultElo();
+            this.elo = rankingModule.getConfig().getDefaultElo();
         }
     }
 
@@ -81,9 +80,9 @@ public class PlayerData extends BaseData {
         this.uuid = uuid;
         this.name = name;
 
-        Module<?> rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
+        RankingModule rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
         if(rankingModule != null) {
-            this.elo = ((RankingModule) rankingModule).getConfig().getDefaultElo();
+            this.elo = rankingModule.getConfig().getDefaultElo();
         }
     }
 

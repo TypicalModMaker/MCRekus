@@ -7,7 +7,6 @@ import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.isnow.mcrekus.util.cooldown.Cooldown;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
-import eu.decentsoftware.holograms.api.holograms.Hologram;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;

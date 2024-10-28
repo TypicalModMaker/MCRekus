@@ -68,6 +68,24 @@ public class DurationUtils {
         return format(tokens, 0, 0, days, hours, minutes, seconds, milliseconds);
     }
 
+    public static String formatRemaining(final long duration) {
+        return DurationUtils.formatWith(
+                duration,
+                "H' godzin'",
+                "m' minut'",
+                "s' sekund'"
+        );
+    }
+
+    public static String formatElapsed(final long timestamp) {
+        return DurationUtils.formatWith(
+                (System.currentTimeMillis() / 1000L) - timestamp,
+                "H' godzin'",
+                "m' minut'",
+                "s' sekund'"
+        );
+    }
+
     public static String format(long durationSeconds, String format) {
         ArrayList<Token> tokens = parse(format);
         long remainingDuration = durationSeconds;
@@ -111,12 +129,24 @@ public class DurationUtils {
                 buffer.append(days);
             } else if (token.getValue() == Tokens.HOURS) {
                 buffer.append(hours);
+                if(hours == 1) {
+                    buffer.append("a");
+                }
             } else if (token.getValue() == Tokens.MINUTES) {
                 buffer.append(minutes);
+                if(minutes == 1) {
+                    buffer.append("a");
+                }
             } else if (token.getValue() == Tokens.SECONDS) {
                 buffer.append(seconds);
+                if(seconds == 1) {
+                    buffer.append("a");
+                }
             } else if (token.getValue() == Tokens.MILLISECONDS) {
                 buffer.append(milliseconds);
+                if(milliseconds == 1) {
+                    buffer.append("a");
+                }
             }
         }
         return buffer.toString();

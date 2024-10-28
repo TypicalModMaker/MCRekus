@@ -32,15 +32,15 @@ public class ChampionEvent extends ModuleAccessor<KingdomsModule> implements Lis
 
     @EventHandler
     public void onMove(final EntityMoveEvent event) {
-        getModule().getEntityThreadPool().execute(() -> {
+        final LivingEntity entity = event.getEntity();
+        if(!getModule().getChampions().containsKey(entity.getEntityId())) {
+            return;
+        }
 
-            final LivingEntity entity = event.getEntity();
+        getModule().getEntityThreadPool().execute(() -> {
             final Location from = event.getFrom();
             final Location to = event.getTo();
 
-            if(!getModule().getChampions().containsKey(entity.getEntityId())) {
-                return;
-            }
 
             final Champion champion = getModule().getChampions().get(entity.getEntityId());
 

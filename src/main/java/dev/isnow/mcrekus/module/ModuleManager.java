@@ -62,11 +62,15 @@ public class ModuleManager {
         });
     }
 
-    public Module<?> getModuleByName(final String moduleName) {
-        return modules.stream().filter(module -> module.getName().equals(moduleName)).findFirst().orElse(null);
+    public <T> T getModuleByName(final String moduleName) {
+        final Module<?> foundModule = modules.stream().filter(module -> module.getName().equals(moduleName)).findFirst().orElse(null);;
+
+        return foundModule != null ? (T) foundModule : null;
     }
 
-    public Module<?> getModuleByClass(final Class<?> clazz) {
-        return modules.stream().filter(module -> module.getClass().getName().equals(clazz.getName())).findFirst().orElse(null);
+    public <T> T getModuleByClass(final Class<T> clazz) {
+        final Module<?> foundModule = modules.stream().filter(module -> module.getClass().equals(clazz)).findFirst().orElse(null);
+
+        return foundModule != null ? (T) foundModule : null;
     }
 }

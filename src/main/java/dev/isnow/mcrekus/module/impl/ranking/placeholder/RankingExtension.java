@@ -1,4 +1,4 @@
-package dev.isnow.mcrekus.module.impl.ranking.placeholderapi;
+package dev.isnow.mcrekus.module.impl.ranking.placeholder;
 
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
@@ -25,7 +25,7 @@ public class RankingExtension extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(final Player player, final String identifier) {
         if(identifier.equals("elo")) {
-            final RankingModule rankingModule = (RankingModule) MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
+            final RankingModule rankingModule = MCRekus.getInstance().getModuleManager().getModuleByName("Ranking");
 
             return String.valueOf(rankingModule.getRankingCache().get(player));
         }

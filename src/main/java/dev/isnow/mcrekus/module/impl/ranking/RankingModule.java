@@ -5,7 +5,7 @@ import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.impl.ranking.config.RankingConfig;
 import dev.isnow.mcrekus.module.impl.ranking.hit.PlayerHit;
 import dev.isnow.mcrekus.module.impl.ranking.kill.PlayerKill;
-import dev.isnow.mcrekus.module.impl.ranking.placeholderapi.RankingExtension;
+import dev.isnow.mcrekus.module.impl.ranking.placeholder.RankingExtension;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.text.DecimalFormat;
@@ -40,11 +40,6 @@ public class RankingModule extends Module<RankingConfig> {
 
     @Override
     public void onEnable(final MCRekus plugin) {
-        if(!MCRekus.getInstance().getHookManager().isPlaceholerAPIHook()) {
-            RekusLogger.info("PlaceholderAPI not found, Ranking will not work.");
-            return;
-        }
-
         for(final Player player : Bukkit.getOnlinePlayers()) {
             MCRekus.getInstance().getDatabaseManager().getUserAsync(player, (session, data) -> {
                 rankingCache.put(player, data.getElo());
@@ -53,6 +48,10 @@ public class RankingModule extends Module<RankingConfig> {
 
         registerListeners("event");
         registerCommands("command");
+
+        if(!MCRekus.getInstance().getHookManager().isPlaceholerAPIHook()) {
+            return;
+        }
 
         new RankingExtension().register();
     }

@@ -5,7 +5,6 @@ import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.module.ModuleConfig;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Sound;
 
 @Getter
 @Setter

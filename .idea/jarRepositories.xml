@@ -57,6 +57,11 @@
       <option name="url" value="https://repo.aikar.co/content/groups/aikar/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="alessiodp-repo" />
+      <option name="name" value="alessiodp-repo" />
+      <option name="url" value="https://repo.alessiodp.com/releases/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />

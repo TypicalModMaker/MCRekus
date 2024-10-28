@@ -1,7 +1,6 @@
 package dev.isnow.mcrekus.module.impl.ranking.event;
 
 import dev.isnow.mcrekus.MCRekus;
-import dev.isnow.mcrekus.module.Module;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.module.impl.ranking.hit.PlayerHit;
@@ -19,11 +18,10 @@ public class HitEvent extends ModuleAccessor<RankingModule> implements Listener 
 
         if (!(event.getDamager() instanceof Player damager) || !(event.getEntity() instanceof Player player)) return;
 
-        final Module<?> spawnProtectionModule = MCRekus.getInstance().getModuleManager().getModuleByName("SpawnProtection");
+        final SpawnProtectionModule spawnProtectionModule = MCRekus.getInstance().getModuleManager().getModuleByName("SpawnProtection");
 
         if(spawnProtectionModule != null) {
-            final SpawnProtectionModule spawnProtection = (SpawnProtectionModule) spawnProtectionModule;
-            if(spawnProtection.getSpawnCuboid().isIn(player)) {
+            if(spawnProtectionModule.getSpawnCuboid().isIn(player)) {
                 return;
             }
         }

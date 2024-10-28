@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.Getter;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftMinecart;
 
 @Getter
 public class KingdomsModule extends Module<KingdomsConfig> {
@@ -23,7 +24,7 @@ public class KingdomsModule extends Module<KingdomsConfig> {
     }
 
     @Override
-    public void onEnable(MCRekus plugin) {
+    public void onEnable(final MCRekus plugin) {
         if (!plugin.getHookManager().isKingdomsHook()) {
             plugin.getLogger().warning("Kingdoms hook is not enabled, this module will not work.");
             return;
@@ -33,13 +34,13 @@ public class KingdomsModule extends Module<KingdomsConfig> {
             new KingdomsNameExtension().register();
         }
 
-        entityThreadPool = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setNameFormat("mcrekus-entity-thread-%d").build());
+        entityThreadPool = Executors.newFixedThreadPool(3, new ThreadFactoryBuilder().setNameFormat("mcrekus-entity-thread-%d").build());
 
         registerListeners("event");
     }
 
     @Override
-    public void onDisable(MCRekus plugin) {
+    public void onDisable(final MCRekus plugin) {
         unRegisterListeners();
 
         entityThreadPool.shutdownNow();

@@ -19,11 +19,11 @@ public class ModuleAccessor<T extends Module<?>> {
             return;
         }
 
-        module = (T) MCRekus.getInstance().getModuleManager().getModuleByClass(clazz);
+        module = MCRekus.getInstance().getModuleManager().getModuleByClass(clazz);
     }
 
     @SuppressWarnings("unchecked")
     public ModuleAccessor(final Class<T> moduleClass) {
-        this.module = (T) MCRekus.getInstance().getModuleManager().getModuleByClass(moduleClass);
+        this.module = MCRekus.getInstance().getModuleManager().getModuleByClass(moduleClass);
     }
 }
