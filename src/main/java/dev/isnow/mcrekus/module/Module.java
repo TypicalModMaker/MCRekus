@@ -1,10 +1,11 @@
 package dev.isnow.mcrekus.module;
 
-import co.aikar.commands.BaseCommand;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
+import dev.velix.imperat.annotations.Command;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +18,7 @@ import org.bukkit.event.Listener;
 @Getter
 public abstract class Module<T extends ModuleConfig> {
     private final String name;
-    private final Set<BaseCommand> registeredCommands = new HashSet<>();
+    private final Set<String[]> registeredCommands = new HashSet<>();
     private final Set<Listener> registeredListeners = new HashSet<>();
 
     @Setter
@@ -49,7 +50,7 @@ public abstract class Module<T extends ModuleConfig> {
     public final void registerListener(final Class<? extends Listener> clazz) {
         RekusLogger.debug("Registering listener " + clazz.getSimpleName());
         try {
-            final Listener listener = clazz.newInstance();
+            final Listener listener = clazz.getDeclaredConstructor().newInstance();
 
             Bukkit.getPluginManager().registerEvents(listener, MCRekus.getInstance());
 
@@ -74,7 +75,12 @@ public abstract class Module<T extends ModuleConfig> {
     }
 
     public final void unRegisterCommands() {
-        registeredCommands.removeIf(command -> MCRekus.getInstance().getCommandManager().unRegisterCommand(command));
+        registeredCommands.removeIf(command -> {
+            for (final String s : command) {
+                MCRekus.getInstance().getCommandManager().unRegisterCommand(s);
+            }
+            return true;
+        });
     }
 
     public final void unRegisterListeners() {
@@ -83,20 +89,12 @@ public abstract class Module<T extends ModuleConfig> {
         }
     }
 
-    private void registerPlayerDataObject(final Class<? extends PlayerData> clazz) {
-        if(clazz == null) {
-            RekusLogger.debug("No player data object has been found for module " + getName());
-            return;
-        }
-
-        RekusLogger.debug("Registering player data object " + clazz.getSimpleName());
-    }
-
-    private void registerCommand(final Class<? extends BaseCommand> clazz) {
+    private void registerCommand(final String[] names, final Class<?> clazz) {
         RekusLogger.debug("Registering command " + clazz.getSimpleName());
         try {
-            final BaseCommand baseCommand = clazz.newInstance();
-            registeredCommands.add(baseCommand);
+            final Object baseCommand = clazz.getDeclaredConstructor().newInstance();
+            registeredCommands.add(names);
+
             MCRekus.getInstance().getCommandManager().registerCommand(baseCommand);
         } catch (Exception e) {
             RekusLogger.info("Failed to register command " + clazz.getSimpleName() + " for module " + name);
@@ -104,13 +102,14 @@ public abstract class Module<T extends ModuleConfig> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public final void registerCommands(String packageName) {
         try {
             final List<Class<?>> eventClasses = ReflectionUtil.getClasses(getClass().getPackageName() + "." + packageName);
             for (final Class<?> clazz : eventClasses) {
-                if(BaseCommand.class.isAssignableFrom(clazz)) {
-                    registerCommand((Class<? extends BaseCommand>) clazz);
+                if(clazz.isAnnotationPresent(Command.class)) {
+                    final Command command = clazz.getAnnotation(Command.class);
+
+                    registerCommand(command.value(), clazz);
                 }
             }
         } catch (final Exception e) {

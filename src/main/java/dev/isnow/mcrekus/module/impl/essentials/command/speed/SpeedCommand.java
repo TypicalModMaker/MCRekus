@@ -1,61 +1,73 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.speed;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
+import dev.isnow.mcrekus.module.impl.essentials.command.broadcast.BroadcastType;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.isnow.mcrekus.util.RekusLogger;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Optional;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.SuggestionProvider;
+import dev.velix.imperat.annotations.Usage;
+import dev.velix.imperat.command.parameters.CommandParameter;
+import dev.velix.imperat.context.SuggestionContext;
+import dev.velix.imperat.resolvers.SuggestionResolver;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 
-@CommandAlias("speed|predkosc")
+@Command({"speed", "predkosc"})
 @Description("Command to set your flight/walk speed")
-@CommandPermission("mcrekus.speed")
+@Permission("mcrekus.speed")
 @SuppressWarnings("unused")
-public class SpeedCommand extends BaseCommand {
-
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+public class SpeedCommand extends ModuleAccessor<EssentialsModule> {
 
     public SpeedCommand() {
-        MCRekus.getInstance().getCommandManager().registerCompletion("speedType", context -> Arrays.stream(SpeedType.values())
-                .map(SpeedType::name)
-                .collect(Collectors.toList()));
+        super(EssentialsModule.class);
+
+        RekusLogger.info("Registering speedType resolver");
+
+        MCRekus.getInstance().getCommandManager().registerCompletion("speedType", new SpeedTypeResolver());
     }
 
-    @Default
-    @CommandCompletion("@speedType [speed/reset] @players")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-        if(args.length == 0) {
-            player.sendMessage(ComponentUtil.deserialize(config.getSpeedUsageMessage()));
-            return;
-        }
+        source.reply(ComponentUtil.deserialize(config.getSpeedUsageMessage()));
+    }
 
-        final SpeedType type;
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("type") @SuggestionProvider("speedType") String type, @Named("action") @Suggest("speed/reset") String action, @Named("speed") float speed, @Named("player") @Optional  Player target) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final SpeedType foundType;
         try {
-            type = SpeedType.valueOf(args[0].toUpperCase());
+            foundType = SpeedType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
-            player.sendMessage(ComponentUtil.deserialize(config.getSpeedInvalidTypeMessage()));
+            source.reply(ComponentUtil.deserialize(config.getSpeedInvalidTypeMessage()));
             return;
         }
 
-        if(args.length == 1) {
-            player.sendMessage(ComponentUtil.deserialize(config.getSpeedUsageMessage()));
+        if(action == null || action.isEmpty()) {
+            source.reply(ComponentUtil.deserialize(config.getSpeedUsageMessage()));
             return;
         }
 
-        final String speedString = args[1];
-
-        if(speedString.equalsIgnoreCase("reset")) {
-            switch (type) {
+        final Player player = source.asPlayer();
+        if(action.equalsIgnoreCase("reset")) {
+            switch (foundType) {
                 case FLIGHT:
                     player.setFlySpeed(0.1f);
                     player.sendMessage(ComponentUtil.deserialize(config.getFlightSpeedResetMessage()));
@@ -68,34 +80,35 @@ public class SpeedCommand extends BaseCommand {
             return;
         }
 
-        final float speed;
-        try {
-            speed = Float.parseFloat(speedString);
-        } catch (NumberFormatException e) {
-            player.sendMessage(ComponentUtil.deserialize(config.getSpeedInvalidSpeedMessage()));
-            return;
-        }
-
         if(speed < -1 || speed > 1) {
             player.sendMessage(ComponentUtil.deserialize(config.getSpeedInvalidSpeedMessage()));
             return;
         }
 
-        final Player target = args.length == 3 ? player.getServer().getPlayer(args[2]) : player;
         if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getSpeedPlayerNotFoundMessage(), null, "%player%", args[2]));
+            player.sendMessage(ComponentUtil.deserialize(config.getSpeedPlayerNotFoundMessage()));
             return;
         }
 
-        switch (type) {
+        switch (foundType) {
             case FLIGHT:
                 target.setFlySpeed(speed);
-                player.sendMessage(ComponentUtil.deserialize(config.getFlightSpeedChangedMessage(), null, "%speed%", speed, "%player%", target));
+                source.reply(ComponentUtil.deserialize(config.getFlightSpeedChangedMessage(), null, "%speed%", speed, "%player%", target));
                 break;
             case WALK:
                 target.setWalkSpeed(speed);
-                player.sendMessage(ComponentUtil.deserialize(config.getWalkSpeedChangedMessage(), null, "%speed%", speed, "%player%", target));
+                source.reply(ComponentUtil.deserialize(config.getWalkSpeedChangedMessage(), null, "%speed%", speed, "%player%", target));
                 break;
         }
+    }
+}
+class SpeedTypeResolver implements SuggestionResolver<BukkitSource> {
+
+    @Override
+    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
+            CommandParameter<BukkitSource> parameter) {
+        return Arrays.stream(SpeedType.values())
+                .map(SpeedType::name)
+                .collect(Collectors.toList());
     }
 }

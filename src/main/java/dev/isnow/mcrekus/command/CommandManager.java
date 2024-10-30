@@ -1,37 +1,31 @@
 package dev.isnow.mcrekus.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.BukkitCommandCompletionContext;
-import co.aikar.commands.CommandCompletions;
-import co.aikar.commands.PaperCommandManager;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.command.impl.RekusCommand;
 import dev.velix.imperat.BukkitImperat;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.command.CommandUsage;
+import dev.velix.imperat.resolvers.SuggestionResolver;
 
 public class CommandManager {
 
-    private final PaperCommandManager internalCommandManager;
+    private final BukkitImperat commandManager;
 
     public CommandManager(final MCRekus plugin) {
-        BukkitImperat commandManager = BukkitImperat.create(plugin);
+        commandManager = BukkitImperat.create(plugin);
 
-        internalCommandManager = new PaperCommandManager(plugin);
-        internalCommandManager.getLocales().setDefaultLocale(plugin.getConfigManager().getGeneralConfig().getCommandsLocale().getJavaLocale());
-
-        internalCommandManager.registerCommand(new RekusCommand());
+        commandManager.registerCommand(new RekusCommand());
     }
 
-    public void registerCommand(final BaseCommand baseCommand) {
-        internalCommandManager.registerCommand(baseCommand);
+    public void registerCommand(final Object command) {
+        commandManager.registerCommand(command);
     }
 
-    public boolean unRegisterCommand(final BaseCommand baseCommand) {
-        internalCommandManager.unregisterCommand(baseCommand);
-
-        return true;
+    public void unRegisterCommand(final String command) {
+        commandManager.unregisterCommand(command);
     }
 
-    public void registerCompletion(final String completion, CommandCompletions.AsyncCommandCompletionHandler<BukkitCommandCompletionContext> handler) {
-        internalCommandManager.getCommandCompletions().registerAsyncCompletion(completion, handler);
+    public void registerCompletion(final String completion, final SuggestionResolver<BukkitSource> handler) {
+        commandManager.registerNamedSuggestionResolver(completion, handler);
     }
 }

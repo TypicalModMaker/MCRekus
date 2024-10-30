@@ -1,12 +1,6 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.home;
 
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.data.HomeData;
 import dev.isnow.mcrekus.module.ModuleAccessor;
@@ -15,53 +9,63 @@ import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.PermissionUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Greedy;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("sethome|ustawdom")
+@Command({"sethome", "ustawdom"})
 @Description("Command to set a home")
-@CommandPermission("mcrekus.sethome")
+@Permission("mcrekus.sethome")
 @SuppressWarnings("unused")
-public class SetHomeCommand extends BaseCommand {
+public class SetHomeCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("[nazwa]")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        source.reply(ComponentUtil.deserialize(config.getSetHomeUsageMessage()));
+    }
 
-        if(args.length == 0) {
-            player.sendMessage(ComponentUtil.deserialize(config.getSetHomeUsageMessage()));
-            return;
-        }
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("name") @Suggest("nazwa") @Greedy final String name) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final Player player = source.asPlayer();
 
         MCRekus.getInstance().getDatabaseManager().getUserAsync(player, (session, data) -> {
             if(data == null) {
-                player.sendMessage(ComponentUtil.deserialize("&cWystąpił błąd podczas ładowania danych gracza. Spróbuj ponownie później."));
+                source.reply(ComponentUtil.deserialize("&cWystąpił błąd podczas ładowania danych gracza. Spróbuj ponownie później."));
                 return;
             }
 
-            final int maxHomes = PermissionUtil.getMaxAllowedHomes(moduleAccessor.getModule().getConfig().getMaxAllowedHomesByDefault(), player);
+            final int maxHomes = PermissionUtil.getMaxAllowedHomes(getModule().getConfig().getMaxAllowedHomesByDefault(), player);
 
             if (data.getHomeLocations().size() >= maxHomes) {
-                player.sendMessage(ComponentUtil.deserialize(config.getSetHomeAtLimitMessage(), null, "%max%", String.valueOf(maxHomes)));
+                source.reply(ComponentUtil.deserialize(config.getSetHomeAtLimitMessage(), null, "%max%", String.valueOf(maxHomes)));
                 return;
             }
 
-            final String homeName = String.join(" ", args);
-
-            final HomeData home = data.getHomeLocations().get(homeName);
+            final HomeData home = data.getHomeLocations().get(name);
 
             if (home != null) {
                 home.setLocation(new RekusLocation(player.getLocation()));
 
-                player.sendMessage(ComponentUtil.deserialize(config.getSetHomeUpdatedMessage(), null, "%home%", homeName));
+                source.reply(ComponentUtil.deserialize(config.getSetHomeUpdatedMessage(), null, "%home%", name));
                 player.playSound(player.getLocation(), config.getSetHomeSound(), 1.0F, 1.0F);
             } else {
-                final HomeData homeData = new HomeData(homeName, new RekusLocation(player.getLocation()), data);
+                final HomeData homeData = new HomeData(name, new RekusLocation(player.getLocation()), data);
 
-                data.getHomeLocations().put(homeName, homeData);
-                player.sendMessage(ComponentUtil.deserialize(config.getSetHomeCreatedMessage(), null, "%home%", homeName));
+                data.getHomeLocations().put(name, homeData);
+                source.reply(ComponentUtil.deserialize(config.getSetHomeCreatedMessage(), null, "%home%", name));
                 player.playSound(player.getLocation(), config.getSetHomeSound(), 1.0F, 1.0F);
             }
 

@@ -1,27 +1,36 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Optional;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.SuggestionProvider;
+import dev.velix.imperat.annotations.Usage;
+import dev.velix.imperat.command.parameters.CommandParameter;
+import dev.velix.imperat.context.SuggestionContext;
+import dev.velix.imperat.resolvers.SuggestionResolver;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-@CommandAlias("gm|gamemode")
+@Command({"gm", "gamemode"})
 @Description("Gamemode command")
-@CommandPermission("mcrekus.gamemode")
+@Permission("mcrekus.gamemode")
 @SuppressWarnings("unused")
-public class GamemodeCommand extends BaseCommand {
+public class GamemodeCommand extends ModuleAccessor<EssentialsModule> {
 
-    private static final Map<String, GameMode> GAME_MODES = Map.ofEntries(
+    public static final Map<String, GameMode> GAME_MODES = Map.ofEntries(
             Map.entry("0", GameMode.SURVIVAL),
             Map.entry("survival", GameMode.SURVIVAL),
             Map.entry("przetrwanie", GameMode.SURVIVAL),
@@ -36,72 +45,82 @@ public class GamemodeCommand extends BaseCommand {
             Map.entry("spectator", GameMode.SPECTATOR)
     );
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
-
     public GamemodeCommand() {
-        MCRekus.getInstance().getCommandManager().registerCompletion("gamemode", context -> GAME_MODES.keySet());
+        super(EssentialsModule.class);
+
+        MCRekus.getInstance().getCommandManager().registerCompletion("gamemode", new GameModeResolver());
     }
 
-    @Default
-    @CommandCompletion("@gamemode @players")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+    @Usage
+    @Async
+    public void usage(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-        if(args.length == 0) {
-            player.sendMessage(ComponentUtil.deserialize(config.getGamemodeNoArgsMessage()));
-            return;
-        }
-
-        if(args.length == 1) {
-            final GameMode gameMode = GAME_MODES.get(args[0].toLowerCase());
-
-            if (gameMode != null && player.hasPermission("mcrekus.gamemode." + gameMode.name().toLowerCase())) {
-                player.setGameMode(gameMode);
-                player.sendMessage(ComponentUtil.deserialize(config.getGamemodeChangedMessage(), null, "%gamemode%", getTranslation(gameMode)));
-                if(config.getGamemodeChangedSound() != null) {
-                    player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);
-                }
-            } else {
-                player.sendMessage(ComponentUtil.deserialize(config.getGamemodeInvalidMessage()));
-            }
-
-            return;
-        }
-
-        if(args.length == 2) {
-            final Player target = player.getServer().getPlayer(args[1]);
-
-            if(target == null) {
-                player.sendMessage(ComponentUtil.deserialize(config.getGamemodePlayerNotFoundMessage()));
-                return;
-            }
-
-            final GameMode gameMode = GAME_MODES.get(args[0].toLowerCase());
-
-            if (gameMode != null) {
-                target.setGameMode(gameMode);
-                player.setAllowFlight(gameMode == GameMode.CREATIVE || gameMode == GameMode.SPECTATOR);
-                player.sendMessage(ComponentUtil.deserialize(config.getGamemodeChangedOtherMessage(), null, "%gamemode%", getTranslation(gameMode), "%player%", target.getName()));
-                if(config.getGamemodeChangedSound() != null) {
-                    player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);
-                }
-            } else {
-                player.sendMessage(ComponentUtil.deserialize(config.getGamemodeInvalidMessage()));
-            }
-
-            return;
-        }
-
-        player.sendMessage(ComponentUtil.deserialize(config.getGamemodeUsageMessage()));
+        source.reply(ComponentUtil.deserialize(config.getGamemodeNoArgsMessage()));
     }
+
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("gamemode") @SuggestionProvider("gamemode") final String gamemode) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final GameMode foundGameMode = GAME_MODES.get(gamemode.toLowerCase());
+
+        final Player player = source.asPlayer();
+
+        if (foundGameMode != null && player.hasPermission("mcrekus.gamemode." + foundGameMode.name().toLowerCase())) {
+            player.setGameMode(foundGameMode);
+            player.setAllowFlight(foundGameMode == GameMode.CREATIVE || foundGameMode == GameMode.SPECTATOR);
+            player.sendMessage(ComponentUtil.deserialize(config.getGamemodeChangedMessage(), null, "%gamemode%", getTranslation(foundGameMode)));
+            if(config.getGamemodeChangedSound() != null) {
+                player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);
+            }
+        } else {
+            player.sendMessage(ComponentUtil.deserialize(config.getGamemodeInvalidMessage()));
+        }
+
+    }
+
+
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("gamemode") @SuggestionProvider("gamemode") final String gamemode, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final GameMode foundGameMode = GAME_MODES.get(gamemode.toLowerCase());
+
+        if (foundGameMode != null) {
+            target.setGameMode(foundGameMode);
+            target.setAllowFlight(foundGameMode == GameMode.CREATIVE || foundGameMode == GameMode.SPECTATOR);
+            source.reply(ComponentUtil.deserialize(config.getGamemodeChangedOtherMessage(), null, "%gamemode%", getTranslation(foundGameMode), "%player%", target.getName()));
+            if(config.getGamemodeChangedSound() != null && !source.isConsole()) {
+                final Player player = source.asPlayer();
+
+                player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);
+            }
+        } else {
+            source.reply(ComponentUtil.deserialize(config.getGamemodeInvalidMessage()));
+        }
+    }
+
+
 
     private String getTranslation(final GameMode input) {
         return switch (input) {
-            case SURVIVAL -> moduleAccessor.getModule().getConfig().getGamemodeSurvival();
-            case CREATIVE -> moduleAccessor.getModule().getConfig().getGamemodeCreative();
-            case ADVENTURE -> moduleAccessor.getModule().getConfig().getGamemodeAdventure();
-            case SPECTATOR -> moduleAccessor.getModule().getConfig().getGamemodeSpectator();
+            case SURVIVAL -> getModule().getConfig().getGamemodeSurvival();
+            case CREATIVE -> getModule().getConfig().getGamemodeCreative();
+            case ADVENTURE -> getModule().getConfig().getGamemodeAdventure();
+            case SPECTATOR -> getModule().getConfig().getGamemodeSpectator();
             default -> "Unknown";
         };
+    }
+}
+
+class GameModeResolver implements SuggestionResolver<BukkitSource> {
+
+    @Override
+    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
+            CommandParameter<BukkitSource> parameter) {
+        return GamemodeCommand.GAME_MODES.keySet();
     }
 }

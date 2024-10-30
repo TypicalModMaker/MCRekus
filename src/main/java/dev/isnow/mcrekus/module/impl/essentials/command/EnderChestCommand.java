@@ -1,32 +1,49 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-@CommandAlias("ec|enderchest|ender")
+@Command({"ec", "enderchest", "ender"})
 @Description("Command to open enderchest")
-@CommandPermission("mcrekus.enderchest")
+@Permission("mcrekus.enderchest")
 @SuppressWarnings("unused")
-public class EnderChestCommand extends BaseCommand {
+public class EnderChestCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void openEnderChest(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final Player player = source.asPlayer();
 
         player.openInventory(player.getEnderChest());
 
-        player.sendMessage(ComponentUtil.deserialize(config.getOpenEnderChestMessage()));
+        source.reply(ComponentUtil.deserialize(config.getOpenEnderChestMessage()));
 
         player.playSound(player.getLocation(), config.getOpenEnderChestSound(), 1.0F, 1.0F);
+    }
+
+    @Usage
+    @Async
+    @Permission("mcrekus.enderchest.other")
+    public void openEnderChestOther(final BukkitSource source, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final Player player = source.asPlayer();
+
+        source.reply(ComponentUtil.deserialize(config.getOpenEnderChestMessage(), null, "%player%", target.getName()));
+
+        player.openInventory(target.getEnderChest());
     }
 }

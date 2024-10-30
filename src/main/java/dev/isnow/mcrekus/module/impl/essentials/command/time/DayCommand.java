@@ -1,29 +1,29 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.time;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("day|dzien")
+@Command({"day", "dzien"})
 @Description("Command to set time to day")
-@CommandPermission("mcrekus.day")
+@Permission("mcrekus.day")
 @SuppressWarnings("unused")
-public class DayCommand extends BaseCommand {
+public class DayCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
-
-        player.getWorld().setTime(1000L);
-        player.sendMessage(ComponentUtil.deserialize(config.getDayMessage()));
+        source.asPlayer().getWorld().setTime(1000L);
+        source.reply(ComponentUtil.deserialize(config.getDayMessage()));
     }
 }

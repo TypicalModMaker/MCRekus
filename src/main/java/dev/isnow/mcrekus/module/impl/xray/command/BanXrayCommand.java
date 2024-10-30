@@ -1,56 +1,51 @@
 package dev.isnow.mcrekus.module.impl.xray.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.xray.XrayModule;
 import dev.isnow.mcrekus.module.impl.xray.config.XrayConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Greedy;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-@CommandAlias("banxray")
+@Command("banxray")
 @Description("Command to clear and ban a player")
-@CommandPermission("mcrekus.banxray")
+@Permission("mcrekus.banxray")
 @SuppressWarnings("unused")
-public class BanXrayCommand extends BaseCommand {
+public class BanXrayCommand extends ModuleAccessor<XrayModule> {
 
-    private final ModuleAccessor<XrayModule> moduleAccessor = new ModuleAccessor<>(XrayModule.class);
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final XrayConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("@players [Czas]")
-    public void execute(Player player, String[] args) {
-        final XrayConfig config = moduleAccessor.getModule().getConfig();
+        source.reply(ComponentUtil.deserialize(config.getBanXrayUsageMessage()));
+    }
 
-        if(args.length == 0) {
-            player.sendMessage(ComponentUtil.deserialize(config.getBanXrayUsageMessage()));
-            return;
-        }
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("player") final Player player, @Named("args") @Greedy final String args) {
+        final XrayConfig config = getModule().getConfig();
 
-        final String playerName = args[0];
-        final Player target = player.getServer().getPlayer(playerName);
-
-        if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getBanXrayPlayerNotFoundMessage(), null, "%player%", playerName));
-            return;
-        }
-
-        target.getInventory().clear();
-        Bukkit.dispatchCommand(player, "tempban " + playerName + " Udowodniono u Ciebie używanie niedozwolonej modyfikacji tekstur - X-ray. " + String.join(" ", args).replace(playerName, ""));
+        player.getInventory().clear();
+        Bukkit.dispatchCommand(source.origin(), "tempban " + player.getName() + " Udowodniono u Ciebie używanie niedozwolonej modyfikacji tekstur - X-ray. " + String.join(" ", args));
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (target.isOnline()) {
-                    player.sendMessage(ComponentUtil.deserialize(config.getBanXrayNotSuccessfulMessage(), null, "%player%", playerName));
+                if (player.isOnline()) {
+                    source.reply(ComponentUtil.deserialize(config.getBanXrayNotSuccessfulMessage(), null, "%player%", player.getName()));
                 } else {
-                    player.sendMessage(ComponentUtil.deserialize(config.getBanXraySuccessMessage(), null, "%player%", playerName));
+                    source.reply(ComponentUtil.deserialize(config.getBanXraySuccessMessage(), null, "%player%", player.getName()));
                 }
             }
         }.runTaskLaterAsynchronously(MCRekus.getInstance(), 20L);

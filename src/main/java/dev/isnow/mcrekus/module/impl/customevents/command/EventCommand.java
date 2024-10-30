@@ -1,11 +1,6 @@
 package dev.isnow.mcrekus.module.impl.customevents.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
+import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.customevents.CustomEventsModule;
 import dev.isnow.mcrekus.module.impl.customevents.config.CustomEventsConfig;
@@ -14,56 +9,86 @@ import dev.isnow.mcrekus.module.impl.customevents.event.CustomEventManager;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.SuggestionProvider;
+import dev.velix.imperat.annotations.Usage;
+import dev.velix.imperat.command.parameters.CommandParameter;
+import dev.velix.imperat.context.SuggestionContext;
+import dev.velix.imperat.resolvers.SuggestionResolver;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
 
-@CommandAlias("event")
+@Command("event")
 @Description("Command to manage events")
-@CommandPermission("mcrekus.event")
+@Permission("mcrekus.event")
 @SuppressWarnings("unused")
-public class EventCommand extends BaseCommand {
+public class EventCommand extends ModuleAccessor<CustomEventsModule> {
 
-    private final ModuleAccessor<CustomEventsModule> moduleAccessor = new ModuleAccessor<>(CustomEventsModule.class);
+    public EventCommand() {
+        super(CustomEventsModule.class);
 
-    @Default
-    @CommandCompletion("start|stop <event>")
-    public void execute(Player player, String[] args) {
-        final CustomEventsConfig config = moduleAccessor.getModule().getConfig();
+        MCRekus.getInstance().getCommandManager().registerCompletion("event", new EventResolver());
+    }
 
+    @Async
+    @Usage
+    public void usage(final BukkitSource source) {
+        final CustomEventsConfig config = getModule().getConfig();
 
-        if (args.length < 1) {
-            player.sendMessage(ComponentUtil.deserialize(config.getEventCommandUsage()));
-            return;
-        }
+        source.reply(ComponentUtil.deserialize(config.getEventCommandUsage()));
+    }
 
-        final CustomEventManager eventManager = moduleAccessor.getModule().getCustomEventManager();
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("toggle") @Suggest({"start", "stop"}) final String toggle, @Named("event") @SuggestionProvider("event") final String event) {
+        final CustomEventsConfig config = getModule().getConfig();
 
-        switch (args[0].toLowerCase()) {
+        final CustomEventManager eventManager = getModule().getCustomEventManager();
+
+        switch (toggle.toLowerCase()) {
             case "start":
                 if (eventManager.getCurrentEvent() != null) {
-                    player.sendMessage(ComponentUtil.deserialize(config.getEventAlreadyRunningMessage()));
+                    source.reply(ComponentUtil.deserialize(config.getEventAlreadyRunningMessage()));
                     return;
                 }
 
-                final CustomEvent event = eventManager.getEventByName(args[1]);
+                final CustomEvent foundEvent = eventManager.getEventByName(event);
 
-                if (event == null) {
-                    player.sendMessage(ComponentUtil.deserialize(config.getEventNotFoundMessage()));
+                if (foundEvent == null) {
+                    source.reply(ComponentUtil.deserialize(config.getEventNotFoundMessage()));
                     return;
                 }
 
-                eventManager.startEvent(event);
+                eventManager.startEvent(foundEvent);
                 break;
             case "stop":
                 if (eventManager.getCurrentEvent() == null) {
-                    player.sendMessage(ComponentUtil.deserialize(config.getEventNotRunningMessage()));
+                    source.reply(ComponentUtil.deserialize(config.getEventNotRunningMessage()));
                     return;
                 }
 
                 eventManager.stopEvent();
                 break;
             default:
-                player.sendMessage(ComponentUtil.deserialize(config.getEventCommandUsage()));
+                source.reply(ComponentUtil.deserialize(config.getEventCommandUsage()));
                 break;
         }
+    }
+}
+
+class EventResolver extends ModuleAccessor<CustomEventsModule> implements SuggestionResolver<BukkitSource> {
+
+    @Override
+    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
+            CommandParameter<BukkitSource> parameter) {
+        return getModule().getCustomEventManager().getEvents().stream().map(CustomEvent::getName).toList();
     }
 }

@@ -1,46 +1,45 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("god|godmode|niesmiertelnosc")
+@Command({"god", "godmode", "niesmiertelnosc"})
 @Description("Command to have godmode")
-@CommandPermission("mcrekus.god")
+@Permission("mcrekus.god")
 @SuppressWarnings("unused")
-public class GodCommand extends BaseCommand {
+public class GodCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("@players")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final Player player = source.asPlayer();
 
-        if(args.length == 0) {
-            final boolean godMode = player.isInvulnerable();
-            player.setInvulnerable(!godMode);
-            player.sendMessage(ComponentUtil.deserialize(godMode ? config.getGodModeDisabledMessage() : config.getGodModeEnabledMessage()));
-            return;
-        }
+        final boolean godMode = player.isInvulnerable();
+        player.setInvulnerable(!godMode);
+        source.reply(ComponentUtil.deserialize(godMode ? config.getGodModeDisabledMessage() : config.getGodModeEnabledMessage()));
+    }
 
-        final Player target = player.getServer().getPlayer(args[0]);
-        if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getGodModePlayerNotFoundMessage(), null, "%player%", args[0]));
-            return;
-        }
+    @Usage
+    @Async
+    public void executeOther(final BukkitSource source, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final Player player = source.asPlayer();
 
         final boolean godMode = target.isInvulnerable();
         target.setInvulnerable(!godMode);
-        player.sendMessage(ComponentUtil.deserialize(godMode ? config.getGodModeDisabledOtherMessage() : config.getGodModeEnabledOtherMessage(), null, "%player%", target));
-
+        source.reply(ComponentUtil.deserialize(godMode ? config.getGodModeDisabledOtherMessage() : config.getGodModeEnabledOtherMessage(), null, "%player%", target));
     }
 }

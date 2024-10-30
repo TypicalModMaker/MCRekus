@@ -1,29 +1,29 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("kickall")
+@Command("kickall")
 @Description("Command to kick all players")
-@CommandPermission("mcrekus.kickall")
+@Permission("mcrekus.kickall")
 @SuppressWarnings("unused")
-public final class KickAllCommand extends BaseCommand {
+public final class KickAllCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
-
-    @Default
-    public void execute(final CommandSender player, final String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
         for(final Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("mcrekus.kickall.bypass")) {
@@ -33,7 +33,7 @@ public final class KickAllCommand extends BaseCommand {
             p.sendMessage(ComponentUtil.deserialize(config.getKickAllReason()));
         }
 
-        player.sendMessage(ComponentUtil.deserialize(config.getKickAllMessage()));
+        source.reply(ComponentUtil.deserialize(config.getKickAllMessage()));
     }
 
 }

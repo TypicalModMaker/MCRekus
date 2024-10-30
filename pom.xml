@@ -119,6 +119,10 @@
   </build>
 
   <repositories>
+      <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2/</url>
+      </repository>
       <!--      PAPER API      -->
       <repository>
           <id>papermc-repo</id>
@@ -255,22 +259,16 @@
 
       <!--      Command API      -->
       <dependency>
-          <groupId>co.aikar</groupId>
-          <artifactId>acf-paper</artifactId>
-          <version>0.5.1-SNAPSHOT</version>
-      </dependency>
-
-      <dependency>
           <groupId>dev.velix</groupId>
           <artifactId>imperat-core</artifactId>
-          <version>1.0.2</version>
+          <version>1.0.4</version>
           <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>dev.velix</groupId>
           <artifactId>imperat-bukkit</artifactId>
-          <version>1.0.2</version>
+          <version>1.0.4</version>
           <scope>provided</scope>
       </dependency>
 

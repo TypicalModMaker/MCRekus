@@ -14,6 +14,6 @@ public class CratesConfig extends ModuleConfig {
         super("config", "Crates");
     }
 
-    @Comment({"", "Crates command usage"})
-    private String commandUsage = "/crates";
+    @Comment({"", "Crates command usage message"})
+    private String commandUsageMessage = "[P] /crates create|delete|givekey <name> <amount> <player|all>";
 }

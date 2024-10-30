@@ -1,43 +1,40 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("feed|nakarm")
+@Command({"feed", "nakarm"})
 @Description("Command to feed yourself or someone else")
-@CommandPermission("mcrekus.feed")
+@Permission("mcrekus.feed")
 @SuppressWarnings("unused")
-public class FeedCommand extends BaseCommand {
+public class FeedCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Async
+    @Usage
+    public void defaultUsage(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
+        final Player player = source.asPlayer();
 
-    @Default
-    @CommandCompletion("@players")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        player.setFoodLevel(20);
+        source.reply(ComponentUtil.deserialize(config.getFeedSelfMessage()));
+    }
 
-        if(args.length == 0) {
-            player.setFoodLevel(20);
-            player.sendMessage(ComponentUtil.deserialize(config.getFeedSelfMessage()));
-            return;
-        }
-
-        final Player target = player.getServer().getPlayer(args[0]);
-        if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getFeedPlayerNotFoundMessage(), null, "%player%", args[0]));
-            return;
-        }
+    @Async
+    @Usage
+    public void feedOther(final BukkitSource source, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
 
         target.setFoodLevel(20);
-        player.sendMessage(ComponentUtil.deserialize(config.getFeedSenderFormat(), null, "%player%", target.getName()));
+        source.reply(ComponentUtil.deserialize(config.getFeedSenderFormat(), null, "%player%", target.getName()));
     }
 }

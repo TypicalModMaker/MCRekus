@@ -1,48 +1,49 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
-@CommandAlias("heal|ulecz")
+@Command("heal|ulecz")
 @Description("Command to heal yourself or someone else")
-@CommandPermission("mcrekus.heal")
+@Permission("mcrekus.heal")
 @SuppressWarnings("unused")
-public class HealCommand extends BaseCommand {
+public class HealCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("@players")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final Player player = source.asPlayer();
+        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+        player.setFoodLevel(20);
+        player.setSaturation(20);
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 
-        if(args.length == 0) {
-            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-            player.setFoodLevel(20);
-            player.setSaturation(20);
-            player.sendMessage(ComponentUtil.deserialize(config.getHealSelfMessage()));
-            return;
-        }
+        source.reply(ComponentUtil.deserialize(config.getHealSelfMessage()));
+    }
 
-        final Player target = player.getServer().getPlayer(args[0]);
-        if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getHealPlayerNotFoundMessage(), null, "%player%", args[0]));
-            return;
-        }
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
 
         target.setHealth(target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
         target.setFoodLevel(20);
         target.setSaturation(20);
-        player.sendMessage(ComponentUtil.deserialize(config.getHealSenderFormat(), null, "%player%", target.getName()));
+        target.getActivePotionEffects().forEach(effect -> target.removePotionEffect(effect.getType()));
+
+        source.reply(ComponentUtil.deserialize(config.getHealSenderFormat(), null, "%player%", target.getName()));
     }
 }

@@ -1,43 +1,45 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
+
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-@CommandAlias("gamma")
+@Command("gamma")
 @Description("Command to get gamma")
-@CommandPermission("mcrekus.gamma")
+@Permission("mcrekus.gamma")
 @SuppressWarnings("unused")
-public class GammaCommand extends BaseCommand {
+public class GammaCommand extends ModuleAccessor<EssentialsModule> {
 
     private final List<Player> gammaPlayers = new ArrayList<>();
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    public void execute(Player player, String[] args) {
-
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final Player player = source.asPlayer();
 
         if(gammaPlayers.contains(player)) {
             gammaPlayers.remove(player);
             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.sendMessage(ComponentUtil.deserialize(config.getGammaOffMessage()));
+            source.reply(ComponentUtil.deserialize(config.getGammaOffMessage()));
         } else {
             gammaPlayers.add(player);
             player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
-            player.sendMessage(ComponentUtil.deserialize(config.getGammaOnMessage()));
+            source.reply(ComponentUtil.deserialize(config.getGammaOnMessage()));
         }
     }
 }

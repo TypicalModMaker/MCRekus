@@ -1,53 +1,53 @@
 package dev.isnow.mcrekus.module.impl.pumpkins.commands;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.database.DatabaseManager;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.pumpkins.PumpkinsModule;
 import dev.isnow.mcrekus.module.impl.pumpkins.config.PumpkinsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.Usage;
+import java.util.List;
 import org.bukkit.entity.Player;
 
-@CommandAlias("pumpkin")
+@Command("pumpkin")
 @Description("Command to setup pumpkins")
-@CommandPermission("mcrekus.pumpkin")
+@Permission("mcrekus.pumpkin")
 @SuppressWarnings("unused")
-public class SetupPumpkinsCommand extends BaseCommand {
+public class SetupPumpkinsCommand extends ModuleAccessor<PumpkinsModule> {
 
-    private final ModuleAccessor<PumpkinsModule> moduleAccessor = new ModuleAccessor<>(PumpkinsModule.class);
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("action") @Suggest({"setup", "resetProgress"}) final String action) {
+        final PumpkinsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("setup|resetProgress")
-    public void execute(Player player, String[] args) {
-        if (args.length < 1) {
-            player.sendMessage(ComponentUtil.deserialize("&cUsage: /pumpkins <setup/resetProgress>"));
-            return;
-        }
-
-        final PumpkinsConfig config = moduleAccessor.getModule().getConfig();
-
-        if(args[0].equalsIgnoreCase("resetProgress")) {
+        if(action.equalsIgnoreCase("resetProgress")) {
             final DatabaseManager databaseManager = MCRekus.getInstance().getDatabaseManager();
-            databaseManager.getUserAsync(player, (session, user) -> {
+            databaseManager.getUserAsync(source.asPlayer(), (session, user) -> {
                 user.getPumpkins().clear();
 
                 user.save(session);
 
-                player.sendMessage(ComponentUtil.deserialize("&aProgress reset!"));
+                source.reply(ComponentUtil.deserialize("&aProgress reset!"));
             });
-        } else if(args[0].equalsIgnoreCase("setup")) {
-            if (moduleAccessor.getModule().getSetupPlayers().contains(player)) {
-                moduleAccessor.getModule().getSetupPlayers().remove(player);
-                player.sendMessage(ComponentUtil.deserialize(config.getSetupPumpkinsOFF()));
+
+        } else if(action.equalsIgnoreCase("setup")) {
+            final Player player = source.asPlayer();
+            final List<Player> setupPlayers = getModule().getSetupPlayers();
+
+            if (setupPlayers.contains(player)) {
+                setupPlayers.remove(player);
+                source.reply(ComponentUtil.deserialize(config.getSetupPumpkinsOFF()));
             } else {
-                moduleAccessor.getModule().getSetupPlayers().add(player);
-                player.sendMessage(ComponentUtil.deserialize(config.getSetupPumpkinsON()));
+                setupPlayers.add(player);
+                source.reply(ComponentUtil.deserialize(config.getSetupPumpkinsON()));
             }
         }
     }

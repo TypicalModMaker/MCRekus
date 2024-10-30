@@ -1,36 +1,38 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.message;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.module.impl.essentials.message.MessageManager;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("msgtoggle|wylaczwiadomosci")
+@Command({"msgtoggle", "wylaczwiadomosci"})
 @Description("Command to toggle messages globally")
-@CommandPermission("mcrekus.msgtoggle")
+@Permission("mcrekus.msgtoggle")
 @SuppressWarnings("unused")
-public class MsgToggleCommand extends BaseCommand {
+public class MsgToggleCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final Player player = source.asPlayer();
 
-    @Default
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final EssentialsConfig config = getModule().getConfig();
 
-        final MessageManager messageManager = moduleAccessor.getModule().getMessageManager();
+        final MessageManager messageManager = getModule().getMessageManager();
 
         if (messageManager.isMessagesEnabled(player.getUniqueId())) {
-            player.sendMessage(ComponentUtil.deserialize(config.getMsgToggleDisabledMessage()));
+            source.reply(ComponentUtil.deserialize(config.getMsgToggleDisabledMessage()));
             messageManager.disableMessages(player.getUniqueId());
         } else {
-            player.sendMessage(ComponentUtil.deserialize(config.getMsgToggleEnabledMessage()));
+            source.reply(ComponentUtil.deserialize(config.getMsgToggleEnabledMessage()));
             messageManager.enableMessages(player.getUniqueId());
         }
     }
