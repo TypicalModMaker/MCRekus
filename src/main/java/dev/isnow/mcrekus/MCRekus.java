@@ -77,9 +77,6 @@ public final class MCRekus extends JavaPlugin {
         threadPool = Executors.newFixedThreadPool(configManager.getGeneralConfig().getThreadAmount(), new ThreadFactoryBuilder().setNameFormat("mcrekus-worker-thread-%d").build());
         scheduler = Executors.newScheduledThreadPool(configManager.getGeneralConfig().getThreadAmount(), new ThreadFactoryBuilder().setNameFormat("mcrekus-scheduler-thread-%d").build());
 
-        RekusLogger.info("Initializing command manager");
-        commandManager = new CommandManager(this);
-
         RekusLogger.info("Loading hooks");
         hookManager = new HookManager();
         menuAPI = Lotus.load(this);

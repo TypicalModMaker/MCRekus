@@ -8,6 +8,7 @@ import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Greedy;
 import dev.velix.imperat.annotations.Named;
 import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.SubCommand;
 import dev.velix.imperat.annotations.Usage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -18,6 +19,12 @@ import org.bukkit.entity.Player;
 @Permission("mcrekus.sendraw")
 @SuppressWarnings("unused")
 public class SendRawCommand {
+
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        source.reply(ComponentUtil.deserialize("&cUsage: /sendraw <player> <message>"));
+    }
 
     @Usage
     @Async

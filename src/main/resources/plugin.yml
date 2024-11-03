@@ -28,5 +28,5 @@ libraries:
   - com.github.ben-manes.caffeine:caffeine:3.1.8
   - com.github.ben-manes.caffeine:jcache:3.1.8
   - org.hibernate:hibernate-jcache:6.2.8.Final
-  - dev.velix:imperat-core:1.0.4
-  - dev.velix:imperat-bukkit:1.0.4
+  - dev.velix:imperat-core:1.2
+  - dev.velix:imperat-bukkit:1.2

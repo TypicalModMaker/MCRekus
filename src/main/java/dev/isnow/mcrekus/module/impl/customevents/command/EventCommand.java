@@ -32,12 +32,6 @@ import org.bukkit.entity.Player;
 @SuppressWarnings("unused")
 public class EventCommand extends ModuleAccessor<CustomEventsModule> {
 
-    public EventCommand() {
-        super(CustomEventsModule.class);
-
-        MCRekus.getInstance().getCommandManager().registerCompletion("event", new EventResolver());
-    }
-
     @Async
     @Usage
     public void usage(final BukkitSource source) {
@@ -84,11 +78,3 @@ public class EventCommand extends ModuleAccessor<CustomEventsModule> {
     }
 }
 
-class EventResolver extends ModuleAccessor<CustomEventsModule> implements SuggestionResolver<BukkitSource> {
-
-    @Override
-    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
-            CommandParameter<BukkitSource> parameter) {
-        return getModule().getCustomEventManager().getEvents().stream().map(CustomEvent::getName).toList();
-    }
-}

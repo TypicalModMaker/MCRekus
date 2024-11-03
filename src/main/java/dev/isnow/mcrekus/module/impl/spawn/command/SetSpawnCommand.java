@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawn.SpawnModule;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.cuboid.RekusLocation;
+import dev.velix.imperat.BukkitSource;
 import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
 import dev.velix.imperat.annotations.Description;
@@ -20,11 +21,13 @@ public class SetSpawnCommand extends ModuleAccessor<SpawnModule> {
 
     @Usage
     @Async
-    public void execute(Player player, String[] args) {
+    public void execute(final BukkitSource source) {
+        final Player player = source.asPlayer();
+
         getModule().getConfig().setSpawnLocation(RekusLocation.fromBukkitLocation(player.getLocation()));
 
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-        player.sendMessage(ComponentUtil.deserialize(getModule().getConfig().getSpawnSetSuccessfullyMessage()));
+        source.reply(ComponentUtil.deserialize(getModule().getConfig().getSpawnSetSuccessfullyMessage()));
 
         getModule().getConfig().save();
     }

@@ -31,14 +31,6 @@ import org.bukkit.entity.Player;
 @SuppressWarnings("unused")
 public class SpeedCommand extends ModuleAccessor<EssentialsModule> {
 
-    public SpeedCommand() {
-        super(EssentialsModule.class);
-
-        RekusLogger.info("Registering speedType resolver");
-
-        MCRekus.getInstance().getCommandManager().registerCompletion("speedType", new SpeedTypeResolver());
-    }
-
     @Usage
     @Async
     public void executeDefault(final BukkitSource source) {
@@ -49,7 +41,7 @@ public class SpeedCommand extends ModuleAccessor<EssentialsModule> {
 
     @Usage
     @Async
-    public void execute(final BukkitSource source, @Named("type") @SuggestionProvider("speedType") String type, @Named("action") @Suggest("speed/reset") String action, @Named("speed") float speed, @Named("player") @Optional  Player target) {
+    public void execute(final BukkitSource source, @Named("type") @SuggestionProvider("speedtype") final String type, @Named("action") @Suggest("speed/reset") final String action, @Named("speed") final float speed, @Named("player") @Optional final Player target) {
         final EssentialsConfig config = getModule().getConfig();
 
         final SpeedType foundType;
@@ -100,15 +92,5 @@ public class SpeedCommand extends ModuleAccessor<EssentialsModule> {
                 source.reply(ComponentUtil.deserialize(config.getWalkSpeedChangedMessage(), null, "%speed%", speed, "%player%", target));
                 break;
         }
-    }
-}
-class SpeedTypeResolver implements SuggestionResolver<BukkitSource> {
-
-    @Override
-    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
-            CommandParameter<BukkitSource> parameter) {
-        return Arrays.stream(SpeedType.values())
-                .map(SpeedType::name)
-                .collect(Collectors.toList());
     }
 }

@@ -4,6 +4,7 @@ import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawners.SpawnersModule;
 import dev.isnow.mcrekus.module.impl.spawners.config.SpawnersConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
 import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
 import dev.velix.imperat.annotations.Description;
@@ -20,7 +21,9 @@ public class SpawnerCommand extends ModuleAccessor<SpawnersModule> {
 
     @Usage
     @Async
-    public void execute(Player player, String[] args) {
+    public void execute(final BukkitSource source) {
+        final Player player = source.asPlayer();
+
         final List<Player> disabled = getModule().getSpawnersMessageDisabled();
 
         final boolean hasDisabled = disabled.contains(player);
@@ -29,10 +32,10 @@ public class SpawnerCommand extends ModuleAccessor<SpawnersModule> {
 
         if (hasDisabled) {
             disabled.remove(player);
-            player.sendMessage(ComponentUtil.deserialize(config.getSpawnerMessageTurnedOn()));
+            source.reply(ComponentUtil.deserialize(config.getSpawnerMessageTurnedOn()));
         } else {
             disabled.add(player);
-            player.sendMessage(ComponentUtil.deserialize(config.getSpawnerMessageTurnedOff()));
+            source.reply(ComponentUtil.deserialize(config.getSpawnerMessageTurnedOff()));
         }
     }
 

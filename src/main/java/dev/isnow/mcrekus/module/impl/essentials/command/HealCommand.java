@@ -14,7 +14,7 @@ import dev.velix.imperat.annotations.Usage;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
-@Command("heal|ulecz")
+@Command({"heal", "ulecz"})
 @Description("Command to heal yourself or someone else")
 @Permission("mcrekus.heal")
 @SuppressWarnings("unused")

@@ -1,6 +1,7 @@
 package dev.isnow.mcrekus.module;
 
 import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.command.CommandManager;
 import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.lang.reflect.Modifier;
@@ -30,18 +31,32 @@ public class ModuleManager {
                     try {
                         if(plugin.getConfigManager().getGeneralConfig().getEnabledModules().contains(module.getName())) {
                             modules.add(module);
-
-                            RekusLogger.info("Loading module " + module.getName());
-                            module.onEnable(plugin);
-                            RekusLogger.info("Loaded module " + module.getName());
+                            RekusLogger.debug("Found module " + module.getName());
                         }
                     } catch (Exception e) {
                         modules.remove(module);
-                        RekusLogger.error("Failed to load module " + module.getName() + "!");
+                        RekusLogger.error("Failed to find module " + module.getName() + "!");
                         e.printStackTrace();
                     }
                 }
             }
+
+            RekusLogger.info("Initializing command manager");
+            MCRekus.getInstance().setCommandManager(new CommandManager(MCRekus.getInstance()));
+
+            for(Module<?> module : modules) {
+                RekusLogger.info("Loading module " + module.getName());
+
+                try {
+                    module.onEnable(plugin);
+                } catch (Exception e) {
+                    RekusLogger.error("Failed to load module " + module.getName() + "!");
+                    e.printStackTrace();
+                }
+
+                RekusLogger.info("Loaded module " + module.getName());
+            }
+
         } catch (Exception e) {
             RekusLogger.error("Failed to load modules!");
             e.printStackTrace();

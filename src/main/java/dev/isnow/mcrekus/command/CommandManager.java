@@ -2,17 +2,26 @@ package dev.isnow.mcrekus.command;
 
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.command.impl.RekusCommand;
+import dev.isnow.mcrekus.module.impl.customevents.command.EventResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.gamemode.GameModeResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.broadcast.BroadcastTypeResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.song.SongResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.speed.SpeedTypeResolver;
+import dev.velix.imperat.BukkitConfigBuilder;
 import dev.velix.imperat.BukkitImperat;
-import dev.velix.imperat.BukkitSource;
-import dev.velix.imperat.command.CommandUsage;
-import dev.velix.imperat.resolvers.SuggestionResolver;
 
 public class CommandManager {
 
     private final BukkitImperat commandManager;
 
     public CommandManager(final MCRekus plugin) {
-        commandManager = BukkitImperat.create(plugin);
+        commandManager = BukkitConfigBuilder.builder(plugin)
+                .namedSuggestionResolver("event", new EventResolver())
+                .namedSuggestionResolver("broadcastType", new BroadcastTypeResolver())
+                .namedSuggestionResolver("speedType", new SpeedTypeResolver())
+                .namedSuggestionResolver("song", new SongResolver())
+                .namedSuggestionResolver("gamemode", new GameModeResolver())
+                .build();
 
         commandManager.registerCommand(new RekusCommand());
     }
@@ -23,9 +32,5 @@ public class CommandManager {
 
     public void unRegisterCommand(final String command) {
         commandManager.unregisterCommand(command);
-    }
-
-    public void registerCompletion(final String completion, final SuggestionResolver<BukkitSource> handler) {
-        commandManager.registerNamedSuggestionResolver(completion, handler);
     }
 }

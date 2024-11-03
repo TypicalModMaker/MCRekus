@@ -34,14 +34,6 @@ import org.bukkit.command.CommandSender;
 @SuppressWarnings("unused")
 public class BroadcastCommand extends ModuleAccessor<EssentialsModule> {
 
-    public BroadcastCommand() {
-        super(EssentialsModule.class);
-
-        RekusLogger.info("Registering broadcastType resolver");
-
-        MCRekus.getInstance().getCommandManager().registerCompletion("broadcastType", new BroadcastTypeResolver());
-    }
-
     @Usage
     @Async
     public void executeDefault(final BukkitSource source) {
@@ -76,15 +68,5 @@ public class BroadcastCommand extends ModuleAccessor<EssentialsModule> {
                 Bukkit.getOnlinePlayers().forEach(p -> p.sendActionBar(ComponentUtil.deserialize(config.getBroadcastActionbarMessage(), null, "%message%", message)));
                 break;
         }
-    }
-}
-class BroadcastTypeResolver implements SuggestionResolver<BukkitSource> {
-
-    @Override
-    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
-            CommandParameter<BukkitSource> parameter) {
-        return Arrays.stream(BroadcastType.values())
-                .map(BroadcastType::name)
-                .collect(Collectors.toList());
     }
 }

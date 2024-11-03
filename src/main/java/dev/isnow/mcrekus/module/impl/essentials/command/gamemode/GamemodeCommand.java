@@ -1,6 +1,5 @@
-package dev.isnow.mcrekus.module.impl.essentials.command;
+package dev.isnow.mcrekus.module.impl.essentials.command.gamemode;
 
-import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
@@ -8,19 +7,13 @@ import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.velix.imperat.BukkitSource;
 import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.DefaultProvider;
 import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Named;
-import dev.velix.imperat.annotations.Optional;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.SuggestionProvider;
 import dev.velix.imperat.annotations.Usage;
-import dev.velix.imperat.command.parameters.CommandParameter;
-import dev.velix.imperat.context.SuggestionContext;
-import dev.velix.imperat.resolvers.SuggestionResolver;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -44,12 +37,6 @@ public class GamemodeCommand extends ModuleAccessor<EssentialsModule> {
             Map.entry("obserwator", GameMode.SPECTATOR),
             Map.entry("spectator", GameMode.SPECTATOR)
     );
-
-    public GamemodeCommand() {
-        super(EssentialsModule.class);
-
-        MCRekus.getInstance().getCommandManager().registerCompletion("gamemode", new GameModeResolver());
-    }
 
     @Usage
     @Async
@@ -116,11 +103,3 @@ public class GamemodeCommand extends ModuleAccessor<EssentialsModule> {
     }
 }
 
-class GameModeResolver implements SuggestionResolver<BukkitSource> {
-
-    @Override
-    public Collection<String> autoComplete(SuggestionContext<BukkitSource> context,
-            CommandParameter<BukkitSource> parameter) {
-        return GamemodeCommand.GAME_MODES.keySet();
-    }
-}

@@ -40,6 +40,6 @@ public class GodCommand extends ModuleAccessor<EssentialsModule> {
 
         final boolean godMode = target.isInvulnerable();
         target.setInvulnerable(!godMode);
-        source.reply(ComponentUtil.deserialize(godMode ? config.getGodModeDisabledOtherMessage() : config.getGodModeEnabledOtherMessage(), null, "%player%", target));
+        source.reply(ComponentUtil.deserialize(godMode ? config.getGodModeDisabledOtherMessage() : config.getGodModeEnabledOtherMessage(), null, "%player%", target.getName()));
     }
 }
