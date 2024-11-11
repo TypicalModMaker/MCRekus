@@ -1,37 +1,41 @@
 package dev.isnow.mcrekus.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.BukkitCommandCompletionContext;
-import co.aikar.commands.CommandCompletions;
-import co.aikar.commands.PaperCommandManager;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.command.impl.RekusCommand;
+import dev.isnow.mcrekus.module.impl.customevents.command.EventResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.broadcast.BroadcastTypeResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.gamemode.GameModeResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.home.HomeResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.song.SongResolver;
+import dev.isnow.mcrekus.module.impl.essentials.command.speed.SpeedTypeResolver;
+import dev.isnow.mcrekus.module.impl.model.command.ModelResolver;
+import dev.velix.imperat.BukkitConfigBuilder;
 import dev.velix.imperat.BukkitImperat;
+import dev.velix.imperat.util.ImperatDebugger;
 
 public class CommandManager {
 
-    private final PaperCommandManager internalCommandManager;
+    private final BukkitImperat commandManager;
 
     public CommandManager(final MCRekus plugin) {
-        BukkitImperat commandManager = BukkitImperat.create(plugin);
+        commandManager = BukkitImperat.builder(plugin).applyBrigadier(true)
+                .namedSuggestionResolver("event", new EventResolver())
+                .namedSuggestionResolver("broadcastType", new BroadcastTypeResolver())
+                .namedSuggestionResolver("speedType", new SpeedTypeResolver())
+                .namedSuggestionResolver("song", new SongResolver())
+                .namedSuggestionResolver("gamemode", new GameModeResolver())
+                .namedSuggestionResolver("home", new HomeResolver())
+                .namedSuggestionResolver("model", new ModelResolver())
+                .build();
 
-        internalCommandManager = new PaperCommandManager(plugin);
-        internalCommandManager.getLocales().setDefaultLocale(plugin.getConfigManager().getGeneralConfig().getCommandsLocale().getJavaLocale());
-
-        internalCommandManager.registerCommand(new RekusCommand());
+        commandManager.registerCommand(new RekusCommand());
     }
 
-    public void registerCommand(final BaseCommand baseCommand) {
-        internalCommandManager.registerCommand(baseCommand);
+    public void registerCommand(final Object command) {
+        commandManager.registerCommand(command);
     }
 
-    public boolean unRegisterCommand(final BaseCommand baseCommand) {
-        internalCommandManager.unregisterCommand(baseCommand);
-
-        return true;
-    }
-
-    public void registerCompletion(final String completion, CommandCompletions.AsyncCommandCompletionHandler<BukkitCommandCompletionContext> handler) {
-        internalCommandManager.getCommandCompletions().registerAsyncCompletion(completion, handler);
+    public void unRegisterCommand(final String command) {
+        commandManager.unregisterCommand(command);
     }
 }

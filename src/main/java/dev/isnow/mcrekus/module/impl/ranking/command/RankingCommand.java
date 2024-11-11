@@ -1,80 +1,81 @@
 package dev.isnow.mcrekus.module.impl.ranking.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.ranking.RankingModule;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Optional;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.Usage;
+import java.util.HashMap;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-@CommandAlias("ranking")
+@Command("ranking")
 @Description("Command to manage ranking")
-@CommandPermission("mcrekus.ranking")
+@Permission("mcrekus.ranking")
 @SuppressWarnings("unused")
-public class RankingCommand extends BaseCommand {
+public class RankingCommand extends ModuleAccessor<RankingModule> {
 
-    private final ModuleAccessor<RankingModule> moduleAccessor = new ModuleAccessor<>(RankingModule.class);
+    @Usage
+    @Async
+    public void defaultUsage(final BukkitSource source) {
+        source.reply(ComponentUtil.deserialize("[P] &cUsage: /ranking <set|add|remove|reset|disablehitcache> <player> [amount]"));
+    }
 
-    @Default
-    @CommandCompletion("set|add|remove|reset|disablehitcache @players [amount]")
-    public void execute(Player player, String[] args) {
-        if(args.length < 1) {
-            player.sendMessage(ComponentUtil.deserialize("[P] &cUsage: /ranking <set|add|remove|reset|disablehitcache> <player> [amount]"));
-            return;
-        }
-
-        final String action = args[0];
-
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, final @Named("action") @Suggest({"set", "add", "remove", "reset", "disablehitcache"}) String action, final @Named("player") @Optional Player target, final @Named("amount") @Optional int amount) {
         if(action.equalsIgnoreCase("disablehitcache")) {
-            final boolean disable = moduleAccessor.getModule().isDisableKillCache();
-            moduleAccessor.getModule().setDisableKillCache(!disable);
-            player.sendMessage(ComponentUtil.deserialize("[P] &aKill cache is now " + (!disable ? "disabled" : "enabled")));
+            final boolean disable = getModule().isDisableKillCache();
+            getModule().setDisableKillCache(!disable);
+            source.reply(ComponentUtil.deserialize("[P] &aKill cache is now " + (!disable ? "disabled" : "enabled")));
             return;
         }
 
-        final Player target = player.getServer().getPlayer(args[1]);
         if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize("[P] &cPlayer not found!"));
+            source.reply(ComponentUtil.deserialize("[P] &cPlayer not found!"));
             return;
         }
+        final Player player = source.asPlayer();
+
+        final HashMap<Player, Integer> rankingCache = getModule().getRankingCache();
+        final int defaultElo = getModule().getConfig().getDefaultElo();
 
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         if(action.equalsIgnoreCase("reset")) {
-            moduleAccessor.getModule().getRankingCache().put(target, moduleAccessor.getModule().getConfig().getDefaultElo());
+            rankingCache.put(target, defaultElo);
             player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking reset"));
             return;
         }
 
-        if(args.length < 3) {
-            player.sendMessage(ComponentUtil.deserialize("[P] &cUsage: /ranking " + args[0] + " " + target.getName() + " <amount>"));
+        if(amount == 0) {
+            player.sendMessage(ComponentUtil.deserialize("[P] &cUsage: /ranking " + action + " " + target.getName() + " <amount>"));
             return;
         }
 
-        final int oldRanking = moduleAccessor.getModule().getRankingCache().getOrDefault(target, moduleAccessor.getModule().getConfig().getDefaultElo());
+        final int oldRanking = getModule().getRankingCache().getOrDefault(target, getModule().getConfig().getDefaultElo());
 
         switch (action) {
             case "set":
-                final int amount = Integer.parseInt(args[2]);
-                moduleAccessor.getModule().getRankingCache().put(target, amount);
+                rankingCache.put(target, amount);
                 player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking set to " + amount));
                 break;
             case "add":
-                final int addAmount = Integer.parseInt(args[2]);
-                moduleAccessor.getModule().getRankingCache().put(target, oldRanking + addAmount);
-                player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking added by " + addAmount));
+                rankingCache.put(target, oldRanking + amount);
+                player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking added by " + amount));
                 break;
             case "remove":
-                final int removeAmount = Integer.parseInt(args[2]);
-                moduleAccessor.getModule().getRankingCache().put(target, oldRanking - removeAmount);
-                player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking removed by " + removeAmount));
+                rankingCache.put(target, oldRanking - amount);
+                player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking removed by " + amount));
                 break;
             case "reset":
-                moduleAccessor.getModule().getRankingCache().put(target, moduleAccessor.getModule().getConfig().getDefaultElo());
+                rankingCache.put(target, defaultElo);
                 player.sendMessage(ComponentUtil.deserialize("[P] &aPlayer ranking reset"));
                 break;
             default:

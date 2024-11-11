@@ -7,7 +7,6 @@ import dev.isnow.mcrekus.module.impl.ranking.hit.PlayerHit;
 import dev.isnow.mcrekus.module.impl.ranking.kill.PlayerKill;
 import dev.isnow.mcrekus.module.impl.ranking.placeholder.RankingExtension;
 import dev.isnow.mcrekus.util.ComponentUtil;
-import dev.isnow.mcrekus.util.RekusLogger;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.HashMap;

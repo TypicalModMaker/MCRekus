@@ -1,7 +1,6 @@
 package dev.isnow.mcrekus.module.impl.customevents.event.impl.pumpkin;
 
 import dev.isnow.mcrekus.module.impl.customevents.event.CustomEvent;
-import dev.isnow.mcrekus.module.impl.customevents.event.impl.pearls.event.ThrowBukkitEvent;
 import dev.isnow.mcrekus.module.impl.customevents.event.impl.pumpkin.event.PumpkinBreakBukkitEvent;
 
 public class PumpkinEvent extends CustomEvent {

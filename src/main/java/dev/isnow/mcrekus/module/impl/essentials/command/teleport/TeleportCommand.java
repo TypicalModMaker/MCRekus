@@ -1,62 +1,67 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.teleport;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.TeleportUtil;
-import org.bukkit.Bukkit;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-@CommandAlias("tp|teleport")
+@Command({"tp", "teleport"})
 @Description("Command to teleport to someone or teleport 2 different players")
-@CommandPermission("mcrekus.teleport")
+@Permission("mcrekus.teleport")
 @SuppressWarnings("unused")
-public class TeleportCommand extends BaseCommand {
+public class TeleportCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Async
+    @Usage
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("@players @players")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        source.reply(ComponentUtil.deserialize(config.getTeleportNoArgsMessage()));
+    }
 
-        switch (args.length) {
-            case 0:
-                player.sendMessage(ComponentUtil.deserialize(config.getTeleportNoArgsMessage()));
-                return;
-            case 1:
-                Player target = Bukkit.getPlayer(args[0]);
+    @Async
+    @Usage
+    public void executeOne(final BukkitSource source, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
+        final Player player = source.asPlayer();
 
-                if (target == null) {
-                    player.sendMessage(ComponentUtil.deserialize(config.getTeleportPlayerNotFoundMessage(), null, "%player%", args[0]));
-                    return;
-                }
+//
+//        if (target == null) {
+//            player.sendMessage(ComponentUtil.deserialize(config.getTeleportPlayerNotFoundMessage(), null, "%player%", args[0]));
+//            return;
+//        }
 
-                TeleportUtil.teleportPlayers(player, player, target, config);
-                return;
-            case 2:
-                target = player.getServer().getPlayer(args[0]);
-                final Player destination = player.getServer().getPlayer(args[1]);
+        TeleportUtil.teleportPlayers(player, player, target, config);
+    }
 
-                TeleportUtil.teleportPlayers(player, target, destination, config);
-                return;
-            case 3:
-                final Location location = new Location(player.getWorld(), Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), player.getYaw(), player.getPitch());
+    @Async
+    @Usage
+    public void executeTwo(final BukkitSource source, @Named("player") final Player target, @Named("destination") final Player destination) {
+        final EssentialsConfig config = getModule().getConfig();
+        final Player player = source.asPlayer();
 
-                player.teleport(location);
-                player.sendMessage(ComponentUtil.deserialize(config.getTeleportToLocationMessage(), null, "%coordinates%", ComponentUtil.formatLocation(location, true)));
-                return;
-            default:
-                player.sendMessage(ComponentUtil.deserialize(config.getTeleportNoArgsMessage()));
-        }
+        TeleportUtil.teleportPlayers(player, target, destination, config);
+    }
 
+    @Async
+    @Usage
+    public void executeThree(final BukkitSource source, @Named("x") final double x, @Named("y") final double y, @Named("z") final double z) {
+        final EssentialsConfig config = getModule().getConfig();
+        final Player player = source.asPlayer();
+
+        final Location location = new Location(player.getWorld(), x, y, z, player.getYaw(), player.getPitch());
+
+        player.teleport(location);
+        source.reply(ComponentUtil.deserialize(config.getTeleportToLocationMessage(), null, "%coordinates%", ComponentUtil.formatLocation(location, true)));
     }
 }

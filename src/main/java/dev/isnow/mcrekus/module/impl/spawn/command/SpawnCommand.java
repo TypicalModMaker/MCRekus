@@ -1,34 +1,36 @@
 package dev.isnow.mcrekus.module.impl.spawn.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawn.SpawnModule;
 import dev.isnow.mcrekus.module.impl.spawn.config.SpawnConfig;
 import dev.isnow.mcrekus.module.impl.spawn.teleport.SpawnTeleportManager;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-@CommandAlias("spawn")
+@Command("spawn")
 @Description("Command to teleport to spawn")
-@CommandPermission("mcrekus.spawn")
+@Permission("mcrekus.spawn")
 @SuppressWarnings("unused")
-public class SpawnCommand extends BaseCommand {
+public class SpawnCommand extends ModuleAccessor<SpawnModule> {
 
-    private final ModuleAccessor<SpawnModule> moduleAccessor = new ModuleAccessor<>(SpawnModule.class);
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final Player player = source.asPlayer();
 
-    @Default
-    public void execute(Player player, String[] args) {
-        final SpawnTeleportManager spawnTeleportManager = moduleAccessor.getModule().getSpawnTeleportManager();
-        final SpawnConfig spawnConfig = moduleAccessor.getModule().getConfig();
+        final SpawnTeleportManager spawnTeleportManager = getModule().getSpawnTeleportManager();
+        final SpawnConfig spawnConfig = getModule().getConfig();
         final UUID uuid = player.getUniqueId();
 
         final String cooldown = spawnTeleportManager.getCooldown().isOnCooldown(uuid);
@@ -42,7 +44,7 @@ public class SpawnCommand extends BaseCommand {
             player.sendMessage(ComponentUtil.deserialize(spawnConfig.getSpawnDelayMessage(), null, "%time%", spawnConfig.getSpawnTeleportDelay()));
             spawnTeleportManager.getCooldown().addCooldown(player.getUniqueId());
 
-            BukkitTask bukkitRunnable = new BukkitRunnable() {
+            final BukkitTask bukkitRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
                     spawnTeleportManager.removePlayerTeleporting(uuid);

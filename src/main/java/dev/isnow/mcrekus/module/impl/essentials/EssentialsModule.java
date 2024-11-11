@@ -23,14 +23,13 @@ public class EssentialsModule extends Module<EssentialsConfig> {
     }
 
     @Override
-    public void onEnable(MCRekus plugin) {
-
+    public void onEnable(final MCRekus plugin) {
         registerListeners("event");
         registerCommands("command");
     }
 
     @Override
-    public void onDisable(MCRekus plugin) {
+    public void onDisable(final MCRekus plugin) {
         unRegisterCommands();
     }
 }

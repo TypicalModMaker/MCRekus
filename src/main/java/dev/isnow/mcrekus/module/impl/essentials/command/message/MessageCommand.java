@@ -1,44 +1,57 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.message;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.module.impl.essentials.message.MessageManager;
 import dev.isnow.mcrekus.util.ComponentUtil;
-import org.bukkit.Bukkit;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Greedy;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("message|msg|wiadomosc")
+@Command({"message", "msg", "wiadomosc"})
 @Description("Command to message someone")
-@CommandPermission("mcrekus.message")
+@Permission("mcrekus.message")
 @SuppressWarnings("unused")
-public class MessageCommand extends BaseCommand {
+public class MessageCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Async
+    @Usage
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("@players [wiadomość]")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        source.reply(ComponentUtil.deserialize(config.getMessageUsageMessage()));
+    }
 
-        if(args.length < 2) {
-            player.sendMessage(ComponentUtil.deserialize(config.getMessageUsageMessage()));
-            return;
-        }
+    @Usage
+    @Async
+    public void executeDefaultTwo(final BukkitSource source, @Named("player") final Player target) {
+        final EssentialsConfig config = getModule().getConfig();
 
-        final Player target = Bukkit.getPlayer(args[0]);
-        if(target == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getMessagePlayerNotFoundMessage(), null, "%player%", args[0]));
-            return;
-        }
+        source.reply(ComponentUtil.deserialize(config.getMessageUsageMessage()));
+    }
 
-        final MessageManager messageManager = moduleAccessor.getModule().getMessageManager();
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("player") final Player target, @Named("message") @Suggest("wiadomość") @Greedy final String message) {
+        final EssentialsConfig config = getModule().getConfig();
+
+//        final Player target = Bukkit.getPlayer(args[0]);
+//        if(target == null) {
+//            player.sendMessage(ComponentUtil.deserialize(config.getMessagePlayerNotFoundMessage(), null, "%player%", args[0]));
+//            return;
+//        }
+
+        final Player player = source.asPlayer();
+
+        final MessageManager messageManager = getModule().getMessageManager();
 
         if (messageManager.isIgnored(target.getUniqueId(), player.getUniqueId()) || !messageManager.isMessagesEnabled(target.getUniqueId())) {
             player.sendMessage(ComponentUtil.deserialize(config.getMessagePlayerIgnoredMessage(), null, "%player%", target.getName()));
@@ -51,7 +64,6 @@ public class MessageCommand extends BaseCommand {
         }
 
 
-        final String message = String.join(" ", args).substring(args[0].length() + 1);
         target.sendMessage(ComponentUtil.deserialize(config.getMessageSenderFormat(), null, "%player%", player.getName(), "%message%", message, "%author%", target.getName()));
         player.sendMessage(ComponentUtil.deserialize(config.getMessageReceiverFormat(), null, "%player%", target.getName(), "%message%", message, "%author%", player.getName()));
         target.playSound(target.getLocation(), config.getMessageReceivedSound(), 1.0F, 1.0F);

@@ -1,13 +1,14 @@
 package dev.isnow.mcrekus.module.impl.spawnprotection.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,18 +18,19 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-@CommandAlias("setupspawn")
+@Command("setupspawn")
 @Description("Command to setup spawn cuboid")
-@CommandPermission("mcrekus.setupspawn")
+@Permission("mcrekus.setupspawn")
 @SuppressWarnings("unused")
-public class SetupSpawnCommand extends BaseCommand {
+public class SetupSpawnCommand extends ModuleAccessor<SpawnProtectionModule> {
 
     public static final Component SELECTION_WAND = ComponentUtil.deserialize("&c&lSelect Spawn Cuboid");
 
-    private final ModuleAccessor<SpawnProtectionModule> moduleAccessor = new ModuleAccessor<>(SpawnProtectionModule.class);
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final Player player = source.asPlayer();
 
-    @Default
-    public void execute(Player player, String[] args) {
         final ItemStack selectionWand = new ItemStack(Material.GOLDEN_AXE);
         final ItemMeta selectionWandMeta = selectionWand.getItemMeta();
 

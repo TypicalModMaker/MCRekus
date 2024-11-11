@@ -1,58 +1,50 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.broadcast;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
-import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Greedy;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.SuggestionProvider;
+import dev.velix.imperat.annotations.Usage;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 
-@CommandAlias("bc|broadcast")
+@Command({"bc", "broadcast"})
 @Description("Command to broadcast message")
-@CommandPermission("mcrekus.broadcast")
+@Permission("mcrekus.broadcast")
 @SuppressWarnings("unused")
-public class BroadcastCommand extends BaseCommand {
+public class BroadcastCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    public BroadcastCommand() {
-        MCRekus.getInstance().getCommandManager().registerCompletion("broadcastType", context -> Arrays.stream(BroadcastType.values())
-                .map(BroadcastType::name)
-                .collect(Collectors.toList()));
+        source.reply(ComponentUtil.deserialize(config.getBroadcastNoArgsMessage()));
     }
 
-    @Default
-    @CommandCompletion("@broadcastType [message]")
-    public void execute(CommandSender player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("type") @SuggestionProvider("broadcastType") final String type, @Named("message") @Greedy final String message) {
+        final EssentialsConfig config = getModule().getConfig();
 
-        if(args.length == 0) {
-            player.sendMessage(ComponentUtil.deserialize(config.getBroadcastNoArgsMessage()));
-            return;
-        }
-
-        final BroadcastType type;
+        final BroadcastType foundType;
         try {
-            type = BroadcastType.valueOf(args[0].toUpperCase());
+            foundType = BroadcastType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
-            player.sendMessage(ComponentUtil.deserialize(config.getBroadcastInvalidTypeMessage()));
+            source.reply(ComponentUtil.deserialize(config.getBroadcastInvalidTypeMessage()));
             return;
         }
 
-        final String message = String.join(" ", args).replaceFirst(args[0] + " ", "");
-
-        switch (type) {
+        switch (foundType) {
             case CHAT:
                 Bukkit.broadcast(ComponentUtil.deserialize(config.getBroadcastChatMessage(), null, "%message%", message));
                 break;

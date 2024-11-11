@@ -1,35 +1,31 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.util.ComponentUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Greedy;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("sendraw")
+@Command("sendraw")
 @Description("Command to set raw message to player")
-@CommandPermission("mcrekus.sendraw")
+@Permission("mcrekus.sendraw")
 @SuppressWarnings("unused")
-public class SendRawCommand extends BaseCommand {
+public class SendRawCommand {
 
-    @Default
-    public void execute(CommandSender sender, String[] args) {
-        if(args.length < 2) {
-            sender.sendMessage(ComponentUtil.deserialize("&cUsage: /sendraw <player> <message>"));
-            return;
-        }
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        source.reply(ComponentUtil.deserialize("&cUsage: /sendraw <player> <message>"));
+    }
 
-        final Player target = Bukkit.getPlayer(args[0]);
-        if(target == null) {
-            sender.sendMessage(ComponentUtil.deserialize("&cPlayer not found!"));
-            return;
-        }
-
-        final String message = String.join(" ", args).replace(args[0] + " ", "");
-        target.sendMessage(ComponentUtil.deserialize(message));
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("player") final Player player, @Named("message") @Greedy final String message) {
+        player.sendMessage(ComponentUtil.deserialize(message));
     }
 }

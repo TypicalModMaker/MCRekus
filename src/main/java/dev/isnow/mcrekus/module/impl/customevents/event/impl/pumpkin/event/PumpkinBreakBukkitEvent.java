@@ -2,13 +2,10 @@ package dev.isnow.mcrekus.module.impl.customevents.event.impl.pumpkin.event;
 
 import dev.isnow.mcrekus.module.impl.customevents.event.BukkitEvent;
 import dev.isnow.mcrekus.module.impl.customevents.event.CustomEvent;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 public class PumpkinBreakBukkitEvent extends BukkitEvent implements Listener {
 

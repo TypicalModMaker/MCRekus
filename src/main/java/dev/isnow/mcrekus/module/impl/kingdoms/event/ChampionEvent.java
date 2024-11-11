@@ -11,6 +11,7 @@ import io.papermc.paper.event.entity.EntityMoveEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
@@ -40,7 +41,6 @@ public class ChampionEvent extends ModuleAccessor<KingdomsModule> implements Lis
         getModule().getEntityThreadPool().execute(() -> {
             final Location from = event.getFrom();
             final Location to = event.getTo();
-
 
             final Champion champion = getModule().getChampions().get(entity.getEntityId());
 
@@ -136,10 +136,10 @@ public class ChampionEvent extends ModuleAccessor<KingdomsModule> implements Lis
                 return false;
             }
 
-            KingdomPlayer kp = KingdomPlayer.getKingdomPlayer(player);
+            final KingdomPlayer kp = KingdomPlayer.getKingdomPlayer(player);
 
             return kp.getKingdom() != null && kp.getKingdom().getName().equals(invasion.getAttacker().getKingdom().getName());
-        }).map(entity1 -> (Player) entity1).toList();
+        }).map(entity1 -> (Player) entity1).collect(Collectors.toList());
 
         final KingdomsConfig config = getModule().getConfig();
 

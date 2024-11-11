@@ -1,31 +1,33 @@
 package dev.isnow.mcrekus.module.impl.essentials.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@CommandAlias("anvil|kowadlo|kowad")
+@Command({"anvil", "kowadlo"})
 @Description("Command to open anvil")
-@CommandPermission("mcrekus.anvil")
+@Permission("mcrekus.anvil")
 @SuppressWarnings("unused")
-public class AnvilCommand extends BaseCommand {
+public class AnvilCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void openAnvil(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        final Player player = source.asPlayer();
 
         player.openAnvil(null, true);
 
-        player.sendMessage(ComponentUtil.deserialize(config.getOpenAnvilMessage()));
+        source.reply(ComponentUtil.deserialize(config.getOpenAnvilMessage()));
 
         player.playSound(player.getLocation(), config.getOpenAnvilSound(), 1.0F, 1.0F);
     }

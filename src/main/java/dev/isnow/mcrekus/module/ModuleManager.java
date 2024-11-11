@@ -1,11 +1,18 @@
 package dev.isnow.mcrekus.module;
 
 import dev.isnow.mcrekus.MCRekus;
+import dev.isnow.mcrekus.command.CommandManager;
 import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class ModuleManager {
@@ -21,30 +28,51 @@ public class ModuleManager {
     }
 
     private void loadModules(final MCRekus plugin, final String packageName) {
+        RekusLogger.info("Initializing command manager");
+        MCRekus.getInstance().setCommandManager(new CommandManager(MCRekus.getInstance()));
+
+        List<Module<?>> initializedModules = new ArrayList<>();
+
         try {
             List<Class<?>> moduleClasses = ReflectionUtil.getClasses(packageName);
             for (Class<?> clazz : moduleClasses) {
                 if (Module.class.isAssignableFrom(clazz) && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
-                    final Module<?> module = (Module<?>) clazz.getDeclaredConstructor().newInstance();
-
                     try {
-                        if(plugin.getConfigManager().getGeneralConfig().getEnabledModules().contains(module.getName())) {
-                            modules.add(module);
-
-                            RekusLogger.info("Loading module " + module.getName());
-                            module.onEnable(plugin);
-                            RekusLogger.info("Loaded module " + module.getName());
+                        final Module<?> module = (Module<?>) clazz.getDeclaredConstructor().newInstance();
+                        try {
+                            initializedModules.add(module);
+                        } catch (Exception e) {
+                            RekusLogger.error("Failed to find module " + module.getName() + "!");
+                            e.printStackTrace();
                         }
                     } catch (Exception e) {
-                        modules.remove(module);
-                        RekusLogger.error("Failed to load module " + module.getName() + "!");
+                        RekusLogger.error("Failed to load module " + clazz.getSimpleName());
                         e.printStackTrace();
                     }
                 }
             }
+
         } catch (Exception e) {
             RekusLogger.error("Failed to load modules!");
             e.printStackTrace();
+        }
+
+        initializedModules = sortModulesByDependencies(initializedModules);
+
+        for(final Module<?> module : initializedModules) {
+            if(!plugin.getConfigManager().getGeneralConfig().getEnabledModules().contains(module.getName())) {
+                continue;
+            }
+            try {
+                modules.add(module);
+                RekusLogger.info("Loading module " + module.getName());
+                module.onEnable(plugin);
+                RekusLogger.info("Loaded module " + module.getName());
+            } catch (Exception e) {
+                modules.remove(module);
+                RekusLogger.error("Failed to load module " + module.getName());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -73,4 +101,58 @@ public class ModuleManager {
 
         return foundModule != null ? (T) foundModule : null;
     }
+
+    public List<Module<?>> sortModulesByDependencies(final List<Module<?>> modules) {
+        final Map<Class<?>, Integer> inDegree = new HashMap<>();
+        final Map<Class<?>, Module<?>> moduleMap = new HashMap<>();
+        final Queue<Class<?>> zeroDegreeQueue = new LinkedList<>();
+
+        List<Module<?>> sortedList = new ArrayList<>();
+
+        for (final Module<?> module : modules) {
+            final Class<?> moduleClass = module.getClass();
+            inDegree.put(moduleClass, 0);
+            moduleMap.put(moduleClass, module);
+        }
+
+        for (final Module<?> module : modules) {
+            for (final Class<?> dependency : module.getDependencies()) {
+                inDegree.put(dependency, inDegree.getOrDefault(dependency, 0) + 1);
+            }
+        }
+
+        for (final Class<?> moduleClass : inDegree.keySet()) {
+            if (inDegree.get(moduleClass) == 0) {
+                zeroDegreeQueue.add(moduleClass);
+            }
+        }
+
+        while (!zeroDegreeQueue.isEmpty()) {
+            final Class<?> currentClass = zeroDegreeQueue.poll();
+            final Module<?> currentModule = moduleMap.get(currentClass);
+
+            sortedList.add(currentModule);
+
+            for (final Class<?> dependency : currentModule.getDependencies()) {
+                final int updatedInDegree = inDegree.get(dependency) - 1;
+                inDegree.put(dependency, updatedInDegree);
+
+                if (updatedInDegree == 0) {
+                    zeroDegreeQueue.add(dependency);
+                }
+            }
+        }
+
+        sortedList = sortedList.reversed();
+
+        if (sortedList.size() != modules.size()) {
+            RekusLogger.error("There is a cycle in the dependencies!");
+            return null;
+        }
+
+        // Return the sorted list of modules
+        return sortedList;
+    }
+
+
 }

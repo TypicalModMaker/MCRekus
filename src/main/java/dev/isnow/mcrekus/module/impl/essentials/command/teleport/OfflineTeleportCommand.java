@@ -1,59 +1,62 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.teleport;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-@CommandAlias("otp|offlineteleport")
+@Command({"otp", "offlineteleport"})
 @Description("Command to offline teleport to someone")
-@CommandPermission("mcrekus.offlineteleport")
+@Permission("mcrekus.offlineteleport")
 @SuppressWarnings("unused")
-public class OfflineTeleportCommand extends BaseCommand {
+public class OfflineTeleportCommand extends ModuleAccessor<EssentialsModule> {
 
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+    @Usage
+    @Async
+    public void executeDefault(final BukkitSource source) {
+        final EssentialsConfig config = getModule().getConfig();
 
-    @Default
-    @CommandCompletion("[Name]")
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+        source.reply(ComponentUtil.deserialize(config.getOfflineTeleportNoArgsMessage()));
+    }
 
-        switch (args.length) {
-            case 0:
-                player.sendMessage(ComponentUtil.deserialize(config.getOfflineTeleportNoArgsMessage()));
+    @Usage
+    @Async
+    public void execute(final BukkitSource source, @Named("target") final String target) {
+        final EssentialsConfig config = getModule().getConfig();
+
+        final Player player = source.asPlayer();
+
+        MCRekus.getInstance().getDatabaseManager().getUserAsync(target, (session, data) -> {
+            if (data == null) {
+                source.reply(ComponentUtil.deserialize(config.getOfflineTeleportPlayerNotFoundMessage(), null, "%player%", target));
                 return;
-            case 1:
-                MCRekus.getInstance().getDatabaseManager().getUserAsync(args[0], (session, data) -> {
-                    if (data == null) {
-                        player.sendMessage(ComponentUtil.deserialize(config.getOfflineTeleportPlayerNotFoundMessage(), null, "%player%", args[0]));
-                        return;
-                    }
+            }
 
-                    if (data.getLastLocation() == null) {
-                        player.sendMessage(ComponentUtil.deserialize(config.getOfflineTeleportNoLocationMessage(), null, "%player%", args[0]));
-                        return;
-                    }
+            if (data.getLastLocation() == null) {
+                source.reply(ComponentUtil.deserialize(config.getOfflineTeleportNoLocationMessage(), null, "%player%", target));
+                return;
+            }
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            player.teleport(data.getLastLocation().toBukkitLocation());
-                        }
-                    }.runTask(MCRekus.getInstance());
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    player.teleport(data.getLastLocation().toBukkitLocation());
+                }
+            }.runTask(MCRekus.getInstance());
 
-                    player.sendMessage(ComponentUtil.deserialize(config.getOfflineTeleportSuccessMessage(), null, "%player%", args[0]));
-                    session.closeSession();
-                });
-        }
+            source.reply(ComponentUtil.deserialize(config.getOfflineTeleportSuccessMessage(), null, "%player%", target));
+            session.closeSession();
+        });
 
     }
 }

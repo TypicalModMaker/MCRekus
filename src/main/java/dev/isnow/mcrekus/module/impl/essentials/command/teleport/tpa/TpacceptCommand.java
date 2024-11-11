@@ -1,10 +1,5 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.teleport.tpa;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
@@ -12,26 +7,34 @@ import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.module.impl.essentials.teleport.TeleportManager;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.TeleportUtil;
+import dev.velix.imperat.BukkitSource;
+import dev.velix.imperat.annotations.Async;
+import dev.velix.imperat.annotations.Command;
+import dev.velix.imperat.annotations.Description;
+import dev.velix.imperat.annotations.Permission;
+import dev.velix.imperat.annotations.Usage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-@CommandAlias("tpaccept")
+@Command("tpaccept")
 @Description("Command to accept teleport request")
-@CommandPermission("mcrekus.tpaccept")
+@Permission("mcrekus.tpaccept")
 @SuppressWarnings("unused")
-public class TpacceptCommand extends BaseCommand {
-    private final ModuleAccessor<EssentialsModule> moduleAccessor = new ModuleAccessor<>(EssentialsModule.class);
+public class TpacceptCommand extends ModuleAccessor<EssentialsModule> {
 
-    @Default
-    public void execute(Player player, String[] args) {
-        final EssentialsConfig config = moduleAccessor.getModule().getConfig();
+    @Usage
+    @Async
+    public void execute(final BukkitSource source) {
+        final Player player = source.asPlayer();
 
-        final TeleportManager teleportManager = moduleAccessor.getModule().getTeleportManager();
+        final EssentialsConfig config = getModule().getConfig();
+
+        final TeleportManager teleportManager = getModule().getTeleportManager();
 
         if(!teleportManager.hasTpaRequest(player.getUniqueId())) {
-            player.sendMessage(ComponentUtil.deserialize(config.getTpacceptNoRequestMessage()));
+            source.reply(ComponentUtil.deserialize(config.getTpacceptNoRequestMessage()));
             return;
         }
 
@@ -40,12 +43,12 @@ public class TpacceptCommand extends BaseCommand {
         teleportManager.removeTpaRequest(player.getUniqueId());
 
         if (requester == null) {
-            player.sendMessage(ComponentUtil.deserialize(config.getTpacceptRequesterOfflineMessage()));
+            source.reply(ComponentUtil.deserialize(config.getTpacceptRequesterOfflineMessage()));
             return;
         }
 
         requester.sendMessage(ComponentUtil.deserialize(config.getTpaRequestAcceptedRequesterMessage(), null, "%player%", player.getName(), "%time%", String.valueOf(config.getTpaDelayTime())));
-        player.sendMessage(ComponentUtil.deserialize(config.getTpaRequestAcceptedMessage(), null, "%player%", requester.getName()));
+        source.reply(ComponentUtil.deserialize(config.getTpaRequestAcceptedMessage(), null, "%player%", requester.getName()));
 
         BukkitTask bukkitRunnable = new BukkitRunnable() {
             @Override
