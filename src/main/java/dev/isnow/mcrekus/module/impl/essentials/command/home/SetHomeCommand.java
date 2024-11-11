@@ -16,7 +16,7 @@ import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Greedy;
 import dev.velix.imperat.annotations.Named;
 import dev.velix.imperat.annotations.Permission;
-import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.SuggestionProvider;
 import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
@@ -36,21 +36,15 @@ public class SetHomeCommand extends ModuleAccessor<EssentialsModule> {
 
     @Usage
     @Async
-    public void execute(final BukkitSource source, @Named("name") @Suggest("nazwa") @Greedy final String name) {
+    public void execute(final BukkitSource source, @Named("name") @SuggestionProvider("home") @Greedy final String name) {
         final EssentialsConfig config = getModule().getConfig();
 
+        System.out.println("Message: '" + name + "'");
         final Player player = source.asPlayer();
 
         MCRekus.getInstance().getDatabaseManager().getUserAsync(player, (session, data) -> {
             if(data == null) {
                 source.reply(ComponentUtil.deserialize("&cWystąpił błąd podczas ładowania danych gracza. Spróbuj ponownie później."));
-                return;
-            }
-
-            final int maxHomes = PermissionUtil.getMaxAllowedHomes(getModule().getConfig().getMaxAllowedHomesByDefault(), player);
-
-            if (data.getHomeLocations().size() >= maxHomes) {
-                source.reply(ComponentUtil.deserialize(config.getSetHomeAtLimitMessage(), null, "%max%", String.valueOf(maxHomes)));
                 return;
             }
 
@@ -62,6 +56,13 @@ public class SetHomeCommand extends ModuleAccessor<EssentialsModule> {
                 source.reply(ComponentUtil.deserialize(config.getSetHomeUpdatedMessage(), null, "%home%", name));
                 player.playSound(player.getLocation(), config.getSetHomeSound(), 1.0F, 1.0F);
             } else {
+                final int maxHomes = PermissionUtil.getMaxAllowedHomes(getModule().getConfig().getMaxAllowedHomesByDefault(), player);
+
+                if (data.getHomeLocations().size() >= maxHomes) {
+                    source.reply(ComponentUtil.deserialize(config.getSetHomeAtLimitMessage(), null, "%max%", String.valueOf(maxHomes)));
+                    return;
+                }
+
                 final HomeData homeData = new HomeData(name, new RekusLocation(player.getLocation()), data);
 
                 data.getHomeLocations().put(name, homeData);

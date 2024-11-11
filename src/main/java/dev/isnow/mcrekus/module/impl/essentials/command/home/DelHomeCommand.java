@@ -13,7 +13,7 @@ import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Greedy;
 import dev.velix.imperat.annotations.Named;
 import dev.velix.imperat.annotations.Permission;
-import dev.velix.imperat.annotations.Suggest;
+import dev.velix.imperat.annotations.SuggestionProvider;
 import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
@@ -33,7 +33,7 @@ public class DelHomeCommand extends ModuleAccessor<EssentialsModule> {
 
     @Async
     @Usage
-    public void execute(final BukkitSource source, @Named("name") @Suggest("nazwa") @Greedy final String name) {
+    public void execute(final BukkitSource source, @Named("name") @SuggestionProvider("home") @Greedy final String name) {
         final EssentialsConfig config = getModule().getConfig();
         final Player player = source.asPlayer();
 

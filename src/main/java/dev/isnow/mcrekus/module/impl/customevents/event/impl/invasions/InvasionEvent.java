@@ -1,7 +1,6 @@
 package dev.isnow.mcrekus.module.impl.customevents.event.impl.invasions;
 
 import dev.isnow.mcrekus.module.impl.customevents.event.CustomEvent;
-import dev.isnow.mcrekus.module.impl.customevents.event.impl.coinflip.event.CoinFlipBukkitEvent;
 import dev.isnow.mcrekus.module.impl.customevents.event.impl.invasions.event.InvadeBukkitEvent;
 
 public class InvasionEvent extends CustomEvent {

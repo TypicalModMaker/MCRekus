@@ -10,7 +10,6 @@ import dev.velix.imperat.annotations.Command;
 import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Usage;
-import org.bukkit.entity.Player;
 
 @Command({"day", "dzien"})
 @Description("Command to set time to day")

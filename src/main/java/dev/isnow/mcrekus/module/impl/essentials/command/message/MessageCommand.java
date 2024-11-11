@@ -14,7 +14,6 @@ import dev.velix.imperat.annotations.Named;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Suggest;
 import dev.velix.imperat.annotations.Usage;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @Command({"message", "msg", "wiadomosc"})

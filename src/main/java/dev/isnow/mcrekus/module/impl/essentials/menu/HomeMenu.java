@@ -132,7 +132,7 @@ public class HomeMenu extends ModuleAccessor<EssentialsModule> implements Menu {
         }
     }
 
-    private void teleportPlayer(final EssentialsConfig config, final HomeData home, final Player player) {
+    public static void teleportPlayer(final EssentialsConfig config, final HomeData home, final Player player) {
         player.teleport(home.getLocation().toBukkitLocation());
         player.playSound(player.getLocation(), config.getHomeTeleportSound(), 1.0F, 1.0F);
         player.sendMessage(ComponentUtil.deserialize(config.getHomeTeleportMessage(), null, "%home%", home.getName()));

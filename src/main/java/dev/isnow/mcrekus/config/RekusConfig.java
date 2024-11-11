@@ -27,7 +27,7 @@ public abstract class RekusConfig {
 
     public RekusConfig load() {
         if(!path.toFile().exists()) {
-            RekusLogger.debug("Config file " + path.getFileName() + " does not exist, creating...");
+            RekusLogger.debug("Config file " + path.getFileName() + " does not exist, creating...", true);
             save();
         }
 

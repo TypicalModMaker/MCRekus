@@ -12,7 +12,7 @@ import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Usage;
 import org.bukkit.entity.Player;
 
-@Command("workbench|wb|crafting")
+@Command({"workbench", "wb", "crafting"})
 @Description("Command to open workbench")
 @Permission("mcrekus.workbench")
 @SuppressWarnings("unused")

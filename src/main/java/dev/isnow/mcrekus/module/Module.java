@@ -1,11 +1,9 @@
 package dev.isnow.mcrekus.module;
 
 import dev.isnow.mcrekus.MCRekus;
-import dev.isnow.mcrekus.data.PlayerData;
 import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import dev.velix.imperat.annotations.Command;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +16,7 @@ import org.bukkit.event.Listener;
 @Getter
 public abstract class Module<T extends ModuleConfig> {
     private final String name;
+    private final Set<Class<?>> dependencies = new HashSet<>();
     private final Set<String[]> registeredCommands = new HashSet<>();
     private final Set<Listener> registeredListeners = new HashSet<>();
 
@@ -28,6 +27,13 @@ public abstract class Module<T extends ModuleConfig> {
         this.name = name;
 
         this.config = createConfig();
+    }
+
+    public Module(final String name, final Class<?>... dependencies) {
+        this.name = name;
+
+        this.config = createConfig();
+        this.dependencies.addAll(List.of(dependencies));
     }
 
     @SuppressWarnings("unchecked")

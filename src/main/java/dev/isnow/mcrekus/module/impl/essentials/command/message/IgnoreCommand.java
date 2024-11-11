@@ -12,7 +12,6 @@ import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Named;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Usage;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @Command({"ignore", "zignoruj"})

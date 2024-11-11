@@ -1,12 +1,9 @@
 package dev.isnow.mcrekus.module.impl.essentials.command.speed;
 
-import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.essentials.EssentialsModule;
-import dev.isnow.mcrekus.module.impl.essentials.command.broadcast.BroadcastType;
 import dev.isnow.mcrekus.module.impl.essentials.config.EssentialsConfig;
 import dev.isnow.mcrekus.util.ComponentUtil;
-import dev.isnow.mcrekus.util.RekusLogger;
 import dev.velix.imperat.BukkitSource;
 import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
@@ -17,12 +14,6 @@ import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Suggest;
 import dev.velix.imperat.annotations.SuggestionProvider;
 import dev.velix.imperat.annotations.Usage;
-import dev.velix.imperat.command.parameters.CommandParameter;
-import dev.velix.imperat.context.SuggestionContext;
-import dev.velix.imperat.resolvers.SuggestionResolver;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 
 @Command({"speed", "predkosc"})

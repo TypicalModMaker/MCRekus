@@ -7,7 +7,6 @@ import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.velix.imperat.BukkitSource;
 import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
-import dev.velix.imperat.annotations.Cooldown;
 import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Usage;

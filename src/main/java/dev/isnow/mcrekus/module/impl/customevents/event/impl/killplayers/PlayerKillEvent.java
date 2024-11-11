@@ -2,7 +2,6 @@ package dev.isnow.mcrekus.module.impl.customevents.event.impl.killplayers;
 
 import dev.isnow.mcrekus.module.impl.customevents.event.CustomEvent;
 import dev.isnow.mcrekus.module.impl.customevents.event.impl.killplayers.event.PlayerBukkitEvent;
-import dev.isnow.mcrekus.module.impl.customevents.event.impl.pearls.event.ThrowBukkitEvent;
 
 public class PlayerKillEvent extends CustomEvent {
 

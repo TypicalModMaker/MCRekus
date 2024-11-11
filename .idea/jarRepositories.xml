@@ -42,6 +42,11 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="codemc-snapshots" />
+      <option name="name" value="codemc-snapshots" />
+      <option name="url" value="https://repo.codemc.io/repository/maven-snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="rosewood-repo" />
       <option name="name" value="rosewood-repo" />
       <option name="url" value="https://repo.rosewooddev.io/repository/public/" />
@@ -50,6 +55,11 @@
       <option name="id" value="xenondevs" />
       <option name="name" value="xenondevs" />
       <option name="url" value="https://repo.xenondevs.xyz/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="codemc-releases" />
+      <option name="name" value="codemc-releases" />
+      <option name="url" value="https://repo.codemc.io/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="aikar" />

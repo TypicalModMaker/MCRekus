@@ -7,9 +7,9 @@ import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.velix.imperat.BukkitSource;
 import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
-import dev.velix.imperat.annotations.DefaultProvider;
 import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Optional;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.SuggestionProvider;
 import dev.velix.imperat.annotations.Usage;
@@ -48,7 +48,7 @@ public class GamemodeCommand extends ModuleAccessor<EssentialsModule> {
 
     @Usage
     @Async
-    public void execute(final BukkitSource source, @Named("gamemode") @SuggestionProvider("gamemode") final String gamemode) {
+    public void execute(final BukkitSource source, @Named("gamemode") @SuggestionProvider("gamemode") final String gamemode, @Optional @Named("player") final Player target) {
         final EssentialsConfig config = getModule().getConfig();
 
         final GameMode foundGameMode = GAME_MODES.get(gamemode.toLowerCase());
@@ -56,40 +56,28 @@ public class GamemodeCommand extends ModuleAccessor<EssentialsModule> {
         final Player player = source.asPlayer();
 
         if (foundGameMode != null && player.hasPermission("mcrekus.gamemode." + foundGameMode.name().toLowerCase())) {
-            player.setGameMode(foundGameMode);
-            player.setAllowFlight(foundGameMode == GameMode.CREATIVE || foundGameMode == GameMode.SPECTATOR);
-            player.sendMessage(ComponentUtil.deserialize(config.getGamemodeChangedMessage(), null, "%gamemode%", getTranslation(foundGameMode)));
-            if(config.getGamemodeChangedSound() != null) {
-                player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);
+            if(target != null) {
+                target.setGameMode(foundGameMode);
+                target.setAllowFlight(foundGameMode == GameMode.CREATIVE
+                        || foundGameMode == GameMode.SPECTATOR);
+                source.reply(
+                        ComponentUtil.deserialize(config.getGamemodeChangedOtherMessage(), null,
+                                "%gamemode%", getTranslation(foundGameMode), "%player%",
+                                target.getName()));
+            } else {
+                player.setGameMode(foundGameMode);
+                player.setAllowFlight(foundGameMode == GameMode.CREATIVE || foundGameMode == GameMode.SPECTATOR);
+                source.reply(ComponentUtil.deserialize(config.getGamemodeChangedMessage(), null, "%gamemode%", getTranslation(foundGameMode)));
             }
-        } else {
-            player.sendMessage(ComponentUtil.deserialize(config.getGamemodeInvalidMessage()));
-        }
 
-    }
-
-
-    @Usage
-    @Async
-    public void execute(final BukkitSource source, @Named("gamemode") @SuggestionProvider("gamemode") final String gamemode, @Named("player") final Player target) {
-        final EssentialsConfig config = getModule().getConfig();
-
-        final GameMode foundGameMode = GAME_MODES.get(gamemode.toLowerCase());
-
-        if (foundGameMode != null) {
-            target.setGameMode(foundGameMode);
-            target.setAllowFlight(foundGameMode == GameMode.CREATIVE || foundGameMode == GameMode.SPECTATOR);
-            source.reply(ComponentUtil.deserialize(config.getGamemodeChangedOtherMessage(), null, "%gamemode%", getTranslation(foundGameMode), "%player%", target.getName()));
-            if(config.getGamemodeChangedSound() != null && !source.isConsole()) {
-                final Player player = source.asPlayer();
-
+            if(config.getGamemodeChangedSound() != null) {
                 player.playSound(player.getLocation(), config.getGamemodeChangedSound(), 1.0F, 1.0F);
             }
         } else {
             source.reply(ComponentUtil.deserialize(config.getGamemodeInvalidMessage()));
         }
-    }
 
+    }
 
 
     private String getTranslation(final GameMode input) {

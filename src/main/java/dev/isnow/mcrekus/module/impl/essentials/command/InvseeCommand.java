@@ -13,9 +13,7 @@ import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Named;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Usage;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.A;
 
 @Command("invsee")
 @Description("Command to preview players inventory")

@@ -1,7 +1,6 @@
 package dev.isnow.mcrekus.module.impl.essentials.minecart.codec;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
 public class Vec3Codec {

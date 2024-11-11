@@ -28,7 +28,11 @@ public class RekusLogger {
     }
 
     public void debug(final String log) {
-        if(!MCRekus.getInstance().getConfigManager().getGeneralConfig().isDebugMode()) return;
+        debug(log, false);
+    }
+
+    public void debug(final String log, final boolean force) {
+        if(!force && !MCRekus.getInstance().getConfigManager().getGeneralConfig().isDebugMode()) return;
 
         Bukkit.getConsoleSender().sendMessage(ComponentUtil.deserialize(prefix + " &a[DEBUG] " + log));
     }
