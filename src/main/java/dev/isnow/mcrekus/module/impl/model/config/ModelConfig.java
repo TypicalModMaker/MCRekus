@@ -15,5 +15,5 @@ public class ModelConfig extends ModuleConfig {
     }
 
     @Comment({"", "Model command usage message"})
-    private String commandUsageMessage = "[P] /model <list|place|remove|parseall> <name>";
+    private String commandUsageMessage = "[P] Usage: /model <list|place|remove|parseall> <name>";
 }

@@ -39,6 +39,14 @@ public class ModelCommand extends ModuleAccessor<ModelModule> {
 
     @Usage
     @Async
+    public void defaultCommand(final BukkitSource source) {
+        final ModelConfig config = getModule().getConfig();
+
+        source.reply(ComponentUtil.deserialize(config.getCommandUsageMessage()));
+    }
+
+    @Usage
+    @Async
     public void execute(final BukkitSource source, @Named("action") @Suggest({"list", "place", "remove", "parseall"}) final String action, @Named("model") @SuggestionProvider("model") @Optional @Greedy final String model) {
         final ModelConfig config = getModule().getConfig();
 
