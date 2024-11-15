@@ -123,32 +123,24 @@
           <id>central</id>
           <url>https://repo1.maven.org/maven2/</url>
       </repository>
-      <!--      PAPER API      -->
+
       <repository>
           <id>papermc-repo</id>
           <url>https://repo.papermc.io/repository/maven-public/</url>
       </repository>
 
-      <!--      PLACEHOLDERAPI HOOK      -->
       <repository>
           <id>placeholderapi</id>
           <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
       </repository>
 
-      <!--      COMMANDS API      -->
-      <repository>
-          <id>aikar</id>
-          <url>https://repo.aikar.co/content/groups/aikar/</url>
-      </repository>
-
-      <!--      INV API      -->
       <repository>
         <id>jitpack.io</id>
         <url>https://jitpack.io</url>
       </repository>
 
       <repository>
-          <id>google</id>
+          <id>enonic</id>
           <url>https://repo.enonic.com/public/</url>
       </repository>
 
@@ -161,6 +153,7 @@
           <id>codemc-releases</id>
           <url>https://repo.codemc.io/repository/maven-releases/</url>
       </repository>
+
       <repository>
           <id>codemc-snapshots</id>
           <url>https://repo.codemc.io/repository/maven-snapshots/</url>
@@ -397,11 +390,4 @@
           <scope>provided</scope>
       </dependency>
   </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>update-dev</id>
-            <url>sftp://root@${env.BUILD_IP}/home/earthsmpdev_nowy/plugins</url>
-        </repository>
-    </distributionManagement>
 </project>
