@@ -16,7 +16,7 @@ import me.tofaa.entitylib.ve.ViewerEngine;
 public class ModelModule extends Module<ModelConfig> {
 
     private final HashMap<String, Model> parsedModels = new HashMap<>();
-    private final ViewerEngine viewerEngine = new ViewerEngine();
+//    private final ViewerEngine viewerEngine = new ViewerEngine();
     private final ModelTracker modelTracker = new ModelTracker();
 
     public ModelModule() {
@@ -29,7 +29,7 @@ public class ModelModule extends Module<ModelConfig> {
         parseModels();
 
         registerCommands("command");
-        viewerEngine.enable();
+//        viewerEngine.enable();
     }
 
     @Override

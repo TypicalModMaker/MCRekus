@@ -10,9 +10,12 @@ import dev.velix.imperat.annotations.Async;
 import dev.velix.imperat.annotations.Command;
 import dev.velix.imperat.annotations.Description;
 import dev.velix.imperat.annotations.Named;
+import dev.velix.imperat.annotations.Optional;
 import dev.velix.imperat.annotations.Permission;
 import dev.velix.imperat.annotations.Usage;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @Command({"tp", "teleport"})
@@ -31,7 +34,7 @@ public class TeleportCommand extends ModuleAccessor<EssentialsModule> {
 
     @Async
     @Usage
-    public void executeOne(final BukkitSource source, @Named("player") final Player target) {
+    public void executeOne(final BukkitSource source, @Named("player") final Player target, @Named("destination") @Optional final Player destination) {
         final EssentialsConfig config = getModule().getConfig();
         final Player player = source.asPlayer();
 
@@ -41,25 +44,30 @@ public class TeleportCommand extends ModuleAccessor<EssentialsModule> {
 //            return;
 //        }
 
-        TeleportUtil.teleportPlayers(player, player, target, config);
+        if (destination != null) {
+            TeleportUtil.teleportPlayers(player, target, destination, config);
+        } else {
+            TeleportUtil.teleportPlayers(player, player, target, config);
+        }
     }
 
     @Async
     @Usage
-    public void executeTwo(final BukkitSource source, @Named("player") final Player target, @Named("destination") final Player destination) {
+    public void executeTwo(final BukkitSource source, @Named("x") final double x, @Named("y") final double y, @Named("z") final double z, @Optional String worldArgument) {
         final EssentialsConfig config = getModule().getConfig();
         final Player player = source.asPlayer();
 
-        TeleportUtil.teleportPlayers(player, target, destination, config);
-    }
+        World world = player.getWorld();
+        if(worldArgument != null) {
+            world = Bukkit.getWorld(worldArgument);
+        }
 
-    @Async
-    @Usage
-    public void executeThree(final BukkitSource source, @Named("x") final double x, @Named("y") final double y, @Named("z") final double z) {
-        final EssentialsConfig config = getModule().getConfig();
-        final Player player = source.asPlayer();
+        if(world == null) {
+            source.reply(ComponentUtil.deserialize(config.getWorldNotFoundMessage(), null, "%world%", worldArgument));
+            return;
+        }
 
-        final Location location = new Location(player.getWorld(), x, y, z, player.getYaw(), player.getPitch());
+        final Location location = new Location(world, x, y, z, player.getYaw(), player.getPitch());
 
         player.teleport(location);
         source.reply(ComponentUtil.deserialize(config.getTeleportToLocationMessage(), null, "%coordinates%", ComponentUtil.formatLocation(location, true)));

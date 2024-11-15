@@ -67,6 +67,10 @@ public class ModelCommand extends ModuleAccessor<ModelModule> {
                 try {
                     final TrackedModel trackedModel = getModule().getModelTracker().spawnModel(player.getLocation(), foundModel);
 
+                    for(final WrapperEntity object : trackedModel.getObjects()) {
+                        object.addViewer(player.getUniqueId());
+                    }
+
                     source.reply("&aPlaced model! ID: " + trackedModel.getBase().getEntityId());
                 } catch (Exception e) {
                     RekusLogger.error("Failed to spawn model: " + foundModel.getName());

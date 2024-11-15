@@ -27,7 +27,7 @@ public class Transformable {
         matrix.set(reversed);
 
         final float scaleFactor = 1.0F / matrix.m33();
-        final Triple<Quaternionf, org.joml.Vector3f, Quaternionf> triple = MatrixUtil.svdDecompose(new Matrix3f(matrix).scale(scaleFactor));
+        final Triple<Quaternionf, org.joml.Vector3f, Quaternionf> triple = MatrixUtil.decomposeSVD(new Matrix3f(matrix).scale(scaleFactor));
 
         final Quaternionf jomlLeftRotation = new Quaternionf(triple.getLeft());
         this.leftRotation = new Quaternion4f(jomlLeftRotation.x, jomlLeftRotation.y, jomlLeftRotation.z, jomlLeftRotation.w);

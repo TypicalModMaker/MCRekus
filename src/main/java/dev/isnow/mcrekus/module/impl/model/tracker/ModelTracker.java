@@ -1,16 +1,20 @@
 package dev.isnow.mcrekus.module.impl.model.tracker;
 
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
-import com.github.retrooper.packetevents.protocol.world.Location;
-import com.github.retrooper.packetevents.util.Vector3d;
 import dev.isnow.mcrekus.module.impl.model.parser.impl.Model;
 import dev.isnow.mcrekus.module.impl.model.util.ModelUtil;
+import dev.isnow.mcrekus.module.impl.model.util.MountableWrappedEntity;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import java.util.HashMap;
 import java.util.List;
 import me.tofaa.entitylib.meta.display.BlockDisplayMeta;
+import me.tofaa.entitylib.meta.display.TextDisplayMeta;
+import me.tofaa.entitylib.meta.types.DisplayMeta;
 import me.tofaa.entitylib.ve.ViewerEngine;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 public class ModelTracker {
 
@@ -20,8 +24,8 @@ public class ModelTracker {
         return trackedModels.get(entityId);
     }
 
-    public TrackedModel spawnModel(final org.bukkit.Location bukkitLocation, final Model model) {
-        final WrapperEntity base = new WrapperEntity(EntityTypes.BLOCK_DISPLAY);
+    public TrackedModel spawnModel(final Location location, final Model model, final Player player) {
+        final MountableWrappedEntity base = new MountableWrappedEntity(EntityTypes.BLOCK_DISPLAY, player);
 
         final BlockDisplayMeta meta = base.getEntityMeta(BlockDisplayMeta.class);
 
@@ -30,9 +34,7 @@ public class ModelTracker {
         meta.setLeftRotation(model.getDefaultTransform().getLeftRotation());
         meta.setRightRotation(model.getDefaultTransform().getRightRotation());
 
-        final Location location = SpigotConversionUtil.fromBukkitLocation(bukkitLocation);
-
-        base.spawn(location);
+        base.spawn(location, player);
 
         final List<WrapperEntity> objects = ModelUtil.setupModel(base, model);
 
@@ -41,6 +43,17 @@ public class ModelTracker {
         trackedModels.put(base.getEntityId(), trackedModel);
 
         return trackedModel;
+    }
+
+
+    public TrackedModel spawnModel(final org.bukkit.Location bukkitLocation, final Model model) {
+
+//        trackedModel.getBase().addViewer(player.getUniqueId());
+//        for(final WrapperEntity object : trackedModel.getObjects()) {
+//            object.addViewer(player.getUniqueId());
+//        }
+
+        return spawnModel(bukkitLocation, model, null);
     }
 
     public void despawnModel(final int entityId) {
@@ -54,5 +67,9 @@ public class ModelTracker {
         }
 
         trackedModels.remove(entityId);
+    }
+
+    public void despawnModel(final TrackedModel model) {
+        despawnModel(model.getBase().getEntityId());
     }
 }

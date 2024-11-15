@@ -133,7 +133,7 @@ public class EssentialsConfig extends ModuleConfig {
     private String broadcastInvalidTypeMessage = "[P] &cNieprawidłowy typ ogłoszenia, dostępne: chat, title, actionbar.";
 
     @Comment({"", "Teleport no args message"})
-    private String teleportNoArgsMessage = "[P] &cUżycie: /tp <gracz> <gracz2> lub /tp <x> <y> <z>";
+    private String teleportNoArgsMessage = "[P] &cUżycie: /tp <gracz> <gracz2> lub /tp <x> <y> <z> <swiat>";
 
     @Comment({"", "Teleport success sound"})
     private Sound teleportSuccessSound = Sound.ENTITY_ENDERMAN_TELEPORT;
@@ -148,7 +148,7 @@ public class EssentialsConfig extends ModuleConfig {
     private String teleportHereNoArgsMessage = "[P] &cUżycie: /tphere <gracz>";
 
     @Comment({"", "Teleport player not found"})
-    private String teleportPlayerNotFoundMessage = "[P] &cGracz %player% nie został znaleziony.";
+    private String teleportPlayerNotFoundMessage = "[P] &cGracz nie został znaleziony.";
 
     @Comment({"", "Teleport to location message"})
     private String teleportToLocationMessage = "[P] &aPrzeteleportowano do lokacji %coordinates%.";
@@ -451,4 +451,7 @@ public class EssentialsConfig extends ModuleConfig {
 
     @Comment({"", "Riptide cooldown message"})
     private String riptideCooldownMessage = "[P] &cMusisz odczekać %time% sekund przed kolejnym użyciem trójzębu.";
+
+    @Comment({"", "World not found message"})
+    private String worldNotFoundMessage = "[P] &cŚwiat %world% nie został znaleziony.";
 }

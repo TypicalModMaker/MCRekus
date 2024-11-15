@@ -5,186 +5,173 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Math;
 import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 @UtilityClass
 public class MatrixUtil {
-    private final float G = 3.0F + 2.0F * org.joml.Math.sqrt(2.0F);
-    private final GivensParameters PI_4 = GivensParameters.fromPositiveAngle((float) (java.lang.Math.PI / 4));
-    
-    public Matrix4f mulComponentWise(Matrix4f matrix, float scalar) {
-        return matrix.set(
-                matrix.m00() * scalar,
-                matrix.m01() * scalar,
-                matrix.m02() * scalar,
-                matrix.m03() * scalar,
-                matrix.m10() * scalar,
-                matrix.m11() * scalar,
-                matrix.m12() * scalar,
-                matrix.m13() * scalar,
-                matrix.m20() * scalar,
-                matrix.m21() * scalar,
-                matrix.m22() * scalar,
-                matrix.m23() * scalar,
-                matrix.m30() * scalar,
-                matrix.m31() * scalar,
-                matrix.m32() * scalar,
-                matrix.m33() * scalar
-        );
+    private final float CONSTANT_G = 3.0F + 2.0F * org.joml.Math.sqrt(2.0F);
+    private final GivensParameters QUARTER_PI_GIVENS = GivensParameters.fromPositiveAngle((float) (java.lang.Math.PI / 4));
+
+    private GivensParameters calculateApproxGivens(final float diagonalElement1, final float offDiagonalElement, final float diagonalElement2) {
+        final float diff = 2.0F * (diagonalElement1 - diagonalElement2);
+
+        return CONSTANT_G * offDiagonalElement * offDiagonalElement < diff * diff ? GivensParameters.fromUnnormalized(offDiagonalElement, diff) : QUARTER_PI_GIVENS;
     }
 
-    private GivensParameters approxGivensQuat(float a11, float a12, float a22) {
-        float f = 2.0F * (a11 - a22);
-        return G * a12 * a12 < f * f ? GivensParameters.fromUnnormalized(a12, f) : PI_4;
-    }
+    private GivensParameters calculateQrGivens(final float value1, final float value2) {
+        final float magnitude = (float) java.lang.Math.hypot(value1, value2);
 
-    private GivensParameters qrGivensQuat(float a1, float a2) {
-        float f = (float)java.lang.Math.hypot((double)a1, (double)a2);
-        float g = f > 1.0E-6F ? a2 : 0.0F;
-        float h = org.joml.Math.abs(a1) + Math.max(f, 1.0E-6F);
-        if (a1 < 0.0F) {
-            float i = g;
-            g = h;
-            h = i;
+        float cos = magnitude > 1.0E-6F ? value2 : 0.0F;
+        float sin = org.joml.Math.abs(value1) + Math.max(magnitude, 1.0E-6F);
+
+        // Reverse
+        if (value1 < 0.0F) {
+            final float temp = cos;
+            cos = sin;
+            sin = temp;
         }
 
-        return GivensParameters.fromUnnormalized(g, h);
+        return GivensParameters.fromUnnormalized(cos, sin);
     }
 
-    private void similarityTransform(Matrix3f X, Matrix3f A) {
-        X.mul(A);
-        A.transpose();
-        A.mul(X);
-        X.set(A);
+    private void applySimilarityTransform(final Matrix3f matrix, final Matrix3f transform) {
+        matrix.mul(transform);
+        transform.transpose();
+        transform.mul(matrix);
+        matrix.set(transform);
     }
 
-    private void stepJacobi(Matrix3f AtA, Matrix3f matrix3f, Quaternionf quaternionf, Quaternionf quaternionf2) {
-        if (AtA.m01 * AtA.m01 + AtA.m10 * AtA.m10 > 1.0E-6F) {
-            GivensParameters givensParameters = approxGivensQuat(AtA.m00, 0.5F * (AtA.m01 + AtA.m10), AtA.m11);
-            Quaternionf quaternionf3 = givensParameters.aroundZ(quaternionf);
-            quaternionf2.mul(quaternionf3);
-            givensParameters.aroundZ(matrix3f);
-            similarityTransform(AtA, matrix3f);
+    private void performJacobiStep(final Matrix3f symmetricMatrix, final Matrix3f rotationMatrix, final Quaternionf tempQuaternion, final Quaternionf outputQuaternion) {
+        // Z-axis rotation
+        if (symmetricMatrix.m01 * symmetricMatrix.m01 + symmetricMatrix.m10 * symmetricMatrix.m10 > 1.0E-6F) {
+            final GivensParameters givensParameters = calculateApproxGivens(symmetricMatrix.m00, 0.5F * (symmetricMatrix.m01 + symmetricMatrix.m10), symmetricMatrix.m11);
+            final Quaternionf zRotationQuaternion = givensParameters.aroundZ(tempQuaternion);
+            outputQuaternion.mul(zRotationQuaternion);
+            givensParameters.aroundZ(rotationMatrix);
+            applySimilarityTransform(symmetricMatrix, rotationMatrix);
         }
 
-        if (AtA.m02 * AtA.m02 + AtA.m20 * AtA.m20 > 1.0E-6F) {
-            GivensParameters givensParameters2 = approxGivensQuat(AtA.m00, 0.5F * (AtA.m02 + AtA.m20), AtA.m22).inverse();
-            Quaternionf quaternionf4 = givensParameters2.aroundY(quaternionf);
-            quaternionf2.mul(quaternionf4);
-            givensParameters2.aroundY(matrix3f);
-            similarityTransform(AtA, matrix3f);
+        // Y-axis rotation
+        if (symmetricMatrix.m02 * symmetricMatrix.m02 + symmetricMatrix.m20 * symmetricMatrix.m20 > 1.0E-6F) {
+            final GivensParameters givensParameters = calculateApproxGivens(symmetricMatrix.m00, 0.5F * (symmetricMatrix.m02 + symmetricMatrix.m20), symmetricMatrix.m22).inverse();
+            final Quaternionf yRotationQuaternion = givensParameters.aroundY(tempQuaternion);
+            outputQuaternion.mul(yRotationQuaternion);
+            givensParameters.aroundY(rotationMatrix);
+            applySimilarityTransform(symmetricMatrix, rotationMatrix);
         }
 
-        if (AtA.m12 * AtA.m12 + AtA.m21 * AtA.m21 > 1.0E-6F) {
-            GivensParameters givensParameters3 = approxGivensQuat(AtA.m11, 0.5F * (AtA.m12 + AtA.m21), AtA.m22);
-            Quaternionf quaternionf5 = givensParameters3.aroundX(quaternionf);
-            quaternionf2.mul(quaternionf5);
-            givensParameters3.aroundX(matrix3f);
-            similarityTransform(AtA, matrix3f);
+        // X-axis rotation
+        if (symmetricMatrix.m12 * symmetricMatrix.m12 + symmetricMatrix.m21 * symmetricMatrix.m21 > 1.0E-6F) {
+            final GivensParameters givensParameters = calculateApproxGivens(symmetricMatrix.m11, 0.5F * (symmetricMatrix.m12 + symmetricMatrix.m21), symmetricMatrix.m22);
+            final Quaternionf xRotationQuaternion = givensParameters.aroundX(tempQuaternion);
+            outputQuaternion.mul(xRotationQuaternion);
+            givensParameters.aroundX(rotationMatrix);
+            applySimilarityTransform(symmetricMatrix, rotationMatrix);
         }
     }
 
-    public Quaternionf eigenvalueJacobi(Matrix3f AtA, int numJacobiIterations) {
-        Quaternionf quaternionf = new Quaternionf();
-        Matrix3f matrix3f = new Matrix3f();
-        Quaternionf quaternionf2 = new Quaternionf();
+    public Quaternionf computeEigenvalueJacobi(final Matrix3f symmetricMatrix, final int maxIterations) {
+        final Quaternionf outputQuaternion = new Quaternionf();
+        final Matrix3f rotationMatrix = new Matrix3f();
+        final Quaternionf tempQuaternion = new Quaternionf();
 
-        for (int i = 0; i < numJacobiIterations; i++) {
-            stepJacobi(AtA, matrix3f, quaternionf2, quaternionf);
+        for (int i = 0; i < maxIterations; i++) {
+            performJacobiStep(symmetricMatrix, rotationMatrix, tempQuaternion, outputQuaternion);
         }
 
-        quaternionf.normalize();
-        return quaternionf;
+        outputQuaternion.normalize();
+        return outputQuaternion;
     }
 
-    public float[] reverseFromBDEngine(float[] input) {
-        float t = input[1];
-        input[1] = input[4];
-        input[4] = t;
+    public float[] reverseFromBDEngine(final float[] matrixElements) {
+        float temp;
 
-        t = input[2];
-        input[2] = input[8];
-        input[8] = t;
+        temp = matrixElements[1];
+        matrixElements[1] = matrixElements[4];
+        matrixElements[4] = temp;
 
-        t = input[6];
-        input[6] = input[9];
-        input[9] = t;
+        temp = matrixElements[2];
+        matrixElements[2] = matrixElements[8];
+        matrixElements[8] = temp;
 
-        t = input[3];
-        input[3] = input[12];
-        input[12] = t;
+        temp = matrixElements[6];
+        matrixElements[6] = matrixElements[9];
+        matrixElements[9] = temp;
 
-        t = input[7];
-        input[7] = input[13];
-        input[13] = t;
+        temp = matrixElements[3];
+        matrixElements[3] = matrixElements[12];
+        matrixElements[12] = temp;
 
-        t = input[11];
-        input[11] = input[14];
-        input[14] = t;
+        temp = matrixElements[7];
+        matrixElements[7] = matrixElements[13];
+        matrixElements[13] = temp;
 
-        return input;
+        temp = matrixElements[11];
+        matrixElements[11] = matrixElements[14];
+        matrixElements[14] = temp;
+
+        return matrixElements;
     }
 
-    public Triple<Quaternionf, Vector3f, Quaternionf> svdDecompose(Matrix3f A) {
-        Matrix3f matrix3f = new Matrix3f(A);
-        matrix3f.transpose();
-        matrix3f.mul(A);
-        Quaternionf quaternionf = eigenvalueJacobi(matrix3f, 5);
-        float f = matrix3f.m00;
-        float g = matrix3f.m11;
-        boolean bl = (double)f < 1.0E-6;
-        boolean bl2 = (double)g < 1.0E-6;
-        Matrix3f matrix3f3 = A.rotate(quaternionf);
-        Quaternionf quaternionf2 = new Quaternionf();
-        Quaternionf quaternionf3 = new Quaternionf();
+    public Triple<Quaternionf, Vector3f, Quaternionf> decomposeSVD(final Matrix3f inputMatrix) {
+        final Matrix3f transposeMultMatrix = new Matrix3f(inputMatrix);
+        transposeMultMatrix.transpose();
+        transposeMultMatrix.mul(inputMatrix);
+
+        final Quaternionf eigenvalueQuaternion = computeEigenvalueJacobi(transposeMultMatrix, 5);
+
+        final float eigenvalue1 = transposeMultMatrix.m00;
+        final float eigenvalue2 = transposeMultMatrix.m11;
+
+        final boolean isEigenvalue1Small = eigenvalue1 < 1.0E-6;
+        final boolean isEigenvalue2Small = eigenvalue2 < 1.0E-6;
+
+        final Matrix3f rotatedMatrix = inputMatrix.rotate(eigenvalueQuaternion);
+        final Quaternionf tempQuaternion = new Quaternionf();
+        final Quaternionf finalLeftQuaternion = new Quaternionf();
+
         GivensParameters givensParameters;
-        if (bl) {
-            givensParameters = qrGivensQuat(matrix3f3.m11, -matrix3f3.m10);
+        if (isEigenvalue1Small) {
+            givensParameters = calculateQrGivens(rotatedMatrix.m11, -rotatedMatrix.m10);
         } else {
-            givensParameters = qrGivensQuat(matrix3f3.m00, matrix3f3.m01);
+            givensParameters = calculateQrGivens(rotatedMatrix.m00, rotatedMatrix.m01);
         }
 
-        Quaternionf quaternionf4 = givensParameters.aroundZ(quaternionf3);
-        Matrix3f matrix3f4 = givensParameters.aroundZ(matrix3f);
-        quaternionf2.mul(quaternionf4);
-        matrix3f4.transpose().mul(matrix3f3);
-        if (bl) {
-            givensParameters = qrGivensQuat(matrix3f4.m22, -matrix3f4.m20);
+        final Quaternionf zRotationQuaternion = givensParameters.aroundZ(tempQuaternion);
+        final Matrix3f adjustedMatrixZ = givensParameters.aroundZ(transposeMultMatrix);
+        finalLeftQuaternion.mul(zRotationQuaternion);
+        adjustedMatrixZ.transpose().mul(rotatedMatrix);
+
+        if (isEigenvalue1Small) {
+            givensParameters = calculateQrGivens(adjustedMatrixZ.m22, -adjustedMatrixZ.m20);
         } else {
-            givensParameters = qrGivensQuat(matrix3f4.m00, matrix3f4.m02);
+            givensParameters = calculateQrGivens(adjustedMatrixZ.m00, adjustedMatrixZ.m02);
         }
 
         givensParameters = givensParameters.inverse();
-        Quaternionf quaternionf5 = givensParameters.aroundY(quaternionf3);
-        Matrix3f matrix3f5 = givensParameters.aroundY(matrix3f3);
-        quaternionf2.mul(quaternionf5);
-        matrix3f5.transpose().mul(matrix3f4);
-        if (bl2) {
-            givensParameters = qrGivensQuat(matrix3f5.m22, -matrix3f5.m21);
+
+        final Quaternionf yRotationQuaternion = givensParameters.aroundY(tempQuaternion);
+        final Matrix3f adjustedMatrixY = givensParameters.aroundY(rotatedMatrix);
+
+        finalLeftQuaternion.mul(yRotationQuaternion);
+
+        adjustedMatrixY.transpose().mul(adjustedMatrixZ);
+
+        if (isEigenvalue2Small) {
+            givensParameters = calculateQrGivens(adjustedMatrixY.m22, -adjustedMatrixY.m21);
         } else {
-            givensParameters = qrGivensQuat(matrix3f5.m11, matrix3f5.m12);
+            givensParameters = calculateQrGivens(adjustedMatrixY.m11, adjustedMatrixY.m12);
         }
 
-        Quaternionf quaternionf6 = givensParameters.aroundX(quaternionf3);
-        Matrix3f matrix3f6 = givensParameters.aroundX(matrix3f4);
-        quaternionf2.mul(quaternionf6);
-        matrix3f6.transpose().mul(matrix3f5);
-        Vector3f vector3f = new Vector3f(matrix3f6.m00, matrix3f6.m11, matrix3f6.m22);
-        return Triple.of(quaternionf2, vector3f, quaternionf.conjugate());
-    }
+        final Quaternionf xRotationQuaternion = givensParameters.aroundX(tempQuaternion);
+        final Matrix3f adjustedMatrixX = givensParameters.aroundX(adjustedMatrixZ);
 
-    public void main(final String[] args) {
-        Matrix4f matrix = new Matrix4f(0.334f,0.0937f,0f,0.189f,-0.2338f,0.1338f,0f,0.8952f,0f,0f,0.2588f,0.4042f,0f,0f,0f,1f);
+        finalLeftQuaternion.mul(xRotationQuaternion);
+        adjustedMatrixX.transpose().mul(adjustedMatrixY);
 
-        float scaleFactor = 1.0F / matrix.m33();
-        Triple<Quaternionf, org.joml.Vector3f, Quaternionf> triple = MatrixUtil.svdDecompose(new Matrix3f(matrix).scale(scaleFactor));
+        final Vector3f singularValues = new Vector3f(adjustedMatrixX.m00, adjustedMatrixX.m11, adjustedMatrixX.m22);
 
-        System.out.println(Float.parseFloat(String.valueOf(triple.getLeft().x)) + " " + Float.parseFloat(String.valueOf(triple.getLeft().y)) + " " + Float.parseFloat(String.valueOf(triple.getLeft().z)) + " " + Float.parseFloat(String.valueOf(triple.getLeft().w)));
-        System.out.println(Float.parseFloat(String.valueOf(triple.getMiddle().x)) + " " + Float.parseFloat(String.valueOf(triple.getMiddle().y)) + " " + Float.parseFloat(String.valueOf(triple.getMiddle().z)));
-        System.out.println(Float.parseFloat(String.valueOf(triple.getRight().x)) + " " + Float.parseFloat(String.valueOf(triple.getRight().y)) + " " + Float.parseFloat(String.valueOf(triple.getRight().z)) + " " + Float.parseFloat(String.valueOf(triple.getRight().w)));
-
+        return Triple.of(finalLeftQuaternion, singularValues, eigenvalueQuaternion.conjugate());
     }
 }
-

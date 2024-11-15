@@ -31,6 +31,7 @@ public class GeneralConfig extends MasterConfig {
         add("Xray");
         add("Christmas");
         add("Models");
+        add("Music");
     }};
 
     @Comment({"", "Debug mode (more information in console)"})
