@@ -30,7 +30,7 @@ public class MusicTracker {
         final SongPlayer songPlayer = customSongPlayer.getPlayer();
 
         songPlayer.removePlayer(player);
-        if(customSongPlayer.isDestroyOnNoPlayers() && songPlayer.getPlayerUUIDs().isEmpty()) {
+        if (customSongPlayer.isDestroyOnNoPlayers() && songPlayer.getPlayerUUIDs().isEmpty()) {
             songPlayer.destroy();
         }
 

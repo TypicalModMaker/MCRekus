@@ -37,25 +37,21 @@ public class PlaySongCommand extends ModuleAccessor<MusicModule> {
     @Async
     public void execute(final BukkitSource source, @Named("song") @SuggestionProvider("song") final String song) {
         final Player player = source.asPlayer();
-
         final MusicConfig config = getModule().getConfig();
-        final MusicTracker tracker = getModule().getMusicTracker();
 
+        final MusicTracker tracker = getModule().getMusicTracker();
         if (tracker.isPlaying(player)) {
             source.reply(ComponentUtil.deserialize(config.getSongAlreadyPlayingMessage()));
             return;
         }
 
         final ParsedSong foundSong = getModule().getSongs().get(song);
-
-        if(foundSong == null) {
+        if (foundSong == null) {
             source.reply(ComponentUtil.deserialize(config.getSongNotFoundMessage()));
             return;
         }
 
-
         final CustomRadioPlayer songPlayer = SongUtil.playSong(foundSong.getSong(), source.asPlayer());
-
         tracker.trackMusic(player, songPlayer, true);
 
         source.reply(ComponentUtil.deserialize("[P] Playing song " + foundSong.getDisplayName() + ", Author: " + foundSong.getAuthor()));

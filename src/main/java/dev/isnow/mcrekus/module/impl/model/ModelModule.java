@@ -43,12 +43,11 @@ public class ModelModule extends Module<ModelConfig> {
         final File modelFolder = new File("plugins/MCRekus/modules/Model/models/");
         modelFolder.mkdirs();
 
-        for(final File file : modelFolder.listFiles()) {
-            if(file.getName().endsWith(".bdengine")) {
+        for (final File file : modelFolder.listFiles()) {
+            if (file.getName().endsWith(".bdengine")) {
                 RekusLogger.debug("Parsing model: " + file.getName());
 
                 final Model model = ProjectParser.parseFile(file);
-
                 if(model != null) {
                     RekusLogger.debug("Parsed model: " + model.getName());
 

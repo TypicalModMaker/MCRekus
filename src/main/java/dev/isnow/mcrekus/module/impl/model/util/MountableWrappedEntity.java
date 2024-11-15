@@ -38,7 +38,7 @@ public class MountableWrappedEntity extends WrapperEntity {
     public boolean spawn(final Location location, final Player player) {
         final boolean spawned = this.spawn(SpigotConversionUtil.fromBukkitLocation(location), EntityLib.getApi().getDefaultContainer());
 
-        if(spawned) {
+        if(spawned && player != null) {
             addViewer(player.getUniqueId());
         }
 

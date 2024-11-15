@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 
 @Getter
 public class MusicModule extends Module<MusicConfig> {
-
     private final HashMap<String, ParsedSong> songs = new HashMap<>();
 
     private final MusicTracker musicTracker = new MusicTracker();
@@ -36,21 +35,21 @@ public class MusicModule extends Module<MusicConfig> {
         RekusLogger.info("Loading songs...");
         final File songsFolder = new File("plugins/MCRekus/songs/");
 
-        if(!songsFolder.exists()) {
-            songsFolder.mkdirs();
+        if (!songsFolder.exists()) {
+            final boolean created = songsFolder.mkdirs();
         }
 
         final MusicConfig config = getConfig();
 
-        for(final File file : songsFolder.listFiles()) {
-            if(file.getName().endsWith(".nbs")) {
+        for (final File file : songsFolder.listFiles()) {
+            if (file.getName().endsWith(".nbs")) {
                 final Song song = NBSDecoder.parse(file);
+
                 final String name = file.getName().replace(".nbs", "");
                 RekusLogger.info("Loaded song " + name);
 
                 final SongConfig songConfig = config.getSongs().get(name);
-
-                if(songConfig == null) {
+                if (songConfig == null) {
                     songs.put(name, new ParsedSong(song, name, "Unknown", "Unknown"));
                     continue;
                 }
