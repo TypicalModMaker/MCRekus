@@ -44,9 +44,9 @@ public class PlayerMove extends ModuleAccessor<ChristmasModule> implements Liste
                 if (musicTracker.isPlaying(player)) {
                     final CustomSongPlayer songPlayer = musicTracker.getSongPlayer(player);
 
-                    RekusLogger.debug("Stopping Christmas song for " + player.getName());
                     if (christmasSongPlayer == songPlayer) {
-                        RekusLogger.debug("Stopping Christmas song for 212  23123123" + player.getName());
+                        RekusLogger.debug("Stopping Christmas song for " + player.getName());
+
                         musicTracker.stopMusic(player);
                     }
                 }
