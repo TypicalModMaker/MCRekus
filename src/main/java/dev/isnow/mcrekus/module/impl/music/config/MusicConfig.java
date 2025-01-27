@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import dev.isnow.mcrekus.module.ModuleConfig;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,14 +2,6 @@ package dev.isnow.mcrekus.module.impl.model.util;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.block.Block;
-import org.bukkit.block.Skull;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,6 +9,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.SkullType;
+import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 /**
  * A library for the Bukkit API to create player skulls
@@ -241,18 +240,16 @@ public class SkullCreator {
 
     private static void notNull(Object o, String name) {
         if (o == null) {
-            throw new NullPointerException(name + " should not be null!");
+            throw new IllegalArgumentException(name + " should not be null!");
         }
     }
 
     private static String urlToBase64(String url) {
 
-        URI actualUrl;
+        URI actualUrl = null;
         try {
             actualUrl = new URI(url);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (URISyntaxException ignored) {}
         String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl.toString() + "\"}}}";
         return Base64.getEncoder().encodeToString(toEncode.getBytes());
     }

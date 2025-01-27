@@ -3,8 +3,6 @@ package dev.isnow.mcrekus.module.impl.model.parser.impl.object;
 import com.github.retrooper.packetevents.util.Quaternion4f;
 import com.github.retrooper.packetevents.util.Vector3f;
 import dev.isnow.mcrekus.module.impl.model.util.MatrixUtil;
-import dev.isnow.mcrekus.util.RekusLogger;
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Triple;

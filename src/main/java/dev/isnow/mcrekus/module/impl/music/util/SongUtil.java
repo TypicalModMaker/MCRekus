@@ -2,7 +2,6 @@ package dev.isnow.mcrekus.module.impl.music.util;
 
 import com.xxmicloxx.NoteBlockAPI.model.RepeatMode;
 import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 

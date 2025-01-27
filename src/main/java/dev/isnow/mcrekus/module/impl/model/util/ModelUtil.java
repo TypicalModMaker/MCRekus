@@ -2,12 +2,6 @@ package dev.isnow.mcrekus.module.impl.model.util;
 
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.ItemStack.Builder;
-import com.github.retrooper.packetevents.protocol.item.type.ItemType;
-import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.protocol.world.Location;
-import com.github.retrooper.packetevents.util.Quaternion4f;
-import com.github.retrooper.packetevents.util.Vector3f;
 import dev.isnow.mcrekus.module.impl.model.parser.impl.Model;
 import dev.isnow.mcrekus.module.impl.model.parser.impl.group.Group;
 import dev.isnow.mcrekus.module.impl.model.parser.impl.object.DisplayObject;
@@ -18,7 +12,6 @@ import dev.isnow.mcrekus.module.impl.model.parser.impl.object.type.item.HeadDisp
 import dev.isnow.mcrekus.module.impl.model.parser.impl.object.type.item.ItemDisplay;
 import dev.isnow.mcrekus.util.ComponentUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
-import dev.isnow.mcrekus.util.cuboid.RekusLocation;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +19,10 @@ import lombok.experimental.UtilityClass;
 import me.tofaa.entitylib.meta.display.AbstractDisplayMeta;
 import me.tofaa.entitylib.meta.display.BlockDisplayMeta;
 import me.tofaa.entitylib.meta.display.ItemDisplayMeta;
-import me.tofaa.entitylib.meta.display.ItemDisplayMeta.DisplayType;
 import me.tofaa.entitylib.meta.display.TextDisplayMeta;
-import me.tofaa.entitylib.meta.types.DisplayMeta;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 
 @UtilityClass
 public class ModelUtil {
@@ -133,6 +120,10 @@ public class ModelUtil {
             switch (textDisplay.getAlign()) {
                 case LEFT -> meta.setAlignLeft(true);
                 case RIGHT -> meta.setAlignRight(true);
+                case CENTER -> {
+                    meta.setAlignLeft(true);
+                    meta.setAlignRight(true);
+                }
             }
         }
 

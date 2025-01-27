@@ -1,6 +1,5 @@
 package dev.isnow.mcrekus.module.impl.music.command.playsong;
 
-import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import dev.isnow.mcrekus.module.ModuleAccessor;
 import dev.isnow.mcrekus.module.impl.music.MusicModule;
 import dev.isnow.mcrekus.module.impl.music.ParsedSong;

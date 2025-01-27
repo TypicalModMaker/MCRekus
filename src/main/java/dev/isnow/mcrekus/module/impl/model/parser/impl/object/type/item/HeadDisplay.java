@@ -3,7 +3,6 @@ package dev.isnow.mcrekus.module.impl.model.parser.impl.object.type.item;
 import dev.isnow.mcrekus.module.impl.model.parser.impl.object.properties.Brightness;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
 
 @Getter @Setter
 public class HeadDisplay extends ItemDisplay {

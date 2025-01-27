@@ -82,6 +82,8 @@ public class RiptideEvent extends ModuleAccessor<EssentialsModule> implements Li
                         }
                     }
                 }.runTaskLater(MCRekus.getInstance(), 3);
+            default:
+                break;
         }
     }
 }

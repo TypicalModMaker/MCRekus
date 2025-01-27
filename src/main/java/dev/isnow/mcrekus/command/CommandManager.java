@@ -9,9 +9,7 @@ import dev.isnow.mcrekus.module.impl.essentials.command.home.HomeResolver;
 import dev.isnow.mcrekus.module.impl.essentials.command.speed.SpeedTypeResolver;
 import dev.isnow.mcrekus.module.impl.model.command.ModelResolver;
 import dev.isnow.mcrekus.module.impl.music.command.playsong.SongResolver;
-import dev.velix.imperat.BukkitConfigBuilder;
 import dev.velix.imperat.BukkitImperat;
-import dev.velix.imperat.util.ImperatDebugger;
 
 public class CommandManager {
 

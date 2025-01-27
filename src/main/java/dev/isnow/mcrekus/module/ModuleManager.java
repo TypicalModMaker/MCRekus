@@ -6,7 +6,6 @@ import dev.isnow.mcrekus.util.ReflectionUtil;
 import dev.isnow.mcrekus.util.RekusLogger;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;

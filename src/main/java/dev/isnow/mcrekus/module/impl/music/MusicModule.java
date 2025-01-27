@@ -1,15 +1,9 @@
 package dev.isnow.mcrekus.module.impl.music;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
-import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import dev.isnow.mcrekus.MCRekus;
 import dev.isnow.mcrekus.module.Module;
-import dev.isnow.mcrekus.module.impl.model.config.ModelConfig;
-import dev.isnow.mcrekus.module.impl.model.parser.ProjectParser;
-import dev.isnow.mcrekus.module.impl.model.parser.impl.Model;
-import dev.isnow.mcrekus.module.impl.model.tracker.ModelTracker;
 import dev.isnow.mcrekus.module.impl.music.config.MusicConfig;
 import dev.isnow.mcrekus.module.impl.music.config.SongConfig;
 import dev.isnow.mcrekus.module.impl.music.tracker.MusicTracker;
@@ -17,8 +11,6 @@ import dev.isnow.mcrekus.util.RekusLogger;
 import java.io.File;
 import java.util.HashMap;
 import lombok.Getter;
-import me.tofaa.entitylib.ve.ViewerEngine;
-import org.bukkit.entity.Player;
 
 @Getter
 public class MusicModule extends Module<MusicConfig> {
@@ -36,7 +28,7 @@ public class MusicModule extends Module<MusicConfig> {
         final File songsFolder = new File("plugins/MCRekus/songs/");
 
         if (!songsFolder.exists()) {
-            final boolean created = songsFolder.mkdirs();
+            final boolean ignored = songsFolder.mkdirs();
         }
 
         final MusicConfig config = getConfig();

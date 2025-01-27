@@ -156,7 +156,7 @@ public class InteractListener extends ModuleAccessor<CratesModule> implements Li
                     final ItemDisplayMeta meta = (ItemDisplayMeta) display.getEntityMeta();
 
                     if (!descending) {
-                        final Pair<Vector3f, Vector3f> updatedTransformation = getRotation(angle, meta);
+                        final Pair<Vector3f, Vector3f> updatedTransformation = getRotation(angle);
 
                         meta.setTransformationInterpolationDuration(5);
                         meta.setInterpolationDelay(-1);
@@ -182,7 +182,7 @@ public class InteractListener extends ModuleAccessor<CratesModule> implements Li
                 stage++;
             }
 
-            private Pair<Vector3f, Vector3f> getRotation(final double angle, final ItemDisplayMeta meta) {
+            private Pair<Vector3f, Vector3f> getRotation(final double angle) {
                 final float globalAngle = angleIncrement * stage;
                 final double rotatedX = initialRadius * Math.cos(globalAngle + angle);
                 final double rotatedZ = initialRadius * Math.sin(globalAngle + angle);

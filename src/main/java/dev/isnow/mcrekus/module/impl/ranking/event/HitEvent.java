@@ -20,11 +20,7 @@ public class HitEvent extends ModuleAccessor<RankingModule> implements Listener 
 
         final SpawnProtectionModule spawnProtectionModule = MCRekus.getInstance().getModuleManager().getModuleByName("SpawnProtection");
 
-        if(spawnProtectionModule != null) {
-            if(spawnProtectionModule.getSpawnCuboid().isIn(player)) {
-                return;
-            }
-        }
+        if(spawnProtectionModule != null && spawnProtectionModule.getSpawnCuboid().isIn(player)) return;
 
         getModule().getHitCache().put(player, new PlayerHit(damager, System.currentTimeMillis()));
     }

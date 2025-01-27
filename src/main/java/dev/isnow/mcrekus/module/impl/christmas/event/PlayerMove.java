@@ -6,7 +6,6 @@ import dev.isnow.mcrekus.module.impl.christmas.ChristmasModule;
 import dev.isnow.mcrekus.module.impl.music.MusicModule;
 import dev.isnow.mcrekus.module.impl.music.tracker.CustomSongPlayer;
 import dev.isnow.mcrekus.module.impl.music.tracker.MusicTracker;
-import dev.isnow.mcrekus.module.impl.spawn.SpawnModule;
 import dev.isnow.mcrekus.module.impl.spawnprotection.SpawnProtectionModule;
 import dev.isnow.mcrekus.util.RekusLogger;
 import org.bukkit.Location;

@@ -10,7 +10,6 @@ import dev.isnow.mcrekus.util.RekusLogger;
 import java.io.File;
 import java.util.HashMap;
 import lombok.Getter;
-import me.tofaa.entitylib.ve.ViewerEngine;
 
 @Getter
 public class ModelModule extends Module<ModelConfig> {

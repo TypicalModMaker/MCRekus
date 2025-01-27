@@ -2,11 +2,9 @@ package dev.isnow.mcrekus.module.impl.model.parser.impl.object.type;
 
 import dev.isnow.mcrekus.module.impl.model.parser.impl.object.DisplayObject;
 import dev.isnow.mcrekus.module.impl.model.parser.impl.object.properties.Brightness;
-import dev.isnow.mcrekus.util.RekusLogger;
 import java.util.Locale;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 
 @Getter
 public class BlockDisplay extends DisplayObject {
