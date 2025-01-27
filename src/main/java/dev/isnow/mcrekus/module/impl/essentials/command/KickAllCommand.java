@@ -29,6 +29,7 @@ public final class KickAllCommand extends ModuleAccessor<EssentialsModule> {
                 continue;
             }
 
+            p.kick(ComponentUtil.deserialize(config.getKickAllReason()));
             p.sendMessage(ComponentUtil.deserialize(config.getKickAllReason()));
         }
 
